@@ -29,11 +29,10 @@ properties:
         description: "The longitude of the farm coordinate."
     description: "The geographical coordinates of the farm coordinate."
   coordinates:
-    type: object
-    format: array
-    description: "The list of all the geographical coodinates representing the farm total surface area."
+    type: array
+    description: "The list of all the geographical coordinates representing the farm total surface area."
     items:
-      type: number
+      type: object
       properties:
         lat:
           type: number

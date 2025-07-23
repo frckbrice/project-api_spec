@@ -24,9 +24,8 @@ post:
     "403":
       description: "Authorization failed due to insufficient permissions."
       content:
-        type: application/json
         schema:
-          "$ref": "../../components/schemas/api-error-response.yaml"
+          "$ref": "../../components/schemas/api-error-response-schema.yaml"
     "500":
       description: Internal server error
 
