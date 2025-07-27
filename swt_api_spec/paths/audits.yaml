@@ -7,65 +7,66 @@ post:
     - 🌿 Audits
   summary: Create audit
   description: |
-    Create a new audit (project or market) based on the audit_type parameter.
-    
+    Create a new audit (project or market).
+
     **Required Permissions:** `write:audit`
-    
+
     **Business Rules:**
-    - Audit type must be either 'project' or 'market'
-    - Project audit must be associated with a valid project
-    - Market audit must be associated with a valid market
+    - Project audits require project_id and project-specific scores
+    - Market audits require market_id and market-specific scores
     - Audit date must be within valid timeline
     - Only authorized auditors can create audits
-    - Audit scores must be between 0-100
+    - All scores must be between 0-100
   operationId: createAudit
   security:
     - BearerAuth: []
-  parameters:
-    - name: audit_type
-      in: query
-      required: true
-      description: Type of audit to create
-      schema:
-        type: string
-        enum: [project, market]
-        example: "project"
   requestBody:
     required: true
     content:
       application/json:
         schema:
-          oneOf:
-            - $ref: "../components/schemas/project_audit.yaml"
-            - $ref: "../components/schemas/market_audit.yaml"
+          $ref: "../components/schemas/audit.yaml"
         examples:
           project_audit:
             summary: Project audit
             description: Create a project audit
             value:
+              audit_type: "project"
               project_id: "clh1234567890abcdef"
               auditor_id: "clh1234567890abcdef"
               audit_date: "2024-01-15"
-              progress_score: 75
+              scores:
+                progress: 75
+                quality: 85
+                budget: 90
+                timeline: 80
               notes: "Project progressing well within timeline"
-              quality_score: 85
-              budget_score: 90
-              timeline_score: 80
               risks_identified: ["Weather delays", "Supply chain issues"]
               recommendations: ["Accelerate procurement", "Increase monitoring"]
+              metadata:
+                company_id: "clh1234567890abcdef"
+                location: "Ibadan Division"
+                duration_minutes: 120
           market_audit:
             summary: Market audit
             description: Create a market audit
             value:
+              audit_type: "market"
               market_id: "clh1234567890abcdef"
               auditor_id: "clh1234567890abcdef"
               audit_date: "2024-01-15"
-              compliance_score: 85
+              scores:
+                quality: 90
+                compliance: 85
+                safety: 88
+                efficiency: 82
               notes: "Market meets basic compliance requirements"
-              quality_score: 90
-              safety_score: 88
-              efficiency_score: 82
-              recommendations: ["Improve storage facilities", "Enhance quality control"]
+              recommendations:
+                ["Improve storage facilities", "Enhance quality control"]
+              metadata:
+                company_id: "clh1234567890abcdef"
+                location: "Lagos Market"
+                duration_minutes: 90
   responses:
     "201":
       description: Audit created successfully
@@ -78,18 +79,7 @@ post:
       content:
         application/json:
           schema:
-            oneOf:
-              - $ref: "../components/schemas/project_audit.yaml"
-              - $ref: "../components/schemas/market_audit.yaml"
-          example:
-            id: "clh1234567890abcdef"
-            project_id: "clh1234567890abcdef"
-            auditor_id: "clh1234567890abcdef"
-            audit_date: "2024-01-15"
-            progress_score: 75
-            notes: "Project progressing well within timeline"
-            created_at: "2024-01-15T10:30:00Z"
-            updated_at: "2024-01-15T10:30:00Z"
+            $ref: "../components/schemas/audit.yaml"
     "400":
       $ref: "../components/responses/ValidationError.yaml"
     "401":
@@ -122,9 +112,9 @@ get:
   summary: List all audits
   description: |
     Retrieve all audits with optional filtering by type, date range, and other criteria.
-    
+
     **Required Permissions:** `read:audit`
-    
+
     **Features:**
     - Filter by audit type (project/market)
     - Filter by date range
@@ -144,30 +134,6 @@ get:
         type: string
         enum: [project, market]
         example: "project"
-    - name: start_date
-      in: query
-      required: false
-      description: Start date for filtering (ISO 8601 format)
-      schema:
-        type: string
-        format: date
-        example: "2024-01-01"
-    - name: end_date
-      in: query
-      required: false
-      description: End date for filtering (ISO 8601 format)
-      schema:
-        type: string
-        format: date
-        example: "2024-12-31"
-    - name: auditor_id
-      in: query
-      required: false
-      description: Filter by auditor ID
-      schema:
-        type: string
-        format: cuid
-        example: "clh1234567890abcdef"
     - name: resource_id
       in: query
       required: false
@@ -176,10 +142,26 @@ get:
         type: string
         format: cuid
         example: "clh1234567890abcdef"
+    - name: auditor_id
+      in: query
+      required: false
+      description: Filter by auditor ID
+      schema:
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
+    - name: company_id
+      in: query
+      required: false
+      description: Filter by company ID
+      schema:
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
     - name: min_score
       in: query
       required: false
-      description: Minimum score filter
+      description: Minimum score filter (applies to primary score for audit type)
       schema:
         type: integer
         minimum: 0
@@ -188,49 +170,59 @@ get:
     - name: max_score
       in: query
       required: false
-      description: Maximum score filter
+      description: Maximum score filter (applies to primary score for audit type)
       schema:
         type: integer
         minimum: 0
         maximum: 100
         example: 90
+    - $ref: "../components/parameters/DateRangeStart.yaml"
+    - $ref: "../components/parameters/DateRangeEnd.yaml"
+    - $ref: "../components/parameters/PaginationLimit.yaml"
+    - $ref: "../components/parameters/PaginationOffset.yaml"
     - name: sort_by
       in: query
       required: false
       description: Sort field
       schema:
         type: string
-        enum: [audit_date, created_at, progress_score, compliance_score]
+        enum: [audit_date, created_at]
         default: "audit_date"
         example: "audit_date"
     - name: sort_order
       in: query
       required: false
-      description: Sort order
+      description: Sort direction
       schema:
         type: string
         enum: [asc, desc]
         default: "desc"
         example: "desc"
-    - $ref: "../components/parameters/PaginationLimit.yaml"
-    - $ref: "../components/parameters/PaginationOffset.yaml"
   responses:
     "200":
       description: List of audits retrieved successfully
+      headers:
+        X-Total-Count:
+          description: Total number of audits matching the filter criteria
+          schema:
+            type: integer
+        X-Page-Count:
+          description: Total number of pages
+          schema:
+            type: integer
+        Link:
+          description: Pagination links (first, prev, next, last)
+          schema:
+            type: string
       content:
         application/json:
           schema:
             type: object
             properties:
-              success:
-                type: boolean
-                example: true
               data:
                 type: array
                 items:
-                  oneOf:
-                    - $ref: "../components/schemas/project_audit.yaml"
-                    - $ref: "../components/schemas/market_audit.yaml"
+                  $ref: "../components/schemas/audit.yaml"
               pagination:
                 type: object
                 properties:
@@ -246,23 +238,55 @@ get:
                   has_more:
                     type: boolean
                     example: true
+              meta:
+                type: object
+                properties:
+                  filters_applied:
+                    type: object
+                    example:
+                      audit_type: "project"
+                      company_id: "clh1234567890abcdef"
+                      start_date: "2024-01-01"
+                      end_date: "2024-01-31"
           example:
-            success: true
             data:
               - id: "clh1234567890abcdef"
+                audit_type: "project"
                 project_id: "clh1234567890abcdef"
                 auditor_id: "clh1234567890abcdef"
                 audit_date: "2024-01-15"
-                progress_score: 75
+                scores:
+                  progress: 75
+                  quality: 85
+                  budget: 90
+                  timeline: 80
                 notes: "Project progressing well within timeline"
+                risks_identified: ["Weather delays", "Supply chain issues"]
+                recommendations:
+                  ["Accelerate procurement", "Increase monitoring"]
+                metadata:
+                  company_id: "clh1234567890abcdef"
+                  location: "Ibadan Division"
+                  duration_minutes: 120
                 created_at: "2024-01-15T10:30:00Z"
                 updated_at: "2024-01-15T10:30:00Z"
-              - id: "clh1234567890abcdef"
+              - id: "clh1234567890abcdeg"
+                audit_type: "market"
                 market_id: "clh1234567890abcdef"
                 auditor_id: "clh1234567890abcdef"
                 audit_date: "2024-01-14"
-                compliance_score: 85
+                scores:
+                  quality: 90
+                  compliance: 85
+                  safety: 88
+                  efficiency: 82
                 notes: "Market meets basic compliance requirements"
+                recommendations:
+                  ["Improve storage facilities", "Enhance quality control"]
+                metadata:
+                  company_id: "clh1234567890abcdef"
+                  location: "Lagos Market"
+                  duration_minutes: 90
                 created_at: "2024-01-14T14:20:00Z"
                 updated_at: "2024-01-14T14:20:00Z"
             pagination:
@@ -270,12 +294,20 @@ get:
               limit: 20
               offset: 0
               has_more: true
+            meta:
+              filters_applied:
+                audit_type: "project"
+                company_id: "clh1234567890abcdef"
+                start_date: "2024-01-01"
+                end_date: "2024-01-31"
     "400":
       $ref: "../components/responses/ValidationError.yaml"
     "401":
       $ref: "../components/responses/UnauthorizedError.yaml"
     "403":
       $ref: "../components/responses/ForbiddenError.yaml"
+    "429":
+      $ref: "../components/responses/RateLimitError.yaml"
     "500":
       $ref: "../components/responses/ServerError.yaml"
 
@@ -285,13 +317,13 @@ put:
     - 🌿 Audits
   summary: Update audit
   description: |
-    Update an existing audit (project or market).
-    
+    Update an existing audit.
+
     **Required Permissions:** `write:audit`
-    
+
     **Business Rules:**
     - Cannot update audits older than 30 days
-    - Cannot change audit date after submission
+    - Cannot change audit type or resource ID
     - Only the original auditor or admin can update
     - All changes are logged for audit purposes
   operationId: updateAudit
@@ -311,108 +343,43 @@ put:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            progress_score:
-              type: integer
-              minimum: 0
-              maximum: 100
-              description: Updated progress score (for project audits)
-              example: 80
-            compliance_score:
-              type: integer
-              minimum: 0
-              maximum: 100
-              description: Updated compliance score (for market audits)
-              example: 88
-            notes:
-              type: string
-              description: Updated audit notes
-              example: "Updated assessment - better than expected"
-            quality_score:
-              type: integer
-              minimum: 0
-              maximum: 100
-              description: Updated quality score
-              example: 88
-            budget_score:
-              type: integer
-              minimum: 0
-              maximum: 100
-              description: Updated budget score (for project audits)
-              example: 92
-            timeline_score:
-              type: integer
-              minimum: 0
-              maximum: 100
-              description: Updated timeline score (for project audits)
-              example: 85
-            safety_score:
-              type: integer
-              minimum: 0
-              maximum: 100
-              description: Updated safety score (for market audits)
-              example: 90
-            efficiency_score:
-              type: integer
-              minimum: 0
-              maximum: 100
-              description: Updated efficiency score (for market audits)
-              example: 85
-            risks_identified:
-              type: array
-              items:
-                type: string
-              description: Updated risks identified
-              example: ["Weather delays", "Supply chain issues"]
-            recommendations:
-              type: array
-              items:
-                type: string
-              description: Updated recommendations
-              example: ["Accelerate procurement", "Increase monitoring"]
+          $ref: "../components/schemas/audit.yaml"
         examples:
           update_project_audit:
             summary: Update project audit
             description: Update a project audit with new scores and notes
             value:
-              progress_score: 80
+              scores:
+                progress: 80
+                quality: 88
+                budget: 92
+                timeline: 85
               notes: "Updated progress assessment - better than expected"
-              quality_score: 88
-              budget_score: 92
-              timeline_score: 85
               risks_identified: ["Weather delays", "Supply chain issues"]
               recommendations: ["Accelerate procurement", "Increase monitoring"]
+              metadata:
+                duration_minutes: 150
           update_market_audit:
             summary: Update market audit
             description: Update a market audit with new scores and notes
             value:
-              compliance_score: 88
+              scores:
+                quality: 90
+                compliance: 88
+                safety: 92
+                efficiency: 85
               notes: "Updated compliance assessment - improved standards"
-              quality_score: 90
-              safety_score: 92
-              efficiency_score: 85
-              recommendations: ["Improve storage facilities", "Enhance quality control"]
+              recommendations:
+                ["Improve storage facilities", "Enhance quality control"]
+              metadata:
+                duration_minutes: 120
   responses:
     "200":
       description: Audit updated successfully
       content:
         application/json:
           schema:
-            oneOf:
-              - $ref: "../components/schemas/project_audit.yaml"
-              - $ref: "../components/schemas/market_audit.yaml"
-          example:
-            id: "clh1234567890abcdef"
-            project_id: "clh1234567890abcdef"
-            auditor_id: "clh1234567890abcdef"
-            audit_date: "2024-01-15"
-            progress_score: 80
-            notes: "Updated progress assessment - better than expected"
-            quality_score: 88
-            budget_score: 92
-            timeline_score: 85
-            updated_at: "2024-01-15T15:45:00Z"
+            $ref: "../components/schemas/audit.yaml"
     "400":
       $ref: "../components/responses/ValidationError.yaml"
     "401":
@@ -461,14 +428,14 @@ delete:
   summary: Delete audit
   description: |
     Delete an audit from the system.
-    
+
     **Required Permissions:** `write:audit`
-    
+
     **Business Rules:**
     - Cannot delete audits older than 30 days
     - Cannot delete audits that have been submitted for compliance
     - Only admin users can delete audits
-    - Soft delete - marks as deleted but preserves data for audit
+    - Soft delete - marks as deleted but preserves data for audit trail
   operationId: deleteAudit
   security:
     - BearerAuth: []
@@ -521,4 +488,4 @@ delete:
                 type: string
                 example: "AUDIT_NOT_FOUND"
     "500":
-      $ref: "../components/responses/ServerError.yaml" 
+      $ref: "../components/responses/ServerError.yaml"

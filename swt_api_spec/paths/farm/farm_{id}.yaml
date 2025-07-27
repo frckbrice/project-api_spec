@@ -1,95 +1,208 @@
 get:
   tags:
-    - Farm
+    - 🏡 Farms
   summary: Get farm by id
   operationId: getFarmById
-  description: To get a farm by its ID. Only administrators can use this operation. If you want to get a farm by its ID, use the **getFarmById** operation.
+  description: |
+    Retrieve a single farm by its ID.
+
+    **Required Permissions:** `read:farms`
+
+    **Business Rules:**
+    - Users can only access farms in their company
+    - GPS coordinates are returned with high precision
+    - Farm images are returned as signed URLs
   parameters:
-    - in: path
-      name: id
-      description: farm id
+    - name: id
+      in: path
+      description: The ID of the farm to retrieve
       required: true
       schema:
         type: string
-        example: AQA9CNo0cXNLt6sZp5Uc5P0
-      style: simple
+        format: cuid
+        example: "clh1234567890abcdef"
   responses:
     "200":
-      description: farm
+      description: Farm retrieved successfully
       content:
         application/json:
           schema:
             $ref: "../../components/schemas/farm.yaml"
-    "404":
-      description: farm not found
     "401":
-      description: Unauthorized access
+      $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
-      description: Forbidden access
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "404":
+      description: Farm not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Farm Not Found"
+              message:
+                type: string
+                example: "Farm with the specified ID was not found"
+              code:
+                type: string
+                example: "FARM_NOT_FOUND"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"
 
-# delete a farm by ID.
 delete:
   tags:
-    - Farm
+    - 🏡 Farms
   summary: Delete farm by id
   operationId: deleteFarmById
-  description: To delete a farm by its ID. Only administrators can use this operation. If you want to delete a farm by its ID, use the **deleteFarmById** operation.
-  parameters:
-    - in: path
-      name: id
-      description: farm id
-      required: true
-      schema:
-        type: array
-        items:
-          type: string
-          example: AQA9CNo0cXNLt6sZp5Uc5P0
-      style: simple
-  responses:
-    "200":
-      description: farm deleted
-    "404":
-      description: farm not found
-    "401":
-      description: Unauthorized access
-    "403":
-      description: Forbidden access
-patch:
-  tags:
-    - Farm
-  summary: Update farm by id
-  operationId: updateFarmById
-  description: To update a farm by its ID. Only administrators can use this operation. If you want to update a farm by its ID, use the **updateFarmById** operation.
+  description: |
+    Delete a farm from the system.
+
+    **Required Permissions:** `write:farms`
+
+    **Business Rules:**
+    - Cannot delete farms with active projects
+    - Farm data is preserved for audit purposes
+    - Associated resources are marked as inactive
   parameters:
     - name: id
       in: path
-      description: farm id
+      description: The ID of the farm to delete
       required: true
       schema:
-        type: array
-        items:
-          type: string
-          example: AQA9CNo0cXNLt6sZp5Uc5P0
-      style: simple
-    - name: farmer_id
-      in: query
-      description: the farmer ID who is the owner of the farm.
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
+  responses:
+    "204":
+      description: Farm deleted successfully
+    "400":
+      description: Cannot delete farm
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Cannot Delete Farm"
+              message:
+                type: string
+                example: "Farm has active projects"
+              code:
+                type: string
+                example: "FARM_HAS_ACTIVE_PROJECTS"
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "404":
+      description: Farm not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Farm Not Found"
+              message:
+                type: string
+                example: "Farm with the specified ID was not found"
+              code:
+                type: string
+                example: "FARM_NOT_FOUND"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"
+
+patch:
+  tags:
+    - 🏡 Farms
+  summary: Update farm by id
+  operationId: updateFarmById
+  description: |
+    Update a farm's information.
+
+    **Required Permissions:** `write:farms`
+
+    **Business Rules:**
+    - GPS coordinates must be valid
+    - Farm images are uploaded separately
+    - Updates are logged for audit purposes
+    - Only specific fields can be updated
+  parameters:
+    - name: id
+      in: path
+      description: The ID of the farm to update
       required: true
       schema:
-        type: array
-        items:
-          type: string
-          example: AQA9CNo0cXNLt6sZp5Uc5P0
-      style: simple
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
   requestBody:
     required: true
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/farm.yaml"
-
+          type: object
+          properties:
+            location:
+              type: object
+              properties:
+                lat:
+                  type: number
+                  format: double
+                  example: 6.5244
+                lng:
+                  type: number
+                  format: double
+                  example: 3.3792
+            village:
+              type: string
+              example: "Ibadan Village"
+            division:
+              type: string
+              example: "Oyo Division"
+            council:
+              type: string
+              example: "Ibadan Council"
+            farm_image_url:
+              type: string
+              format: uri
+              example: "https://storage.cocoaflow.com/farms/farm_123.jpg"
+            status:
+              type: string
+              enum: [active, inactive]
+              example: "active"
   responses:
     "200":
-      description: farm updated
+      description: Farm updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/farm.yaml"
+    "400":
+      $ref: "../../components/responses/ValidationError.yaml"
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
     "404":
-      description: farm not foun
+      description: Farm not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Farm Not Found"
+              message:
+                type: string
+                example: "Farm with the specified ID was not found"
+              code:
+                type: string
+                example: "FARM_NOT_FOUND"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"

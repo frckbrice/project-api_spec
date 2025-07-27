@@ -1,12 +1,12 @@
 post:
   tags:
-    - Farms
+    - 🏡 Farms
   summary: Create a new farm
   description: |
-    Create a new farm record for a farmer. This endpoint registers a farm with GPS coordinates, location details, and basic information.
-    
+    Create a new farm record for a farmer.
+
     **Required Permissions:** `write:farms`
-    
+
     **Business Rules:**
     - Each farmer can have multiple farms
     - GPS coordinates are required for compliance tracking
@@ -101,18 +101,18 @@ post:
 
 get:
   tags:
-    - Farms
+    - 🏡 Farms
   summary: List all farms
   description: |
     Retrieve a paginated list of farms with optional filtering capabilities.
-    
+
     **Required Permissions:** `read:farms`
-    
+
     **Filtering Options:**
     - Filter by company ID to see farms under specific companies
     - Filter by date range for farm creation
     - Filter by geographical region (village, division, council)
-    
+
     **Pagination:**
     - Default limit: 20 items per page
     - Maximum limit: 100 items per page

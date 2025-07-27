@@ -761,120 +761,461 @@ paths:
       tags:
         - User
       summary: List all users
-      description: This operation lets you list users by their status. A single status value can be provided in a single request. Only administrators can use this operation.
+      description: |
+        Retrieve a paginated list of users with optional filtering capabilities.
+        Only administrators can access this endpoint.
+
+        **Required Permissions:** `read:users`
+
+        **Filtering Options:**
+        - Filter by status (active, banned, inactive)
+        - Filter by role
+        - Filter by company ID
+        - Filter by creation date range
+
+        **Pagination:**
+        - Default limit: 20 items per page
+        - Maximum limit: 100 items per page
       operationId: getAllUsers
       security:
         - BearerAuth: []
       parameters:
-        - name: page
-          in: query
-          description: number  of pages to return by the server
-          schema:
-            type: integer
-          required: false
-        - name: limit
-          in: query
-          description: page size
-          required: false
-          schema:
-            type: integer
-            example: 20
+        - $ref: "#/components/parameters/PaginationLimit"
+        - $ref: "#/components/parameters/PaginationOffset"
+        - $ref: "#/components/parameters/CompanyId"
+        - $ref: "#/components/parameters/DateRangeStart"
+        - $ref: "#/components/parameters/DateRangeEnd"
         - name: status
           in: query
-          description: One or more user status values by which to look up user accounts.
-          required: true
-          style: form
-          explode: false
+          description: Filter by user status
+          required: false
           schema:
-            type: array
-            uniqueItems: true
-            minItems: 1
-            maxItems: 3
-            items:
-              type: string
-              enum:
-                - active
-                - banned
-                - inactive
-              default: active
+            type: string
+            enum:
+              - active
+              - banned
+              - inactive
+            default: active
+            example: active
+        - name: role
+          in: query
+          description: Filter by user role
+          required: false
+          schema:
+            type: string
+            enum:
+              - admin
+              - manager
+              - auditor
+              - user
+            example: manager
+        - name: search
+          in: query
+          description: Search users by name, email, or username
+          required: false
+          schema:
+            type: string
+            example: john
+        - name: sort_by
+          in: query
+          description: Sort field
+          required: false
+          schema:
+            type: string
+            enum:
+              - created_at
+              - username
+              - role
+            default: created_at
+            example: created_at
+        - name: sort_order
+          in: query
+          description: Sort direction
+          required: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+            example: desc
       responses:
         "200":
-          description: User list
+          description: List of users retrieved successfully
+          headers:
+            X-Total-Count:
+              description: Total number of users matching the filter criteria
+              schema:
+                type: integer
+            X-Page-Count:
+              description: Total number of pages
+              schema:
+                type: integer
+            Link:
+              description: Pagination links (first, prev, next, last)
+              schema:
+                type: string
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/user"
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/user"
+                  pagination:
+                    type: object
+                    properties:
+                      limit:
+                        type: integer
+                        example: 20
+                      offset:
+                        type: integer
+                        example: 0
+                      total:
+                        type: integer
+                        example: 150
+                      page_count:
+                        type: integer
+                        example: 8
+                      has_next:
+                        type: boolean
+                        example: true
+                      has_prev:
+                        type: boolean
+                        example: false
+                  meta:
+                    type: object
+                    properties:
+                      filters_applied:
+                        type: object
+                        example:
+                          status: active
+                          role: manager
+                          company_id: clh1234567890abcdef
+              example:
+                data:
+                  - id: clh1234567890abcdef
+                    username: john.doe
+                    email: john.doe@example.com
+                    first_name: John
+                    last_name: Doe
+                    role: manager
+                    company_id: clh1234567890abcdef
+                    phone_number: "+1234567890"
+                    status: active
+                    created_at: "2024-01-01T00:00:00Z"
+                    updated_at: "2024-01-15T10:30:00Z"
+                  - id: clh1234567890abcdeg
+                    username: jane.smith
+                    email: jane.smith@example.com
+                    first_name: Jane
+                    last_name: Smith
+                    role: auditor
+                    company_id: clh1234567890abcdef
+                    phone_number: "+1234567891"
+                    status: active
+                    created_at: "2024-01-02T00:00:00Z"
+                    updated_at: "2024-01-15T11:30:00Z"
+                pagination:
+                  limit: 20
+                  offset: 0
+                  total: 150
+                  page_count: 8
+                  has_next: true
+                  has_prev: false
+                meta:
+                  filters_applied:
+                    status: active
+                    role: manager
+                    company_id: clh1234567890abcdef
         "400":
-          description: Invalid Input
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "429":
+          $ref: "#/components/responses/RateLimitError-2"
+        "500":
+          $ref: "#/components/responses/ServerError-2"
   /users/{id}:
     get:
       tags:
         - User
       summary: Get user by id
+      description: |
+        Retrieve a single user by their ID. Only administrators or the user themselves can access this endpoint.
+
+        **Required Permissions:** `read:users` or be the user being retrieved
+
+        **Business Rules:**
+        - Regular users can only access their own profile
+        - Administrators can access any user profile
+        - Sensitive data is redacted for non-admin users
       operationId: getUserById
-      description: To get a single user by id. Only administrators can use this operation. If you want to get a single user by id, use the **getUserById** operation.
       security:
         - BearerAuth: []
       parameters:
-        - in: path
-          name: id
-          description: user id
+        - name: id
+          in: path
+          description: The ID of the user to retrieve
           required: true
           schema:
-            type: integer
-            example: djfdjsbhvbhsv62656FDOF(*)
+            type: string
+            format: cuid
+            example: clh1234567890abcdef
       responses:
         "200":
-          description: User
+          description: User retrieved successfully
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/user"
+              example:
+                id: clh1234567890abcdef
+                username: john.doe
+                email: john.doe@example.com
+                first_name: John
+                last_name: Doe
+                role: manager
+                company_id: clh1234567890abcdef
+                phone_number: "+1234567890"
+                status: active
+                created_at: "2024-01-01T00:00:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
         "404":
           description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User Not Found
+                  message:
+                    type: string
+                    example: User with the specified ID was not found
+                  code:
+                    type: string
+                    example: USER_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     put:
       tags:
         - User
       summary: Update user by id
-      description: modify some information concerning the user.
+      description: |
+        Update user information. Only administrators or the user themselves can perform this operation.
+
+        **Business Rules:**
+        - Email changes require verification
+        - Role changes require admin privileges
+        - Phone number changes require verification
+        - Password changes trigger email notification
       operationId: updateUserById
+      security:
+        - BearerAuth: []
       parameters:
         - name: id
           in: path
-          description: The ID of the user to be updated.
+          description: The ID of the user to be updated
           required: true
           schema:
             type: string
-            example: 1jssbbjsbjsbjs221878dd817dd87sd
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/user"
-                properties:
-                  id:
-                    type: string
-                    example: 1jssbbjsbjsbjs221878dd817dd87sd
-                  username: user11452
-                  email: user@example.com
-                  password: 123456
+            format: cuid
+            example: clh1234567890abcdef
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: john.doe
+                  minLength: 3
+                  maxLength: 50
+                email:
+                  type: string
+                  format: email
+                  example: john.doe@example.com
+                first_name:
+                  type: string
+                  example: John
+                  minLength: 1
+                  maxLength: 50
+                last_name:
+                  type: string
+                  example: Doe
+                  minLength: 1
+                  maxLength: 50
+                role:
+                  type: string
+                  enum:
+                    - admin
+                    - manager
+                    - auditor
+                    - user
+                  example: manager
+                company_id:
+                  type: string
+                  format: cuid
+                  example: clh1234567890abcdef
+                phone_number:
+                  type: string
+                  pattern: ^\+[1-9]\d{1,14}$
+                  example: "+1234567890"
+                status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                    - banned
+                  example: active
+            examples:
+              basic_update:
+                summary: Basic user update
+                value:
                   first_name: John
                   last_name: Doe
-                  role: user
-                  company_id: 1jssbbjsbjsbjs221878dd817dd87sd
-                  phone_number: 1234567890
+                  phone_number: "+1234567890"
+              role_update:
+                summary: Role update (admin only)
+                value:
+                  role: manager
+                  status: active
       responses:
         "200":
-          description: User updated
+          description: User updated successfully
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/user"
+              example:
+                id: clh1234567890abcdef
+                username: john.doe
+                email: john.doe@example.com
+                first_name: John
+                last_name: Doe
+                role: manager
+                company_id: clh1234567890abcdef
+                phone_number: "+1234567890"
+                status: active
+                created_at: "2024-01-01T00:00:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
         "404":
           description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User Not Found
+                  message:
+                    type: string
+                    example: User with the specified ID was not found
+                  code:
+                    type: string
+                    example: USER_NOT_FOUND
+        "409":
+          description: Update conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Update Conflict
+                  message:
+                    type: string
+                    example: Username or email already in use
+                  code:
+                    type: string
+                    example: USER_UPDATE_CONFLICT
         "500":
-          description: Internal server error
+          $ref: "#/components/responses/ServerError-2"
+    delete:
+      tags:
+        - User
+      summary: Delete user by id
+      description: |
+        Delete a user account. This is a soft delete that marks the user as inactive.
+        Only administrators can use this operation.
+
+        **Business Rules:**
+        - User data is preserved for audit purposes
+        - Associated resources are not deleted
+        - Active subscriptions must be cancelled first
+      operationId: deleteUserById
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the user to be deleted
+          required: true
+          schema:
+            type: string
+            format: cuid
+            example: clh1234567890abcdef
+      responses:
+        "204":
+          description: User successfully deleted
+        "400":
+          description: Cannot delete user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Cannot Delete User
+                  message:
+                    type: string
+                    example: User has active subscriptions
+                  code:
+                    type: string
+                    example: USER_HAS_ACTIVE_SUBSCRIPTIONS
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User Not Found
+                  message:
+                    type: string
+                    example: User with the specified ID was not found
+                  code:
+                    type: string
+                    example: USER_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/ServerError-2"
   /companies:
     post:
       tags:
@@ -1748,10 +2089,10 @@ paths:
   /farms:
     post:
       tags:
-        - Farms
+        - 🏡 Farms
       summary: Create a new farm
       description: |
-        Create a new farm record for a farmer. This endpoint registers a farm with GPS coordinates, location details, and basic information.
+        Create a new farm record for a farmer.
 
         **Required Permissions:** `write:farms`
 
@@ -1848,7 +2189,7 @@ paths:
           $ref: "#/components/responses/ServerError-2"
     get:
       tags:
-        - Farms
+        - 🏡 Farms
       summary: List all farms
       description: |
         Retrieve a paginated list of farms with optional filtering capabilities.
@@ -2034,169 +2375,283 @@ paths:
   /farms/{id}:
     get:
       tags:
-        - Farm
+        - 🏡 Farms
       summary: Get farm by id
       operationId: getFarmById
-      description: To get a farm by its ID. Only administrators can use this operation. If you want to get a farm by its ID, use the **getFarmById** operation.
+      description: |
+        Retrieve a single farm by its ID.
+
+        **Required Permissions:** `read:farms`
+
+        **Business Rules:**
+        - Users can only access farms in their company
+        - GPS coordinates are returned with high precision
+        - Farm images are returned as signed URLs
       parameters:
-        - in: path
-          name: id
-          description: farm id
+        - name: id
+          in: path
+          description: The ID of the farm to retrieve
           required: true
           schema:
             type: string
-            example: AQA9CNo0cXNLt6sZp5Uc5P0
-          style: simple
+            format: cuid
+            example: clh1234567890abcdef
       responses:
         "200":
-          description: farm
+          description: Farm retrieved successfully
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/farm"
         "401":
-          description: Unauthorized access
+          $ref: "#/components/responses/UnauthorizedError-2"
         "403":
-          description: Forbidden access
+          $ref: "#/components/responses/ForbiddenError-2"
         "404":
-          description: farm not found
+          description: Farm not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Farm Not Found
+                  message:
+                    type: string
+                    example: Farm with the specified ID was not found
+                  code:
+                    type: string
+                    example: FARM_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     delete:
       tags:
-        - Farm
+        - 🏡 Farms
       summary: Delete farm by id
       operationId: deleteFarmById
-      description: To delete a farm by its ID. Only administrators can use this operation. If you want to delete a farm by its ID, use the **deleteFarmById** operation.
-      parameters:
-        - in: path
-          name: id
-          description: farm id
-          required: true
-          schema:
-            type: array
-            items:
-              type: string
-              example: AQA9CNo0cXNLt6sZp5Uc5P0
-          style: simple
-      responses:
-        "200":
-          description: farm deleted
-        "401":
-          description: Unauthorized access
-        "403":
-          description: Forbidden access
-        "404":
-          description: farm not found
-    patch:
-      tags:
-        - Farm
-      summary: Update farm by id
-      operationId: updateFarmById
-      description: To update a farm by its ID. Only administrators can use this operation. If you want to update a farm by its ID, use the **updateFarmById** operation.
+      description: |
+        Delete a farm from the system.
+
+        **Required Permissions:** `write:farms`
+
+        **Business Rules:**
+        - Cannot delete farms with active projects
+        - Farm data is preserved for audit purposes
+        - Associated resources are marked as inactive
       parameters:
         - name: id
           in: path
-          description: farm id
+          description: The ID of the farm to delete
           required: true
           schema:
-            type: array
-            items:
-              type: string
-              example: AQA9CNo0cXNLt6sZp5Uc5P0
-          style: simple
-        - name: farmer_id
-          in: query
-          description: the farmer ID who is the owner of the farm.
+            type: string
+            format: cuid
+            example: clh1234567890abcdef
+      responses:
+        "204":
+          description: Farm deleted successfully
+        "400":
+          description: Cannot delete farm
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Cannot Delete Farm
+                  message:
+                    type: string
+                    example: Farm has active projects
+                  code:
+                    type: string
+                    example: FARM_HAS_ACTIVE_PROJECTS
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
+          description: Farm not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Farm Not Found
+                  message:
+                    type: string
+                    example: Farm with the specified ID was not found
+                  code:
+                    type: string
+                    example: FARM_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/ServerError-2"
+    patch:
+      tags:
+        - 🏡 Farms
+      summary: Update farm by id
+      operationId: updateFarmById
+      description: |
+        Update a farm's information.
+
+        **Required Permissions:** `write:farms`
+
+        **Business Rules:**
+        - GPS coordinates must be valid
+        - Farm images are uploaded separately
+        - Updates are logged for audit purposes
+        - Only specific fields can be updated
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the farm to update
           required: true
           schema:
-            type: array
-            items:
-              type: string
-              example: AQA9CNo0cXNLt6sZp5Uc5P0
-          style: simple
+            type: string
+            format: cuid
+            example: clh1234567890abcdef
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/farm"
+              type: object
+              properties:
+                location:
+                  type: object
+                  properties:
+                    lat:
+                      type: number
+                      format: double
+                      example: 6.5244
+                    lng:
+                      type: number
+                      format: double
+                      example: 3.3792
+                village:
+                  type: string
+                  example: Ibadan Village
+                division:
+                  type: string
+                  example: Oyo Division
+                council:
+                  type: string
+                  example: Ibadan Council
+                farm_image_url:
+                  type: string
+                  format: uri
+                  example: https://storage.cocoaflow.com/farms/farm_123.jpg
+                status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                  example: active
       responses:
         "200":
-          description: farm updated
+          description: Farm updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/farm"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
         "404":
-          description: farm not foun
+          description: Farm not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Farm Not Found
+                  message:
+                    type: string
+                    example: Farm with the specified ID was not found
+                  code:
+                    type: string
+                    example: FARM_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/ServerError-2"
   /audits:
     post:
       tags:
         - 🌿 Audits
       summary: Create audit
       description: |
-        Create a new audit (project or market) based on the audit_type parameter.
+        Create a new audit (project or market).
 
         **Required Permissions:** `write:audit`
 
         **Business Rules:**
-        - Audit type must be either 'project' or 'market'
-        - Project audit must be associated with a valid project
-        - Market audit must be associated with a valid market
+        - Project audits require project_id and project-specific scores
+        - Market audits require market_id and market-specific scores
         - Audit date must be within valid timeline
         - Only authorized auditors can create audits
-        - Audit scores must be between 0-100
+        - All scores must be between 0-100
       operationId: createAudit
       security:
         - BearerAuth: []
-      parameters:
-        - name: audit_type
-          in: query
-          required: true
-          description: Type of audit to create
-          schema:
-            type: string
-            enum:
-              - project
-              - market
-            example: project
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              oneOf:
-                - $ref: "#/components/schemas/project_audit"
-                - $ref: "#/components/schemas/market_audit"
+              $ref: "#/components/schemas/audit"
             examples:
               project_audit:
                 summary: Project audit
                 description: Create a project audit
                 value:
+                  audit_type: project
                   project_id: clh1234567890abcdef
                   auditor_id: clh1234567890abcdef
                   audit_date: "2024-01-15"
-                  progress_score: 75
+                  scores:
+                    progress: 75
+                    quality: 85
+                    budget: 90
+                    timeline: 80
                   notes: Project progressing well within timeline
-                  quality_score: 85
-                  budget_score: 90
-                  timeline_score: 80
                   risks_identified:
                     - Weather delays
                     - Supply chain issues
                   recommendations:
                     - Accelerate procurement
                     - Increase monitoring
+                  metadata:
+                    company_id: clh1234567890abcdef
+                    location: Ibadan Division
+                    duration_minutes: 120
               market_audit:
                 summary: Market audit
                 description: Create a market audit
                 value:
+                  audit_type: market
                   market_id: clh1234567890abcdef
                   auditor_id: clh1234567890abcdef
                   audit_date: "2024-01-15"
-                  compliance_score: 85
+                  scores:
+                    quality: 90
+                    compliance: 85
+                    safety: 88
+                    efficiency: 82
                   notes: Market meets basic compliance requirements
-                  quality_score: 90
-                  safety_score: 88
-                  efficiency_score: 82
                   recommendations:
                     - Improve storage facilities
                     - Enhance quality control
+                  metadata:
+                    company_id: clh1234567890abcdef
+                    location: Lagos Market
+                    duration_minutes: 90
       responses:
         "201":
           description: Audit created successfully
@@ -2209,18 +2664,7 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: "#/components/schemas/project_audit"
-                  - $ref: "#/components/schemas/market_audit"
-              example:
-                id: clh1234567890abcdef
-                project_id: clh1234567890abcdef
-                auditor_id: clh1234567890abcdef
-                audit_date: "2024-01-15"
-                progress_score: 75
-                notes: Project progressing well within timeline
-                created_at: "2024-01-15T10:30:00Z"
-                updated_at: "2024-01-15T10:30:00Z"
+                $ref: "#/components/schemas/audit"
         "400":
           $ref: "#/components/responses/ValidationError-2"
         "401":
@@ -2275,30 +2719,6 @@ paths:
               - project
               - market
             example: project
-        - name: start_date
-          in: query
-          required: false
-          description: Start date for filtering (ISO 8601 format)
-          schema:
-            type: string
-            format: date
-            example: "2024-01-01"
-        - name: end_date
-          in: query
-          required: false
-          description: End date for filtering (ISO 8601 format)
-          schema:
-            type: string
-            format: date
-            example: "2024-12-31"
-        - name: auditor_id
-          in: query
-          required: false
-          description: Filter by auditor ID
-          schema:
-            type: string
-            format: cuid
-            example: clh1234567890abcdef
         - name: resource_id
           in: query
           required: false
@@ -2307,10 +2727,26 @@ paths:
             type: string
             format: cuid
             example: clh1234567890abcdef
+        - name: auditor_id
+          in: query
+          required: false
+          description: Filter by auditor ID
+          schema:
+            type: string
+            format: cuid
+            example: clh1234567890abcdef
+        - name: company_id
+          in: query
+          required: false
+          description: Filter by company ID
+          schema:
+            type: string
+            format: cuid
+            example: clh1234567890abcdef
         - name: min_score
           in: query
           required: false
-          description: Minimum score filter
+          description: Minimum score filter (applies to primary score for audit type)
           schema:
             type: integer
             minimum: 0
@@ -2319,12 +2755,16 @@ paths:
         - name: max_score
           in: query
           required: false
-          description: Maximum score filter
+          description: Maximum score filter (applies to primary score for audit type)
           schema:
             type: integer
             minimum: 0
             maximum: 100
             example: 90
+        - $ref: "#/components/parameters/DateRangeStart"
+        - $ref: "#/components/parameters/DateRangeEnd"
+        - $ref: "#/components/parameters/PaginationLimit"
+        - $ref: "#/components/parameters/PaginationOffset"
         - name: sort_by
           in: query
           required: false
@@ -2334,14 +2774,12 @@ paths:
             enum:
               - audit_date
               - created_at
-              - progress_score
-              - compliance_score
             default: audit_date
             example: audit_date
         - name: sort_order
           in: query
           required: false
-          description: Sort order
+          description: Sort direction
           schema:
             type: string
             enum:
@@ -2349,25 +2787,31 @@ paths:
               - desc
             default: desc
             example: desc
-        - $ref: "#/components/parameters/PaginationLimit"
-        - $ref: "#/components/parameters/PaginationOffset"
       responses:
         "200":
           description: List of audits retrieved successfully
+          headers:
+            X-Total-Count:
+              description: Total number of audits matching the filter criteria
+              schema:
+                type: integer
+            X-Page-Count:
+              description: Total number of pages
+              schema:
+                type: integer
+            Link:
+              description: Pagination links (first, prev, next, last)
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
-                    example: true
                   data:
                     type: array
                     items:
-                      oneOf:
-                        - $ref: "#/components/schemas/project_audit"
-                        - $ref: "#/components/schemas/market_audit"
+                      $ref: "#/components/schemas/audit"
                   pagination:
                     type: object
                     properties:
@@ -2383,23 +2827,59 @@ paths:
                       has_more:
                         type: boolean
                         example: true
+                  meta:
+                    type: object
+                    properties:
+                      filters_applied:
+                        type: object
+                        example:
+                          audit_type: project
+                          company_id: clh1234567890abcdef
+                          start_date: "2024-01-01"
+                          end_date: "2024-01-31"
               example:
-                success: true
                 data:
                   - id: clh1234567890abcdef
+                    audit_type: project
                     project_id: clh1234567890abcdef
                     auditor_id: clh1234567890abcdef
                     audit_date: "2024-01-15"
-                    progress_score: 75
+                    scores:
+                      progress: 75
+                      quality: 85
+                      budget: 90
+                      timeline: 80
                     notes: Project progressing well within timeline
+                    risks_identified:
+                      - Weather delays
+                      - Supply chain issues
+                    recommendations:
+                      - Accelerate procurement
+                      - Increase monitoring
+                    metadata:
+                      company_id: clh1234567890abcdef
+                      location: Ibadan Division
+                      duration_minutes: 120
                     created_at: "2024-01-15T10:30:00Z"
                     updated_at: "2024-01-15T10:30:00Z"
-                  - id: clh1234567890abcdef
+                  - id: clh1234567890abcdeg
+                    audit_type: market
                     market_id: clh1234567890abcdef
                     auditor_id: clh1234567890abcdef
                     audit_date: "2024-01-14"
-                    compliance_score: 85
+                    scores:
+                      quality: 90
+                      compliance: 85
+                      safety: 88
+                      efficiency: 82
                     notes: Market meets basic compliance requirements
+                    recommendations:
+                      - Improve storage facilities
+                      - Enhance quality control
+                    metadata:
+                      company_id: clh1234567890abcdef
+                      location: Lagos Market
+                      duration_minutes: 90
                     created_at: "2024-01-14T14:20:00Z"
                     updated_at: "2024-01-14T14:20:00Z"
                 pagination:
@@ -2407,12 +2887,20 @@ paths:
                   limit: 20
                   offset: 0
                   has_more: true
+                meta:
+                  filters_applied:
+                    audit_type: project
+                    company_id: clh1234567890abcdef
+                    start_date: "2024-01-01"
+                    end_date: "2024-01-31"
         "400":
           $ref: "#/components/responses/ValidationError-2"
         "401":
           $ref: "#/components/responses/UnauthorizedError-2"
         "403":
           $ref: "#/components/responses/ForbiddenError-2"
+        "429":
+          $ref: "#/components/responses/RateLimitError-2"
         "500":
           $ref: "#/components/responses/ServerError-2"
     put:
@@ -2420,13 +2908,13 @@ paths:
         - 🌿 Audits
       summary: Update audit
       description: |
-        Update an existing audit (project or market).
+        Update an existing audit.
 
         **Required Permissions:** `write:audit`
 
         **Business Rules:**
         - Cannot update audits older than 30 days
-        - Cannot change audit date after submission
+        - Cannot change audit type or resource ID
         - Only the original auditor or admin can update
         - All changes are logged for audit purposes
       operationId: updateAudit
@@ -2446,118 +2934,48 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                progress_score:
-                  type: integer
-                  minimum: 0
-                  maximum: 100
-                  description: Updated progress score (for project audits)
-                  example: 80
-                compliance_score:
-                  type: integer
-                  minimum: 0
-                  maximum: 100
-                  description: Updated compliance score (for market audits)
-                  example: 88
-                notes:
-                  type: string
-                  description: Updated audit notes
-                  example: Updated assessment - better than expected
-                quality_score:
-                  type: integer
-                  minimum: 0
-                  maximum: 100
-                  description: Updated quality score
-                  example: 88
-                budget_score:
-                  type: integer
-                  minimum: 0
-                  maximum: 100
-                  description: Updated budget score (for project audits)
-                  example: 92
-                timeline_score:
-                  type: integer
-                  minimum: 0
-                  maximum: 100
-                  description: Updated timeline score (for project audits)
-                  example: 85
-                safety_score:
-                  type: integer
-                  minimum: 0
-                  maximum: 100
-                  description: Updated safety score (for market audits)
-                  example: 90
-                efficiency_score:
-                  type: integer
-                  minimum: 0
-                  maximum: 100
-                  description: Updated efficiency score (for market audits)
-                  example: 85
-                risks_identified:
-                  type: array
-                  items:
-                    type: string
-                  description: Updated risks identified
-                  example:
-                    - Weather delays
-                    - Supply chain issues
-                recommendations:
-                  type: array
-                  items:
-                    type: string
-                  description: Updated recommendations
-                  example:
-                    - Accelerate procurement
-                    - Increase monitoring
+              $ref: "#/components/schemas/audit"
             examples:
               update_project_audit:
                 summary: Update project audit
                 description: Update a project audit with new scores and notes
                 value:
-                  progress_score: 80
+                  scores:
+                    progress: 80
+                    quality: 88
+                    budget: 92
+                    timeline: 85
                   notes: Updated progress assessment - better than expected
-                  quality_score: 88
-                  budget_score: 92
-                  timeline_score: 85
                   risks_identified:
                     - Weather delays
                     - Supply chain issues
                   recommendations:
                     - Accelerate procurement
                     - Increase monitoring
+                  metadata:
+                    duration_minutes: 150
               update_market_audit:
                 summary: Update market audit
                 description: Update a market audit with new scores and notes
                 value:
-                  compliance_score: 88
+                  scores:
+                    quality: 90
+                    compliance: 88
+                    safety: 92
+                    efficiency: 85
                   notes: Updated compliance assessment - improved standards
-                  quality_score: 90
-                  safety_score: 92
-                  efficiency_score: 85
                   recommendations:
                     - Improve storage facilities
                     - Enhance quality control
+                  metadata:
+                    duration_minutes: 120
       responses:
         "200":
           description: Audit updated successfully
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: "#/components/schemas/project_audit"
-                  - $ref: "#/components/schemas/market_audit"
-              example:
-                id: clh1234567890abcdef
-                project_id: clh1234567890abcdef
-                auditor_id: clh1234567890abcdef
-                audit_date: "2024-01-15"
-                progress_score: 80
-                notes: Updated progress assessment - better than expected
-                quality_score: 88
-                budget_score: 92
-                timeline_score: 85
-                updated_at: "2024-01-15T15:45:00Z"
+                $ref: "#/components/schemas/audit"
         "400":
           $ref: "#/components/responses/ValidationError-2"
         "401":
@@ -2611,7 +3029,7 @@ paths:
         - Cannot delete audits older than 30 days
         - Cannot delete audits that have been submitted for compliance
         - Only admin users can delete audits
-        - Soft delete - marks as deleted but preserves data for audit
+        - Soft delete - marks as deleted but preserves data for audit trail
       operationId: deleteAudit
       security:
         - BearerAuth: []
@@ -7912,61 +8330,143 @@ components:
           format: date-time
           example: "2020-01-01T00:00:00Z"
           description: the date and time when the farm was updated
-    project_audit:
+    audit:
       type: object
+      required:
+        - auditor_id
+        - audit_date
+        - audit_type
       properties:
         id:
           type: string
           format: cuid
           readOnly: true
-          description: The unique Id of the project_audit.
+          description: The unique ID of the audit
+          example: clh1234567890abcdef
+        audit_type:
+          type: string
+          enum:
+            - project
+            - market
+          description: Type of audit (project or market)
+          example: project
         project_id:
           type: string
           format: cuid
-          readOnly: true
-          description: The project from which the audit is donne
-        user_id:
+          description: The ID of the project being audited (required for project audits)
+          example: clh1234567890abcdef
+        market_id:
           type: string
           format: cuid
-          readOnly: true
-          description: The employee conducting of the project
-        type_of_project:
+          description: The ID of the market being audited (required for market audits)
+          example: clh1234567890abcdef
+        auditor_id:
           type: string
-          description: The type of the project the user where conducting
-          example: internal inspection
+          format: cuid
+          description: The ID of the auditor conducting the audit
+          example: clh1234567890abcdef
+        audit_date:
+          type: string
+          format: date
+          description: The date when the audit was conducted
+          example: "2024-01-15"
+        scores:
+          type: object
+          description: Various audit scores (0-100)
+          properties:
+            progress:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description: Project progress score
+              example: 75
+            quality:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description: Quality score
+              example: 85
+            budget:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description: Budget adherence score (project audits)
+              example: 90
+            timeline:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description: Timeline adherence score (project audits)
+              example: 80
+            compliance:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description: Compliance score (market audits)
+              example: 85
+            safety:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description: Safety standards score (market audits)
+              example: 88
+            efficiency:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description: Operational efficiency score (market audits)
+              example: 82
+        notes:
+          type: string
+          maxLength: 1000
+          description: Detailed audit notes and observations
+          example: Project progressing well within timeline
+        risks_identified:
+          type: array
+          description: List of identified risks during audit
+          items:
+            type: string
+          example:
+            - Weather delays
+            - Supply chain issues
+        recommendations:
+          type: array
+          description: List of recommendations for improvement
+          items:
+            type: string
+          example:
+            - Accelerate procurement
+            - Increase monitoring
+        metadata:
+          type: object
+          description: Additional audit metadata
+          properties:
+            company_id:
+              type: string
+              format: cuid
+              description: Company ID associated with the audit
+              example: clh1234567890abcdef
+            location:
+              type: string
+              description: Location where the audit was conducted
+              example: Ibadan Division
+            duration_minutes:
+              type: integer
+              minimum: 1
+              description: Duration of the audit in minutes
+              example: 120
         created_at:
           type: string
           format: date-time
-          example: "2020-01-01T00:00:00Z"
-          description: the date and time when the project_audit was created
+          readOnly: true
+          description: Timestamp when the audit was created
+          example: "2024-01-15T10:30:00Z"
         updated_at:
           type: string
           format: date-time
-          example: "2020-01-01T00:00:00Z"
-          description: the date and time when the project_audit was updated
-    market_audit:
-      type: object
-      properties:
-        id:
-          description: the unique identifier of the company.
-          type: string
-          format: cuid
           readOnly: true
-        market_id:
-          description: the identifier of the concerned market that was handled by the company user.
-          type: string
-          format: cuid
-          readOnly: true
-        user_id:
-          description: the id of the user in charge of the market
-          type: string
-          format: cuid
-          readOnly: true
-        date:
-          type: string
-          format: date-time
-          description: the date of the market took place
-          example: "2020-01-01T00:00:00Z"
+          description: Timestamp when the audit was last updated
+          example: "2024-01-15T10:30:00Z"
     receipt:
       type: object
       properties:

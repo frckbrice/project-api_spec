@@ -1,0 +1,130 @@
+type: object
+required:
+  - auditor_id
+  - audit_date
+  - audit_type
+properties:
+  id:
+    type: string
+    format: cuid
+    readOnly: true
+    description: "The unique ID of the audit"
+    example: "clh1234567890abcdef"
+  audit_type:
+    type: string
+    enum: [project, market]
+    description: "Type of audit (project or market)"
+    example: "project"
+  project_id:
+    type: string
+    format: cuid
+    description: "The ID of the project being audited (required for project audits)"
+    example: "clh1234567890abcdef"
+  market_id:
+    type: string
+    format: cuid
+    description: "The ID of the market being audited (required for market audits)"
+    example: "clh1234567890abcdef"
+  auditor_id:
+    type: string
+    format: cuid
+    description: "The ID of the auditor conducting the audit"
+    example: "clh1234567890abcdef"
+  audit_date:
+    type: string
+    format: date
+    description: "The date when the audit was conducted"
+    example: "2024-01-15"
+  scores:
+    type: object
+    description: "Various audit scores (0-100)"
+    properties:
+      progress:
+        type: integer
+        minimum: 0
+        maximum: 100
+        description: "Project progress score"
+        example: 75
+      quality:
+        type: integer
+        minimum: 0
+        maximum: 100
+        description: "Quality score"
+        example: 85
+      budget:
+        type: integer
+        minimum: 0
+        maximum: 100
+        description: "Budget adherence score (project audits)"
+        example: 90
+      timeline:
+        type: integer
+        minimum: 0
+        maximum: 100
+        description: "Timeline adherence score (project audits)"
+        example: 80
+      compliance:
+        type: integer
+        minimum: 0
+        maximum: 100
+        description: "Compliance score (market audits)"
+        example: 85
+      safety:
+        type: integer
+        minimum: 0
+        maximum: 100
+        description: "Safety standards score (market audits)"
+        example: 88
+      efficiency:
+        type: integer
+        minimum: 0
+        maximum: 100
+        description: "Operational efficiency score (market audits)"
+        example: 82
+  notes:
+    type: string
+    maxLength: 1000
+    description: "Detailed audit notes and observations"
+    example: "Project progressing well within timeline"
+  risks_identified:
+    type: array
+    description: "List of identified risks during audit"
+    items:
+      type: string
+    example: ["Weather delays", "Supply chain issues"]
+  recommendations:
+    type: array
+    description: "List of recommendations for improvement"
+    items:
+      type: string
+    example: ["Accelerate procurement", "Increase monitoring"]
+  metadata:
+    type: object
+    description: "Additional audit metadata"
+    properties:
+      company_id:
+        type: string
+        format: cuid
+        description: "Company ID associated with the audit"
+        example: "clh1234567890abcdef"
+      location:
+        type: string
+        description: "Location where the audit was conducted"
+        example: "Ibadan Division"
+      duration_minutes:
+        type: integer
+        minimum: 1
+        description: "Duration of the audit in minutes"
+        example: 120
+  created_at:
+    type: string
+    format: date-time
+    readOnly: true
+    description: "Timestamp when the audit was created"
+    example: "2024-01-15T10:30:00Z"
+  updated_at:
+    type: string
+    format: date-time
+    readOnly: true
+    description: "Timestamp when the audit was last updated"
+    example: "2024-01-15T10:30:00Z"

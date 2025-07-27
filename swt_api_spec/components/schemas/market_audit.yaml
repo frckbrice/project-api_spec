@@ -1,23 +1,75 @@
-# the market audit to keep track of the user of the cmpany who was in charge of the market role at that period
 type: object
+required:
+  - market_id
+  - auditor_id
+  - audit_date
+  - compliance_score
 properties:
   id:
-    description: the unique identifier of the company.
     type: string
     format: cuid
     readOnly: true
+    description: "The unique ID of the market audit"
+    example: "clh1234567890abcdef"
   market_id:
-    description: the identifier of the concerned market that was handled by the company user.
     type: string
     format: cuid
-    readOnly: true
-  user_id:
-    description: the id of the user in charge of the market
+    description: "The ID of the market being audited"
+    example: "clh1234567890abcdef"
+  auditor_id:
     type: string
     format: cuid
-    readOnly: true
-  date:
+    description: "The ID of the auditor conducting the audit"
+    example: "clh1234567890abcdef"
+  audit_date:
+    type: string
+    format: date
+    description: "The date when the audit was conducted"
+    example: "2024-01-15"
+  compliance_score:
+    type: integer
+    minimum: 0
+    maximum: 100
+    description: "Market compliance score (0-100)"
+    example: 85
+  quality_score:
+    type: integer
+    minimum: 0
+    maximum: 100
+    description: "Market quality score (0-100)"
+    example: 90
+  safety_score:
+    type: integer
+    minimum: 0
+    maximum: 100
+    description: "Market safety standards score (0-100)"
+    example: 88
+  efficiency_score:
+    type: integer
+    minimum: 0
+    maximum: 100
+    description: "Market operational efficiency score (0-100)"
+    example: 82
+  notes:
+    type: string
+    maxLength: 1000
+    description: "Detailed audit notes and observations"
+    example: "Market meets basic compliance requirements"
+  recommendations:
+    type: array
+    description: "List of recommendations for improvement"
+    items:
+      type: string
+    example: ["Improve storage facilities", "Enhance quality control"]
+  created_at:
     type: string
     format: date-time
-    description: the date of the market took place
-    example: "2020-01-01T00:00:00Z"
+    readOnly: true
+    description: "Timestamp when the audit was created"
+    example: "2024-01-15T10:30:00Z"
+  updated_at:
+    type: string
+    format: date-time
+    readOnly: true
+    description: "Timestamp when the audit was last updated"
+    example: "2024-01-15T10:30:00Z"

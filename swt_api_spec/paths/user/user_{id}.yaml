@@ -3,68 +3,271 @@ get:
   tags:
     - User
   summary: Get user by id
+  description: |
+    Retrieve a single user by their ID. Only administrators or the user themselves can access this endpoint.
+
+    **Required Permissions:** `read:users` or be the user being retrieved
+
+    **Business Rules:**
+    - Regular users can only access their own profile
+    - Administrators can access any user profile
+    - Sensitive data is redacted for non-admin users
   operationId: getUserById
-  description: To get a single user by id. Only administrators can use this operation. If you want to get a single user by id, use the **getUserById** operation.
   security:
     - BearerAuth: []
   parameters:
-    - in: path
-      name: id
-      description: user id
+    - name: id
+      in: path
+      description: The ID of the user to retrieve
       required: true
       schema:
-        type: integer
-        example: djfdjsbhvbhsv62656FDOF(*)
-
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
   responses:
     "200":
-      description: User
+      description: User retrieved successfully
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/user.yaml
+            $ref: "../../components/schemas/user.yaml"
+          example:
+            id: "clh1234567890abcdef"
+            username: "john.doe"
+            email: "john.doe@example.com"
+            first_name: "John"
+            last_name: "Doe"
+            role: "manager"
+            company_id: "clh1234567890abcdef"
+            phone_number: "+1234567890"
+            status: "active"
+            created_at: "2024-01-01T00:00:00Z"
+            updated_at: "2024-01-15T10:30:00Z"
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
     "404":
       description: User not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "User Not Found"
+              message:
+                type: string
+                example: "User with the specified ID was not found"
+              code:
+                type: string
+                example: "USER_NOT_FOUND"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"
 
 # update user's data by id
 put:
   tags:
     - User
   summary: Update user by id
-  description: modify some information concerning the user.
+  description: |
+    Update user information. Only administrators or the user themselves can perform this operation.
+
+    **Business Rules:**
+    - Email changes require verification
+    - Role changes require admin privileges
+    - Phone number changes require verification
+    - Password changes trigger email notification
   operationId: updateUserById
+  security:
+    - BearerAuth: []
   parameters:
     - name: id
       in: path
-      description: The ID of the user to be updated.
+      description: The ID of the user to be updated
       required: true
       schema:
         type: string
-        example: 1jssbbjsbjsbjs221878dd817dd87sd
-      content:
-        application/json:
-          schema:
-            $ref: ../../components/schemas/user.yaml
-            properties:
-              id:
-                type: string
-                example: 1jssbbjsbjsbjs221878dd817dd87sd
-              username: user11452
-              email: user@example.com
-              password: 123456
-              first_name: John
-              last_name: Doe
-              role: user
-              company_id: 1jssbbjsbjsbjs221878dd817dd87sd
-              phone_number: 1234567890
+        format: cuid
+        example: "clh1234567890abcdef"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            username:
+              type: string
+              example: "john.doe"
+              minLength: 3
+              maxLength: 50
+            email:
+              type: string
+              format: email
+              example: "john.doe@example.com"
+            first_name:
+              type: string
+              example: "John"
+              minLength: 1
+              maxLength: 50
+            last_name:
+              type: string
+              example: "Doe"
+              minLength: 1
+              maxLength: 50
+            role:
+              type: string
+              enum: [admin, manager, auditor, user]
+              example: "manager"
+            company_id:
+              type: string
+              format: cuid
+              example: "clh1234567890abcdef"
+            phone_number:
+              type: string
+              pattern: "^\\+[1-9]\\d{1,14}$"
+              example: "+1234567890"
+            status:
+              type: string
+              enum: [active, inactive, banned]
+              example: "active"
+        examples:
+          basic_update:
+            summary: Basic user update
+            value:
+              first_name: "John"
+              last_name: "Doe"
+              phone_number: "+1234567890"
+          role_update:
+            summary: Role update (admin only)
+            value:
+              role: "manager"
+              status: "active"
   responses:
     "200":
-      description: User updated
+      description: User updated successfully
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/user.yaml
+            $ref: "../../components/schemas/user.yaml"
+          example:
+            id: "clh1234567890abcdef"
+            username: "john.doe"
+            email: "john.doe@example.com"
+            first_name: "John"
+            last_name: "Doe"
+            role: "manager"
+            company_id: "clh1234567890abcdef"
+            phone_number: "+1234567890"
+            status: "active"
+            created_at: "2024-01-01T00:00:00Z"
+            updated_at: "2024-01-15T10:30:00Z"
+    "400":
+      $ref: "../../components/responses/ValidationError.yaml"
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
     "404":
       description: User not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "User Not Found"
+              message:
+                type: string
+                example: "User with the specified ID was not found"
+              code:
+                type: string
+                example: "USER_NOT_FOUND"
+    "409":
+      description: Update conflict
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Update Conflict"
+              message:
+                type: string
+                example: "Username or email already in use"
+              code:
+                type: string
+                example: "USER_UPDATE_CONFLICT"
     "500":
-      description: Internal server error
+      $ref: "../../components/responses/ServerError.yaml"
+
+# delete user by id
+delete:
+  tags:
+    - User
+  summary: Delete user by id
+  description: |
+    Delete a user account. This is a soft delete that marks the user as inactive.
+    Only administrators can use this operation.
+
+    **Business Rules:**
+    - User data is preserved for audit purposes
+    - Associated resources are not deleted
+    - Active subscriptions must be cancelled first
+  operationId: deleteUserById
+  security:
+    - BearerAuth: []
+  parameters:
+    - name: id
+      in: path
+      description: The ID of the user to be deleted
+      required: true
+      schema:
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
+  responses:
+    "204":
+      description: User successfully deleted
+    "400":
+      description: Cannot delete user
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Cannot Delete User"
+              message:
+                type: string
+                example: "User has active subscriptions"
+              code:
+                type: string
+                example: "USER_HAS_ACTIVE_SUBSCRIPTIONS"
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "404":
+      description: User not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "User Not Found"
+              message:
+                type: string
+                example: "User with the specified ID was not found"
+              code:
+                type: string
+                example: "USER_NOT_FOUND"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"
