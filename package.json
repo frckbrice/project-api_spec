@@ -33,7 +33,7 @@
   },
   "scripts": {
     "preview": "redocly preview-docs ./swt_api_spec/senwisetool.yaml",
-    "build": "redocly build-docs ./swt_api_spec/senwisetool.yaml -o ./docs",
+    "build": "redocly build-docs ./swt_api_spec/senwisetool.yaml -o ./public/index.html",
     "bundle": "redocly bundle ./swt_api_spec/senwisetool.yaml -o ./dist/senwisetool-api.yaml",
     "bundle-deref": "redocly bundle ./swt_api_spec/senwisetool.yaml -o ./dist/senwisetool-api-deref.yaml -d true",
     "lint": "redocly lint ./swt_api_spec/senwisetool.yaml",
@@ -41,7 +41,7 @@
     "validate": "redocly validate ./swt_api_spec/senwisetool.yaml",
     "test": "npm run lint && npm run validate",
     "docs:serve": "redocly preview-docs ./swt_api_spec/senwisetool.yaml --port 8080",
-    "docs:build": "redocly build-docs ./swt_api_spec/senwisetool.yaml -o ./docs",
+    "docs:build": "redocly build-docs ./swt_api_spec/senwisetool.yaml -o ./public/index.html",
     "generate:client": "openapi-generator-cli generate -i ./dist/senwisetool-api.yaml -g typescript-axios -o ./generated/typescript",
     "generate:postman": "openapi-generator-cli generate -i ./dist/senwisetool-api.yaml -g postman -o ./generated/postman",
     "clean": "rm -rf ./dist ./generated ./docs",

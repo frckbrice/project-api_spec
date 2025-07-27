@@ -1,5 +1,7 @@
 {
     "version": 2,
+    "buildCommand": "npm run bundle && cp dist/senwisetool-api.yaml public/",
+    "outputDirectory": "public",
     "routes": [
         {
             "src": "/api-spec",
