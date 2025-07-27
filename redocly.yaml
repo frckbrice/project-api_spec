@@ -27,76 +27,6 @@ rules:
 
 theme:
   openapi:
-    theme:
-      colors:
-        primary:
-          main: "#2D3748"
-          light: "#4A5568"
-          dark: "#1A202C"
-          contrastText: "#FFFFFF"
-        success:
-          main: "#48BB78"
-          light: "#68D391"
-          dark: "#2F855A"
-          contrastText: "#FFFFFF"
-        warning:
-          main: "#ED8936"
-          light: "#F6AD55"
-          dark: "#C05621"
-          contrastText: "#FFFFFF"
-        error:
-          main: "#E53E3E"
-          light: "#FC8181"
-          dark: "#C53030"
-          contrastText: "#FFFFFF"
-        text:
-          primary: "#2D3748"
-          secondary: "#4A5568"
-        border:
-          dark: "#4A5568"
-          light: "#2D3748"
-        http:
-          get: "#38B2AC"
-          post: "#48BB78"
-          put: "#ED8936"
-          delete: "#E53E3E"
-          options: "#9F7AEA"
-          patch: "#667EEA"
-          basic: "#718096"
-          link: "#4299E1"
-          head: "#A0AEC0"
-      typography:
-        fontSize: "16px"
-        lineHeight: "1.5em"
-        fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-        headings:
-          fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-          fontWeight: "600"
-          color: "#1A202C"
-      sidebar:
-        width: "300px"
-        backgroundColor: "#F7FAFC"
-        textColor: "#2D3748"
-      rightPanel:
-        backgroundColor: "#1F2937"
-        textColor: "#F7FAFC"
-        width: "40%"
-      codeBlock:
-        backgroundColor: "#111827"
-      schema:
-        backgroundColor: "#F7FAFC"
-        typeTitleColor: "#2D3748"
-        typeNameColor: "#2D3748"
-        requireLabelColor: "#E53E3E"
-        labelsTextColor: "#4A5568"
-        linesColor: "#CBD5E0"
-        defaultDetailsWidth: "75%"
-        nestingSpacing: "8px"
-        arrowColor: "#2D3748"
-      logo:
-        maxHeight: "100px"
-        maxWidth: "100%"
-        gutter: "20px"
     generateCodeSamples:
       languages:
         - lang: curl
@@ -125,3 +55,26 @@ theme:
     showExtensions: false
     sortPropsAlphabetically: true
     sortTagsAlphabetically: true
+    theme:
+      colors:
+        primary:
+          main: "#2D3748"
+          light: "#4A5568"
+          dark: "#1A202C"
+          contrastText: "#FFFFFF"
+        text:
+          primary: "#2D3748"
+          secondary: "#4A5568"
+        http:
+          get: "#38B2AC"
+          post: "#48BB78"
+          put: "#ED8936"
+          delete: "#E53E3E"
+          options: "#9F7AEA"
+          patch: "#667EEA"
+          basic: "#718096"
+          link: "#4299E1"
+          head: "#A0AEC0"
+      rightPanel:
+        backgroundColor: "#1F2937"
+        textColor: "#F7FAFC"
