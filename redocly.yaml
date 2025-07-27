@@ -1,7 +1,7 @@
 # Redocly CLI Configuration
 apis:
   cocoaflow@v1:
-    root: swt_api_spec/cocoaflow.yaml
+    root: swt_api_spec/cocoaflow-api.yaml
 
 extends:
   - recommended

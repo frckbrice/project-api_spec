@@ -90,7 +90,7 @@ npm run prepare          # Prepare for publishing
 
 | Environment | URL | Status |
 |-------------|-----|--------|
-| Specification | `./swt_api_spec/cocoaflow.yaml` | ✅ Available |
+| Specification | `./swt_api_spec/cocoaflow-api.yaml` | ✅ Available |
 | Production | [https://project-apispec.vercel.app](https://project-apispec.vercel.app) | ✅ Available |
 | Local Preview | `http://localhost:8080` | ✅ Available |
 
@@ -117,7 +117,7 @@ project-api_spec/
 │   │   ├── user/            # User management endpoints
 │   │   ├── company/         # Company management endpoints
 │   │   └── ...              # Other domain endpoints
-│   └── cocoaflow.yaml       # Main OpenAPI specification
+│   └── cocoaflow-api.yaml   # Main OpenAPI specification
 ├── docs/                    # Generated documentation
 ├── dist/                    # Bundled specifications
 ├── generated/               # Generated client libraries

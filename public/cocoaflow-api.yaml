@@ -1,91 +1,302 @@
 openapi: 3.1.0
 info:
   version: 1.0.0
-  title: SenWiseTool API
+  title: CocoaFlow API
+  summary: Comprehensive Cocoa Industry Management Platform
   description: |
-    # SenWiseTool - Cocoa Industry Management API
+    # 🌱 CocoaFlow API
 
-    ## Overview
-    SenWiseTool is a comprehensive API for managing cocoa industry operations, including farmer management, farm tracking, certification compliance, and supply chain optimization.
+    **The Complete Solution for Cocoa Industry Digital Transformation**
 
-    ## Key Features
-    - **Farmer Management**: Complete farmer profiles, contracts, and relationship tracking
-    - **Farm Operations**: GPS coordinates, inspection data, and compliance monitoring
-    - **Certification Support**: Rainforest Alliance compliance tracking and audit trails
-    - **Supply Chain**: Market management, transactions, and inventory tracking
-    - **Training & Education**: Session management and participant tracking
+    ---
 
-    ## Getting Started
-    1. Obtain API credentials from your administrator
-    2. Use JWT Bearer token authentication
-    3. All requests should include `Content-Type: application/json`
-    4. Rate limiting: 1000 requests per hour per API key
+    ## 🎯 Overview
 
-    ## Environment
-    - **Documentation**: [https://project-apispec.vercel.app](https://project-apispec.vercel.app)
-    - **Local Development**: `http://localhost:8080`
+    CocoaFlow is a comprehensive API platform designed to revolutionize cocoa industry operations through digital transformation. Our API provides end-to-end solutions for farmer management, farm tracking, certification compliance, and supply chain optimization.
 
-    ## Support
-    - **Documentation**: [https://project-apispec.vercel.app](https://project-apispec.vercel.app)
-    - **Support Email**: bricefrkc@gmail.com
+    ### 🌟 Why CocoaFlow?
 
+    - **🌍 Industry-Focused**: Built specifically for cocoa industry challenges
+    - **🔒 Enterprise-Grade**: Production-ready with enterprise security
+    - **📊 Data-Driven**: Comprehensive analytics and reporting
+    - **🌱 Sustainable**: Supports Rainforest Alliance certification
+    - **🚀 Scalable**: Designed for growth and expansion
 
-    ## SDKs & Libraries
-    - [JavaScript/TypeScript SDK](https://github.com/frckbrice/project-api_spec/tree/main/sdks/javascript)
-    - [Python SDK](https://github.com/frckbrice/project-api_spec/tree/main/sdks/python)
-    - [Postman Collection](https://github.com/frckbrice/project-api_spec/tree/main/postman)
-  termsOfService: ''
+    ---
+
+    ## 🚀 Key Features
+
+    ### 👨‍🌾 **Farmer Management**
+    Complete farmer profiles, contracts, and relationship tracking with digital onboarding and verification.
+
+    ### 🏡 **Farm Operations**
+    GPS coordinates, inspection data, and compliance monitoring with real-time tracking capabilities.
+
+    ### 🌿 **Certification Support**
+    Rainforest Alliance compliance tracking and audit trails with automated compliance checks.
+
+    ### 📈 **Campaign Management**
+    Seasonal campaign management and data collection periods with performance analytics.
+
+    ### 🔄 **Supply Chain**
+    Market management, transactions, and inventory tracking with end-to-end traceability.
+
+    ### 🎓 **Training & Education**
+    Session management and participant tracking with learning analytics and certification.
+
+    ---
+
+    ## 🛠️ Getting Started
+
+    ### 1. **Authentication**
+    ```bash
+    # JWT Bearer Token Authentication
+    curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+         https://api.cocoaflow.com/v1/farms
+    ```
+
+    ### 2. **API Requirements**
+    - **Content-Type**: `application/json`
+    - **Rate Limiting**: 1000 requests per hour per API key
+    - **Authentication**: JWT Bearer token required
+
+    ### 3. **Quick Start**
+    ```bash
+    # Install SDK
+    npm install @cocoaflow/js-sdk
+
+    # Initialize client
+    const client = new CocoaFlowAPI({
+      apiKey: 'your-api-key',
+      baseURL: 'https://api.cocoaflow.com'
+    });
+    ```
+
+    ---
+
+    ## 🌐 Environment
+
+    | Environment | URL | Status |
+    |-------------|-----|--------|
+    | **Production** | [https://api.cocoaflow.com](https://api.cocoaflow.com) | 🚧 Coming Soon |
+    | **Documentation** | [https://project-apispec.vercel.app](https://project-apispec.vercel.app) | ✅ Live |
+    | **Local Development** | `http://localhost:8080` | ✅ Available |
+
+    ---
+
+    ## 📚 SDKs & Libraries
+
+    | SDK | Language | Status | Documentation |
+    |-----|----------|--------|---------------|
+    | **JavaScript/TypeScript** | Node.js, Browser | 🚧 Design Phase | [View Design](https://github.com/frckbrice/project-api_spec/tree/main/sdks/javascript) |
+    | **Python** | Python 3.8+ | 🚧 Design Phase | [View Design](https://github.com/frckbrice/project-api_spec/tree/main/sdks/python) |
+    | **Postman Collection** | API Testing | ✅ Ready | [Download](https://github.com/frckbrice/project-api_spec/tree/main/postman) |
+
+    ---
+
+    ## 🆘 Support & Resources
+
+    - **📖 Documentation**: [https://project-apispec.vercel.app](https://project-apispec.vercel.app)
+    - **📧 Support Email**: support@cocoaflow.com
+    - **🐛 Issues**: [GitHub Issues](https://github.com/frckbrice/project-api_spec/issues)
+    - **📚 API Reference**: [OpenAPI Spec](./cocoaflow-api.yaml)
+
+    ---
+
+    ## 🏗️ Architecture
+
+    ### **Security**
+    - JWT Bearer Token Authentication
+    - OAuth 2.0 Support (Coming Soon)
+    - Rate Limiting & Throttling
+    - CORS Configuration
+
+    ### **Performance**
+    - RESTful API Design
+    - Pagination Support
+    - Caching Headers
+    - Compression
+
+    ### **Reliability**
+    - Standardized Error Responses
+    - Comprehensive Logging
+    - Health Check Endpoints
+    - Monitoring & Analytics
+
+    ---
+
+    *Built with ❤️ for the Cocoa Industry*
+  termsOfService: https://cocoaflow.com/terms
   contact:
-    email: bricefrkc@gmail.com
-    url: https://maebrieporfolio.vercel.app/
-    name: avom brice
+    email: support@cocoaflow.com
+    url: https://cocoaflow.com/contact
+    name: CocoaFlow Support Team
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   x-logo:
-    url: ../docs/senwiseTool.png
+    url: https://cocoaflow.com/assets/logo.png
+    altText: CocoaFlow Logo
+    backgroundColor: '#2E7D32'
+    href: https://cocoaflow.com
 servers:
+  - url: https://api.cocoaflow.com
+    description: 🌐 Production Environment
+  - url: https://staging-api.cocoaflow.com
+    description: 🧪 Staging Environment
   - url: https://project-apispec.vercel.app
-    description: Documentation and API specification
+    description: 📚 Documentation & API Specification
   - url: http://localhost:8080
-    description: Local development environment
+    description: 💻 Local Development Environment
 security:
   - BearerAuth: []
   - ApiKeyAuth: []
 tags:
-  - name: Authentication
-    description: User authentication and authorization endpoints
-    externalDocs:
-      description: Authentication Guide
-      url: https://docs.senwisetool.com/authentication
-  - name: Companies
-    description: Company management operations for cocoa industry organizations
-  - name: Users
-    description: User management for system administrators and company employees
-  - name: Farmers
-    description: Farmer profile and relationship management
-  - name: Farms
-    description: Farm registration, GPS tracking, and compliance monitoring
-  - name: Projects
-    description: Rainforest Alliance certification projects and compliance tracking
-  - name: Campaigns
-    description: Seasonal campaign management and data collection periods
-  - name: Markets
-    description: Market sessions for cocoa trading between companies and farmers
-  - name: Transactions
-    description: Financial transactions and payment processing
-  - name: Training
-    description: Farmer training sessions and educational content management
-  - name: Inspection
-    description: Farm inspection data collection and compliance verification
-  - name: Subscriptions
-    description: Company subscription and pricing plan management
-  - name: Analytics
-    description: Data analytics and reporting endpoints
-  - name: Administration
-    description: System administration and configuration
+  - name: 🔐 Authentication
+    description: |
+      **User authentication and authorization endpoints**
+
+      Secure JWT Bearer token authentication with OAuth 2.0 support for third-party integrations.
+
+      **Features:**
+      - JWT Token Management
+      - OAuth 2.0 Authorization
+      - Role-based Access Control
+      - Session Management
+  - name: 🏢 Companies
+    description: |
+      **Company management operations for cocoa industry organizations**
+
+      Complete company profile management with multi-tenant support and organizational hierarchy.
+
+      **Features:**
+      - Company Registration & Onboarding
+      - Multi-tenant Architecture
+      - Organizational Hierarchy
+      - Compliance Management
+  - name: 👥 Users
+    description: |
+      **User management for system administrators and company employees**
+
+      Comprehensive user management with role-based permissions and activity tracking.
+
+      **Features:**
+      - User Registration & Profiles
+      - Role-based Permissions
+      - Activity Tracking
+      - Password Management
+  - name: 👨‍🌾 Farmers
+    description: |
+      **Farmer profile and relationship management**
+
+      Digital farmer onboarding with comprehensive profile management and relationship tracking.
+
+      **Features:**
+      - Digital Onboarding
+      - Profile Management
+      - Contract Management
+      - Performance Tracking
+  - name: 🏡 Farms
+    description: |
+      **Farm registration, GPS tracking, and compliance monitoring**
+
+      GPS-enabled farm management with real-time tracking and compliance monitoring.
+
+      **Features:**
+      - GPS Coordinates
+      - Real-time Tracking
+      - Compliance Monitoring
+      - Inspection Data
+  - name: 🌿 Projects
+    description: |
+      **Rainforest Alliance certification projects and compliance tracking**
+
+      Automated compliance tracking with audit trails and certification management.
+
+      **Features:**
+      - Certification Tracking
+      - Audit Trails
+      - Compliance Automation
+      - Reporting Tools
+  - name: 📈 Campaigns
+    description: |
+      **Seasonal campaign management and data collection periods**
+
+      Seasonal campaign management with performance analytics and data collection.
+
+      **Features:**
+      - Campaign Planning
+      - Data Collection
+      - Performance Analytics
+      - Seasonal Management
+  - name: 🏪 Markets
+    description: |
+      **Market sessions for cocoa trading between companies and farmers**
+
+      Digital marketplace for cocoa trading with transaction management and pricing.
+
+      **Features:**
+      - Digital Marketplace
+      - Transaction Management
+      - Pricing Models
+      - Market Analytics
+  - name: 💰 Transactions
+    description: |
+      **Financial transactions and payment processing**
+
+      Secure payment processing with transaction history and financial reporting.
+
+      **Features:**
+      - Payment Processing
+      - Transaction History
+      - Financial Reporting
+      - Audit Trails
+  - name: 🎓 Training
+    description: |
+      **Farmer training sessions and educational content management**
+
+      Comprehensive training management with learning analytics and certification tracking.
+
+      **Features:**
+      - Session Management
+      - Learning Analytics
+      - Certification Tracking
+      - Content Management
+  - name: 🔍 Inspection
+    description: |
+      **Farm inspection data collection and compliance verification**
+
+      Digital inspection tools with automated compliance verification and reporting.
+
+      **Features:**
+      - Digital Inspections
+      - Compliance Verification
+      - Automated Reporting
+      - Data Collection
+  - name: 📊 Analytics
+    description: |
+      **Data analytics and reporting endpoints**
+
+      Comprehensive business intelligence with real-time analytics and custom reporting.
+
+      **Features:**
+      - Business Intelligence
+      - Real-time Analytics
+      - Custom Reporting
+      - Data Visualization
+  - name: ⚙️ Administration
+    description: |
+      **System administration and configuration**
+
+      System-wide administration tools with configuration management and monitoring.
+
+      **Features:**
+      - System Configuration
+      - User Management
+      - Monitoring & Alerts
+      - Backup & Recovery
 externalDocs:
-  description: GitHub Repository
+  description: 📚 GitHub Repository & Documentation
   url: https://github.com/frckbrice/project-api_spec
 paths:
   /users:
@@ -3811,25 +4022,24 @@ components:
           example: '2020-01-01T00:00:00Z'
           description: To specify the date and time when the price plan requirement was updated
 x-tagGroups:
-  - name: Core Operations
+  - name: 🏢 Core Operations
     tags:
-      - Companies
-      - Users
-      - Farmers
-      - Farms
-  - name: Certification & Compliance
+      - 🏢 Companies
+      - 👥 Users
+      - 👨‍🌾 Farmers
+      - 🏡 Farms
+  - name: 🌿 Certification & Compliance
     tags:
-      - Projects
-      - Campaigns
-      - Inspection
-  - name: Business Operations
+      - 🌿 Projects
+      - 📈 Campaigns
+      - 🔍 Inspection
+  - name: 💼 Business Operations
     tags:
-      - Markets
-      - Transactions
-      - Training
-  - name: System Management
+      - 🏪 Markets
+      - 💰 Transactions
+      - 🎓 Training
+  - name: ⚙️ System Management
     tags:
-      - Authentication
-      - Subscriptions
-      - Administration
-      - Analytics
+      - 🔐 Authentication
+      - 📊 Analytics
+      - ⚙️ Administration
