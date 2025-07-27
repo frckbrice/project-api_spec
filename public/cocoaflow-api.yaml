@@ -56,8 +56,8 @@ info:
 
     ### 2. **API Requirements**
     - **Content-Type**: `application/json`
-    - **Rate Limiting**: 1000 requests per hour per API key
     - **Authentication**: JWT Bearer token required
+    - **Rate Limiting**: Standard rate limiting applies to prevent abuse
 
     ### 3. **API Documentation**
     - Browse the interactive documentation
@@ -120,7 +120,6 @@ info:
     ---
 
     Built with OpenAPI 3.1.0 and Redocly.
-  termsOfService: https://cocoaflow.com/terms
   contact:
     email: support@cocoaflow.com
     url: https://cocoaflow.com/contact
@@ -144,7 +143,6 @@ servers:
     description: 💻 Local Development Environment
 security:
   - BearerAuth: []
-  - ApiKeyAuth: []
 tags:
   - name: 🔐 Authentication
     description: |
@@ -8715,20 +8713,26 @@ components:
       scheme: bearer
       bearerFormat: JWT
       description: |
-        JWT Bearer token authentication. Include your JWT token in the Authorization header.
+        JWT Bearer token authentication. All authenticated endpoints require a valid JWT token.
 
-        **Example:**
-        ```
-        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-        ```
+        **Token Format**: `Authorization: Bearer <token>`
 
-        **Token Format:**
+        **Token Details:**
         - Header: `{"alg": "HS256", "typ": "JWT"}`
         - Payload: `{"sub": "user_id", "company_id": "company_id", "role": "user_role", "exp": 1640995200}`
         - Signature: HMAC SHA256
 
-        **Token Expiration:** 24 hours
-        **Refresh Token:** Available via `/auth/refresh` endpoint
+        **Token Management:**
+        - Expiration: 24 hours
+        - Refresh: Available via `/auth/refresh` endpoint
+
+        **Rate Limiting:**
+        - Rate limits are enforced per token
+        - Limits vary by endpoint and user role
+        - Rate limit headers in all responses:
+          - `X-RateLimit-Limit`: Total requests allowed
+          - `X-RateLimit-Remaining`: Requests remaining
+          - `X-RateLimit-Reset`: Seconds until limit resets
     ApiKeyAuth:
       type: apiKey
       in: header
