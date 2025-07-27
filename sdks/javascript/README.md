@@ -87,7 +87,7 @@ const farms = await client.farms.list({
 
 - [API Reference](https://project-apispec.vercel.app)
 - [Authentication Guide](https://project-apispec.vercel.app/#tag/Authentication)
-- [OpenAPI Specification](./../../swt_api_spec/senwisetool.yaml)
+- [OpenAPI Specification](./../../swt_api_spec/cocoaflow-api.yaml)
 
 ## Development Roadmap
 

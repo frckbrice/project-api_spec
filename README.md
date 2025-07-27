@@ -92,7 +92,7 @@ npm run prepare          # Prepare for publishing
 |-------------|-----|--------|
 | Specification | `./swt_api_spec/cocoaflow-api.yaml` | ✅ Available |
 | Documentation (Vercel) | [https://project-apispec.vercel.app](https://project-apispec.vercel.app) | ✅ Available |
-| Documentation (GitHub Pages) | [https://frckbrice.github.io/project-api_spec](https://frckbrice.github.io/project-api_spec) | 🚧 Coming Soon |
+| Documentation (GitHub Pages) | [https://frckbrice.github.io/project-api_spec](https://frckbrice.github.io/project-api_spec) | ✅ Available |
 | Local Preview | `http://localhost:8080` | ✅ Available |
 
 ### Authentication Examples

@@ -2130,25 +2130,458 @@ paths:
   /project_audits:
     post:
       tags:
-        - Project_audit
-      summary: Create a project audit object
-      description: To create the project audit object data to keep track of the company user in charge of conducting the project.
+        - 🌿 Projects
+      summary: Create project audit
+      description: |
+        Create a new project audit to track project progress and compliance.
+
+        **Required Permissions:** `write:project_audit`
+
+        **Business Rules:**
+        - Project audit must be associated with a valid project
+        - Audit date must be within project timeline
+        - Only authorized auditors can create project audits
+        - Audit scores must be between 0-100
       operationId: createProjectAudit
+      security:
+        - BearerAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/project_audit'
+            examples:
+              basic_audit:
+                summary: Basic project audit
+                description: Create a project audit with minimal information
+                value:
+                  project_id: clh1234567890abcdef
+                  auditor_id: clh1234567890abcdef
+                  audit_date: '2024-01-15'
+                  progress_score: 75
+                  notes: Project progressing well within timeline
+              detailed_audit:
+                summary: Detailed project audit
+                description: Create a project audit with comprehensive details
+                value:
+                  project_id: clh1234567890abcdef
+                  auditor_id: clh1234567890abcdef
+                  audit_date: '2024-01-15'
+                  progress_score: 75
+                  notes: Project progressing well within timeline
+                  quality_score: 85
+                  budget_score: 90
+                  timeline_score: 80
+                  risks_identified:
+                    - Weather delays
+                    - Supply chain issues
+                  recommendations:
+                    - Accelerate procurement
+                    - Increase monitoring
       responses:
         '201':
-          description: project audit created
+          description: Project audit created successfully
+          headers:
+            Location:
+              description: URL of the created project audit resource
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/project_audit'
+              example:
+                id: clh1234567890abcdef
+                project_id: clh1234567890abcdef
+                auditor_id: clh1234567890abcdef
+                audit_date: '2024-01-15'
+                progress_score: 75
+                notes: Project progressing well within timeline
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T10:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
         '401':
-          description: Unauthorized access
+          $ref: '#/components/responses/UnauthorizedError-2'
         '403':
-          description: Forbidden access
+          $ref: '#/components/responses/ForbiddenError-2'
+        '409':
+          description: Project audit already exists for this project and date
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Project Audit Already Exists
+                  message:
+                    type: string
+                    example: Project audit already exists for this project on this date
+                  code:
+                    type: string
+                    example: PROJECT_AUDIT_ALREADY_EXISTS
         '500':
-          description: internal server error
+          $ref: '#/components/responses/ServerError-2'
+    get:
+      tags:
+        - 🌿 Projects
+      summary: List all project audits
+      description: |
+        Retrieve a paginated list of project audits with optional filtering capabilities.
+
+        **Required Permissions:** `read:project_audit`
+
+        **Filtering Options:**
+        - Filter by project ID
+        - Filter by auditor ID
+        - Filter by audit date range
+        - Filter by progress score range
+        - Filter by company ID
+
+        **Pagination:**
+        - Default limit: 20 items per page
+        - Maximum limit: 100 items per page
+      operationId: getAllProjectAudits
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationOffset'
+        - $ref: '#/components/parameters/CompanyId'
+        - $ref: '#/components/parameters/DateRangeStart'
+        - $ref: '#/components/parameters/DateRangeEnd'
+        - name: project_id
+          in: query
+          description: Filter by project ID
+          required: false
+          schema:
+            type: string
+            format: cuid
+            example: clh1234567890abcdef
+        - name: auditor_id
+          in: query
+          description: Filter by auditor ID
+          required: false
+          schema:
+            type: string
+            format: cuid
+            example: clh1234567890abcdef
+        - name: min_score
+          in: query
+          description: Minimum progress score
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 100
+            example: 70
+        - name: max_score
+          in: query
+          description: Maximum progress score
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 100
+            example: 100
+      responses:
+        '200':
+          description: Project audits retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/project_audit'
+                  pagination:
+                    type: object
+                    properties:
+                      limit:
+                        type: integer
+                        example: 20
+                      offset:
+                        type: integer
+                        example: 0
+                      total:
+                        type: integer
+                        example: 45
+                      page_count:
+                        type: integer
+                        example: 3
+                      has_next:
+                        type: boolean
+                        example: true
+                      has_prev:
+                        type: boolean
+                        example: false
+                  summary:
+                    type: object
+                    properties:
+                      average_score:
+                        type: number
+                        example: 82.5
+                      total_audits:
+                        type: integer
+                        example: 45
+                      on_track_projects:
+                        type: integer
+                        example: 38
+              example:
+                data:
+                  - id: clh1234567890abcdef
+                    project_id: clh1234567890abcdef
+                    auditor_id: clh1234567890abcdef
+                    audit_date: '2024-01-15'
+                    progress_score: 75
+                    notes: Project progressing well within timeline
+                    created_at: '2024-01-15T10:30:00Z'
+                    updated_at: '2024-01-15T10:30:00Z'
+                  - id: clh1234567890abcdeg
+                    project_id: clh1234567890abcdeg
+                    auditor_id: clh1234567890abcdef
+                    audit_date: '2024-01-14'
+                    progress_score: 85
+                    notes: Excellent project progress
+                    created_at: '2024-01-14T09:15:00Z'
+                    updated_at: '2024-01-14T09:15:00Z'
+                pagination:
+                  limit: 20
+                  offset: 0
+                  total: 45
+                  page_count: 3
+                  has_next: true
+                  has_prev: false
+                summary:
+                  average_score: 82.5
+                  total_audits: 45
+                  on_track_projects: 38
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    put:
+      tags:
+        - 🌿 Projects
+      summary: Update project audit
+      description: |
+        Update an existing project audit.
+
+        **Required Permissions:** `write:project_audit`
+
+        **Business Rules:**
+        - Cannot update audits older than 30 days
+        - Cannot change audit date after submission
+        - Only the original auditor or admin can update
+        - All changes are logged for audit purposes
+      operationId: updateProjectAudit
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                progress_score:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                  description: Updated progress score
+                  example: 80
+                notes:
+                  type: string
+                  description: Updated audit notes
+                  example: Updated progress assessment
+                quality_score:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                  description: Updated quality score
+                  example: 88
+                budget_score:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                  description: Updated budget score
+                  example: 92
+                timeline_score:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                  description: Updated timeline score
+                  example: 85
+                risks_identified:
+                  type: array
+                  items:
+                    type: string
+                  description: Updated risks identified
+                  example:
+                    - Weather delays
+                    - Supply chain issues
+                recommendations:
+                  type: array
+                  items:
+                    type: string
+                  description: Updated recommendations
+                  example:
+                    - Accelerate procurement
+                    - Increase monitoring
+            examples:
+              update_score:
+                summary: Update progress score
+                description: Update the progress score and notes
+                value:
+                  progress_score: 80
+                  notes: Updated progress assessment - better than expected
+              update_details:
+                summary: Update audit details
+                description: Update comprehensive audit details
+                value:
+                  progress_score: 80
+                  notes: Updated progress assessment - better than expected
+                  quality_score: 88
+                  budget_score: 92
+                  timeline_score: 85
+                  risks_identified:
+                    - Weather delays
+                    - Supply chain issues
+                  recommendations:
+                    - Accelerate procurement
+                    - Increase monitoring
+      responses:
+        '200':
+          description: Project audit updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/project_audit'
+              example:
+                id: clh1234567890abcdef
+                project_id: clh1234567890abcdef
+                auditor_id: clh1234567890abcdef
+                audit_date: '2024-01-15'
+                progress_score: 80
+                notes: Updated progress assessment - better than expected
+                quality_score: 88
+                budget_score: 92
+                timeline_score: 85
+                risks_identified:
+                  - Weather delays
+                  - Supply chain issues
+                recommendations:
+                  - Accelerate procurement
+                  - Increase monitoring
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T11:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Project audit not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Project Audit Not Found
+                  message:
+                    type: string
+                    example: Project audit with the specified ID was not found
+                  code:
+                    type: string
+                    example: PROJECT_AUDIT_NOT_FOUND
+        '409':
+          description: Project audit update conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Project Audit Update Conflict
+                  message:
+                    type: string
+                    example: Cannot update project audit older than 30 days
+                  code:
+                    type: string
+                    example: PROJECT_AUDIT_UPDATE_CONFLICT
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    delete:
+      tags:
+        - 🌿 Projects
+      summary: Delete project audit
+      description: |
+        Delete a project audit from the system.
+
+        **Required Permissions:** `write:project_audit`
+
+        **Business Rules:**
+        - Cannot delete audits older than 30 days
+        - Cannot delete audits that have been submitted for compliance
+        - Only admin users can delete project audits
+        - Soft delete - marks as deleted but preserves data for audit
+      operationId: deleteProjectAudit
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Project audit deleted successfully
+        '400':
+          description: Cannot delete project audit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Cannot Delete Project Audit
+                  message:
+                    type: string
+                    example: Cannot delete audit that has been submitted for compliance
+                  code:
+                    type: string
+                    example: PROJECT_AUDIT_ALREADY_SUBMITTED
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Project audit not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Project Audit Not Found
+                  message:
+                    type: string
+                    example: Project audit with the specified ID was not found
+                  code:
+                    type: string
+                    example: PROJECT_AUDIT_NOT_FOUND
+        '500':
+          $ref: '#/components/responses/ServerError-2'
   /receipts:
     post:
       tags:
@@ -2521,49 +2954,900 @@ paths:
   /market_audits:
     post:
       tags:
-        - Market_audit
-      summary: Create a market audit object
+        - 🏪 Markets
+      summary: Create market audit
+      description: |
+        Create a new market audit between the company and farmers.
+
+        **Required Permissions:** `write:market_audit`
+
+        **Business Rules:**
+        - Market audit must be associated with a valid market
+        - Audit date must be within the current fiscal period
+        - Only authorized auditors can create market audits
+        - Audit scores must be between 0-100
       operationId: createMarketAudit
-      description: To create a market audit between the company and the farmers. This information is used in the company dashboard to display all the market audits. Only administrators can use this operation.
+      security:
+        - BearerAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/market_audit'
+            examples:
+              basic_audit:
+                summary: Basic market audit
+                description: Create a market audit with minimal information
+                value:
+                  market_id: clh1234567890abcdef
+                  auditor_id: clh1234567890abcdef
+                  audit_date: '2024-01-15'
+                  compliance_score: 85
+                  notes: Market meets basic compliance requirements
+              detailed_audit:
+                summary: Detailed market audit
+                description: Create a market audit with comprehensive details
+                value:
+                  market_id: clh1234567890abcdef
+                  auditor_id: clh1234567890abcdef
+                  audit_date: '2024-01-15'
+                  compliance_score: 85
+                  notes: Market meets basic compliance requirements
+                  quality_score: 90
+                  safety_score: 88
+                  efficiency_score: 82
+                  recommendations:
+                    - Improve storage facilities
+                    - Enhance quality control
       responses:
         '201':
-          description: market audit created
+          description: Market audit created successfully
+          headers:
+            Location:
+              description: URL of the created market audit resource
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/market_audit'
+              example:
+                id: clh1234567890abcdef
+                market_id: clh1234567890abcdef
+                auditor_id: clh1234567890abcdef
+                audit_date: '2024-01-15'
+                compliance_score: 85
+                notes: Market meets basic compliance requirements
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T10:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
         '401':
-          description: Unauthorized access
+          $ref: '#/components/responses/UnauthorizedError-2'
         '403':
-          description: Forbidden access
+          $ref: '#/components/responses/ForbiddenError-2'
+        '409':
+          description: Market audit already exists for this market and date
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Market Audit Already Exists
+                  message:
+                    type: string
+                    example: Market audit already exists for this market on this date
+                  code:
+                    type: string
+                    example: MARKET_AUDIT_ALREADY_EXISTS
         '500':
-          description: internal server error
+          $ref: '#/components/responses/ServerError-2'
+    get:
+      tags:
+        - 🏪 Markets
+      summary: List all market audits
+      description: |
+        Retrieve a paginated list of market audits with optional filtering capabilities.
+
+        **Required Permissions:** `read:market_audit`
+
+        **Filtering Options:**
+        - Filter by market ID
+        - Filter by auditor ID
+        - Filter by audit date range
+        - Filter by compliance score range
+        - Filter by company ID
+
+        **Pagination:**
+        - Default limit: 20 items per page
+        - Maximum limit: 100 items per page
+      operationId: getAllMarketAudits
       security:
         - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationOffset'
+        - $ref: '#/components/parameters/CompanyId'
+        - $ref: '#/components/parameters/DateRangeStart'
+        - $ref: '#/components/parameters/DateRangeEnd'
+        - name: market_id
+          in: query
+          description: Filter by market ID
+          required: false
+          schema:
+            type: string
+            format: cuid
+            example: clh1234567890abcdef
+        - name: auditor_id
+          in: query
+          description: Filter by auditor ID
+          required: false
+          schema:
+            type: string
+            format: cuid
+            example: clh1234567890abcdef
+        - name: min_score
+          in: query
+          description: Minimum compliance score
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 100
+            example: 80
+        - name: max_score
+          in: query
+          description: Maximum compliance score
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 100
+            example: 100
+      responses:
+        '200':
+          description: Market audits retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/market_audit'
+                  pagination:
+                    type: object
+                    properties:
+                      limit:
+                        type: integer
+                        example: 20
+                      offset:
+                        type: integer
+                        example: 0
+                      total:
+                        type: integer
+                        example: 75
+                      page_count:
+                        type: integer
+                        example: 4
+                      has_next:
+                        type: boolean
+                        example: true
+                      has_prev:
+                        type: boolean
+                        example: false
+                  summary:
+                    type: object
+                    properties:
+                      average_score:
+                        type: number
+                        example: 87.2
+                      total_audits:
+                        type: integer
+                        example: 75
+                      compliance_rate:
+                        type: number
+                        example: 94.7
+              example:
+                data:
+                  - id: clh1234567890abcdef
+                    market_id: clh1234567890abcdef
+                    auditor_id: clh1234567890abcdef
+                    audit_date: '2024-01-15'
+                    compliance_score: 85
+                    notes: Market meets basic compliance requirements
+                    created_at: '2024-01-15T10:30:00Z'
+                    updated_at: '2024-01-15T10:30:00Z'
+                  - id: clh1234567890abcdeg
+                    market_id: clh1234567890abcdeg
+                    auditor_id: clh1234567890abcdef
+                    audit_date: '2024-01-14'
+                    compliance_score: 90
+                    notes: Excellent market standards
+                    created_at: '2024-01-14T09:15:00Z'
+                    updated_at: '2024-01-14T09:15:00Z'
+                pagination:
+                  limit: 20
+                  offset: 0
+                  total: 75
+                  page_count: 4
+                  has_next: true
+                  has_prev: false
+                summary:
+                  average_score: 87.2
+                  total_audits: 75
+                  compliance_rate: 94.7
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    put:
+      tags:
+        - 🏪 Markets
+      summary: Update market audit
+      description: |
+        Update an existing market audit.
+
+        **Required Permissions:** `write:market_audit`
+
+        **Business Rules:**
+        - Cannot update audits older than 30 days
+        - Cannot change audit date after submission
+        - Only the original auditor or admin can update
+        - All changes are logged for audit purposes
+      operationId: updateMarketAudit
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                compliance_score:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                  description: Updated compliance score
+                  example: 90
+                notes:
+                  type: string
+                  description: Updated audit notes
+                  example: Updated compliance assessment
+                quality_score:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                  description: Updated quality score
+                  example: 92
+                safety_score:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                  description: Updated safety score
+                  example: 88
+                efficiency_score:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                  description: Updated efficiency score
+                  example: 85
+                recommendations:
+                  type: array
+                  items:
+                    type: string
+                  description: Updated recommendations
+                  example:
+                    - Improve storage facilities
+                    - Enhance quality control
+            examples:
+              update_score:
+                summary: Update compliance score
+                description: Update the compliance score and notes
+                value:
+                  compliance_score: 90
+                  notes: Updated compliance assessment - improved standards observed
+              update_details:
+                summary: Update audit details
+                description: Update comprehensive audit details
+                value:
+                  compliance_score: 90
+                  notes: Updated compliance assessment - improved standards observed
+                  quality_score: 92
+                  safety_score: 88
+                  efficiency_score: 85
+                  recommendations:
+                    - Improve storage facilities
+                    - Enhance quality control
+      responses:
+        '200':
+          description: Market audit updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/market_audit'
+              example:
+                id: clh1234567890abcdef
+                market_id: clh1234567890abcdef
+                auditor_id: clh1234567890abcdef
+                audit_date: '2024-01-15'
+                compliance_score: 90
+                notes: Updated compliance assessment - improved standards observed
+                quality_score: 92
+                safety_score: 88
+                efficiency_score: 85
+                recommendations:
+                  - Improve storage facilities
+                  - Enhance quality control
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T11:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Market audit not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Market Audit Not Found
+                  message:
+                    type: string
+                    example: Market audit with the specified ID was not found
+                  code:
+                    type: string
+                    example: MARKET_AUDIT_NOT_FOUND
+        '409':
+          description: Market audit update conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Market Audit Update Conflict
+                  message:
+                    type: string
+                    example: Cannot update market audit older than 30 days
+                  code:
+                    type: string
+                    example: MARKET_AUDIT_UPDATE_CONFLICT
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    delete:
+      tags:
+        - 🏪 Markets
+      summary: Delete market audit
+      description: |
+        Delete a market audit from the system.
+
+        **Required Permissions:** `write:market_audit`
+
+        **Business Rules:**
+        - Cannot delete audits older than 30 days
+        - Cannot delete audits that have been submitted for compliance
+        - Only admin users can delete market audits
+        - Soft delete - marks as deleted but preserves data for audit
+      operationId: deleteMarketAudit
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Market audit deleted successfully
+        '400':
+          description: Cannot delete market audit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Cannot Delete Market Audit
+                  message:
+                    type: string
+                    example: Cannot delete audit that has been submitted for compliance
+                  code:
+                    type: string
+                    example: MARKET_AUDIT_ALREADY_SUBMITTED
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Market audit not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Market Audit Not Found
+                  message:
+                    type: string
+                    example: Market audit with the specified ID was not found
+                  code:
+                    type: string
+                    example: MARKET_AUDIT_NOT_FOUND
+        '500':
+          $ref: '#/components/responses/ServerError-2'
   /inspection_data:
     post:
       tags:
-        - Inspection_data
+        - 🔍 Inspection
       summary: Create inspection data
-      description: Create inspection data for each farm inspected.
+      description: |
+        Create inspection data for each farm inspected.
+
+        **Required Permissions:** `write:inspection`
+
+        **Business Rules:**
+        - Inspection data must be associated with a valid farm
+        - GPS coordinates are required for compliance tracking
+        - Inspection date must be within campaign period
+        - Only authorized inspectors can create inspection data
       operationId: createInspectionData
+      security:
+        - BearerAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/inspection_data'
+            examples:
+              basic_inspection:
+                summary: Basic inspection data
+                description: Create inspection data with minimal information
+                value:
+                  farm_id: clh1234567890abcdef
+                  inspector_id: clh1234567890abcdef
+                  inspection_date: '2024-01-15'
+                  compliance_score: 85
+                  notes: Farm meets basic compliance requirements
+              detailed_inspection:
+                summary: Detailed inspection data
+                description: Create inspection data with comprehensive details
+                value:
+                  farm_id: clh1234567890abcdef
+                  inspector_id: clh1234567890abcdef
+                  inspection_date: '2024-01-15'
+                  compliance_score: 85
+                  notes: Farm meets basic compliance requirements
+                  gps_coordinates:
+                    lat: 6.5244
+                    lng: 3.3792
+                  photos:
+                    - https://storage.cocoaflow.com/inspections/photo1.jpg
+                  violations: []
+                  recommendations:
+                    - Improve soil management practices
       responses:
         '201':
-          description: inspection data created
+          description: Inspection data created successfully
+          headers:
+            Location:
+              description: URL of the created inspection data resource
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inspection_data'
+              example:
+                id: clh1234567890abcdef
+                farm_id: clh1234567890abcdef
+                inspector_id: clh1234567890abcdef
+                inspection_date: '2024-01-15'
+                compliance_score: 85
+                notes: Farm meets basic compliance requirements
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T10:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
         '401':
-          description: Unauthorized access
+          $ref: '#/components/responses/UnauthorizedError-2'
         '403':
-          description: Forbidden access
+          $ref: '#/components/responses/ForbiddenError-2'
+        '409':
+          description: Inspection data already exists for this farm and date
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Inspection Already Exists
+                  message:
+                    type: string
+                    example: Inspection data already exists for this farm on this date
+                  code:
+                    type: string
+                    example: INSPECTION_ALREADY_EXISTS
         '500':
-          description: internal server error
+          $ref: '#/components/responses/ServerError-2'
+    get:
+      tags:
+        - 🔍 Inspection
+      summary: List all inspection data
+      description: |
+        Retrieve a paginated list of inspection data with optional filtering capabilities.
+
+        **Required Permissions:** `read:inspection`
+
+        **Filtering Options:**
+        - Filter by farm ID
+        - Filter by inspector ID
+        - Filter by inspection date range
+        - Filter by compliance score range
+        - Filter by project ID
+
+        **Pagination:**
+        - Default limit: 20 items per page
+        - Maximum limit: 100 items per page
+      operationId: getAllInspectionData
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationOffset'
+        - $ref: '#/components/parameters/CompanyId'
+        - $ref: '#/components/parameters/DateRangeStart'
+        - $ref: '#/components/parameters/DateRangeEnd'
+        - name: farm_id
+          in: query
+          description: Filter by farm ID
+          required: false
+          schema:
+            type: string
+            format: cuid
+            example: clh1234567890abcdef
+        - name: inspector_id
+          in: query
+          description: Filter by inspector ID
+          required: false
+          schema:
+            type: string
+            format: cuid
+            example: clh1234567890abcdef
+        - name: project_id
+          in: query
+          description: Filter by project ID
+          required: false
+          schema:
+            type: string
+            format: cuid
+            example: clh1234567890abcdef
+        - name: min_score
+          in: query
+          description: Minimum compliance score
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 100
+            example: 80
+        - name: max_score
+          in: query
+          description: Maximum compliance score
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 100
+            example: 100
+      responses:
+        '200':
+          description: Inspection data retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/inspection_data'
+                  pagination:
+                    type: object
+                    properties:
+                      limit:
+                        type: integer
+                        example: 20
+                      offset:
+                        type: integer
+                        example: 0
+                      total:
+                        type: integer
+                        example: 150
+                      page_count:
+                        type: integer
+                        example: 8
+                      has_next:
+                        type: boolean
+                        example: true
+                      has_prev:
+                        type: boolean
+                        example: false
+                  summary:
+                    type: object
+                    properties:
+                      average_score:
+                        type: number
+                        example: 87.5
+                      total_inspections:
+                        type: integer
+                        example: 150
+                      compliance_rate:
+                        type: number
+                        example: 92.3
+              example:
+                data:
+                  - id: clh1234567890abcdef
+                    farm_id: clh1234567890abcdef
+                    inspector_id: clh1234567890abcdef
+                    inspection_date: '2024-01-15'
+                    compliance_score: 85
+                    notes: Farm meets basic compliance requirements
+                    created_at: '2024-01-15T10:30:00Z'
+                    updated_at: '2024-01-15T10:30:00Z'
+                  - id: clh1234567890abcdeg
+                    farm_id: clh1234567890abcdeg
+                    inspector_id: clh1234567890abcdef
+                    inspection_date: '2024-01-14'
+                    compliance_score: 90
+                    notes: Excellent compliance standards
+                    created_at: '2024-01-14T09:15:00Z'
+                    updated_at: '2024-01-14T09:15:00Z'
+                pagination:
+                  limit: 20
+                  offset: 0
+                  total: 150
+                  page_count: 8
+                  has_next: true
+                  has_prev: false
+                summary:
+                  average_score: 87.5
+                  total_inspections: 150
+                  compliance_rate: 92.3
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    put:
+      tags:
+        - 🔍 Inspection
+      summary: Update inspection data
+      description: |
+        Update an existing inspection data record.
+
+        **Required Permissions:** `write:inspection`
+
+        **Business Rules:**
+        - Cannot update inspection data older than 30 days
+        - Cannot change inspection date after submission
+        - Only the original inspector or admin can update
+        - All changes are logged for audit purposes
+      operationId: updateInspectionData
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                compliance_score:
+                  type: integer
+                  minimum: 0
+                  maximum: 100
+                  description: Updated compliance score
+                  example: 90
+                notes:
+                  type: string
+                  description: Updated inspection notes
+                  example: Updated compliance assessment
+                gps_coordinates:
+                  type: object
+                  properties:
+                    lat:
+                      type: number
+                      example: 6.5244
+                    lng:
+                      type: number
+                      example: 3.3792
+                photos:
+                  type: array
+                  items:
+                    type: string
+                    format: uri
+                  description: Updated inspection photos
+                  example:
+                    - https://storage.cocoaflow.com/inspections/photo1.jpg
+                violations:
+                  type: array
+                  items:
+                    type: string
+                  description: Updated violations list
+                  example:
+                    - Soil erosion detected
+                recommendations:
+                  type: array
+                  items:
+                    type: string
+                  description: Updated recommendations
+                  example:
+                    - Implement soil conservation measures
+            examples:
+              update_score:
+                summary: Update compliance score
+                description: Update the compliance score and notes
+                value:
+                  compliance_score: 90
+                  notes: Updated compliance assessment - improved practices observed
+              update_details:
+                summary: Update inspection details
+                description: Update comprehensive inspection details
+                value:
+                  compliance_score: 90
+                  notes: Updated compliance assessment - improved practices observed
+                  gps_coordinates:
+                    lat: 6.5244
+                    lng: 3.3792
+                  photos:
+                    - https://storage.cocoaflow.com/inspections/photo1.jpg
+                  violations:
+                    - Soil erosion detected
+                  recommendations:
+                    - Implement soil conservation measures
+      responses:
+        '200':
+          description: Inspection data updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inspection_data'
+              example:
+                id: clh1234567890abcdef
+                farm_id: clh1234567890abcdef
+                inspector_id: clh1234567890abcdef
+                inspection_date: '2024-01-15'
+                compliance_score: 90
+                notes: Updated compliance assessment - improved practices observed
+                gps_coordinates:
+                  lat: 6.5244
+                  lng: 3.3792
+                photos:
+                  - https://storage.cocoaflow.com/inspections/photo1.jpg
+                violations:
+                  - Soil erosion detected
+                recommendations:
+                  - Implement soil conservation measures
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T11:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Inspection data not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Inspection Data Not Found
+                  message:
+                    type: string
+                    example: Inspection data with the specified ID was not found
+                  code:
+                    type: string
+                    example: INSPECTION_NOT_FOUND
+        '409':
+          description: Inspection data update conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Inspection Update Conflict
+                  message:
+                    type: string
+                    example: Cannot update inspection data older than 30 days
+                  code:
+                    type: string
+                    example: INSPECTION_UPDATE_CONFLICT
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    delete:
+      tags:
+        - 🔍 Inspection
+      summary: Delete inspection data
+      description: |
+        Delete inspection data from the system.
+
+        **Required Permissions:** `write:inspection`
+
+        **Business Rules:**
+        - Cannot delete inspection data older than 30 days
+        - Cannot delete inspection data that has been submitted for compliance
+        - Only admin users can delete inspection data
+        - Soft delete - marks as deleted but preserves data for audit
+      operationId: deleteInspectionData
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Inspection data deleted successfully
+        '400':
+          description: Cannot delete inspection data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Cannot Delete Inspection Data
+                  message:
+                    type: string
+                    example: Cannot delete inspection data that has been submitted for compliance
+                  code:
+                    type: string
+                    example: INSPECTION_ALREADY_SUBMITTED
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Inspection data not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Inspection Data Not Found
+                  message:
+                    type: string
+                    example: Inspection data with the specified ID was not found
+                  code:
+                    type: string
+                    example: INSPECTION_NOT_FOUND
+        '500':
+          $ref: '#/components/responses/ServerError-2'
   /inspection_data/{project_id}:
     get:
       tags:
@@ -3552,10 +4836,271 @@ paths:
   /training_session:
     post:
       tags:
-        - Participant
-      summary: create participant
-      description: To create a participant. This information is used in the company dashboard to display all the participants. Only administrators can use this operation.
-      operationId: createParticipant
+        - 🎓 Training
+      summary: Create training session
+      description: |
+        Create a new training session for farmers.
+
+        **Required Permissions:** `write:training`
+
+        **Business Rules:**
+        - Training session must be associated with a valid training program
+        - Session dates must be within campaign period
+        - Maximum participants per session: 50
+        - Only authorized trainers can create sessions
+      operationId: createTrainingSession
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/training_session'
+            examples:
+              basic_session:
+                summary: Basic training session
+                description: Create a training session with minimal information
+                value:
+                  training_id: clh1234567890abcdef
+                  session_date: '2024-01-15'
+                  location: Community Center
+                  trainer_id: clh1234567890abcdef
+                  max_participants: 30
+              detailed_session:
+                summary: Detailed training session
+                description: Create a training session with comprehensive details
+                value:
+                  training_id: clh1234567890abcdef
+                  session_date: '2024-01-15'
+                  start_time: '09:00'
+                  end_time: '17:00'
+                  location: Community Center
+                  trainer_id: clh1234567890abcdef
+                  max_participants: 30
+                  description: Sustainable farming practices workshop
+                  materials_required:
+                    - Notebook
+                    - Pen
+                    - Safety equipment
+      responses:
+        '201':
+          description: Training session created successfully
+          headers:
+            Location:
+              description: URL of the created training session resource
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/training_session'
+              example:
+                id: clh1234567890abcdef
+                training_id: clh1234567890abcdef
+                session_date: '2024-01-15'
+                start_time: '09:00'
+                end_time: '17:00'
+                location: Community Center
+                trainer_id: clh1234567890abcdef
+                max_participants: 30
+                current_participants: 0
+                status: scheduled
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T10:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '409':
+          description: Training session already exists for this date and location
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Training Session Already Exists
+                  message:
+                    type: string
+                    example: A training session already exists for this date and location
+                  code:
+                    type: string
+                    example: TRAINING_SESSION_ALREADY_EXISTS
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    get:
+      tags:
+        - 🎓 Training
+      summary: List all training sessions
+      description: |
+        Retrieve a paginated list of training sessions with optional filtering capabilities.
+
+        **Required Permissions:** `read:training`
+
+        **Filtering Options:**
+        - Filter by training ID
+        - Filter by trainer ID
+        - Filter by session date range
+        - Filter by status (scheduled, in-progress, completed, cancelled)
+        - Filter by location
+
+        **Pagination:**
+        - Default limit: 20 items per page
+        - Maximum limit: 100 items per page
+      operationId: getAllTrainingSessions
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationOffset'
+        - $ref: '#/components/parameters/CompanyId'
+        - $ref: '#/components/parameters/DateRangeStart'
+        - $ref: '#/components/parameters/DateRangeEnd'
+        - name: training_id
+          in: query
+          description: Filter by training ID
+          required: false
+          schema:
+            type: string
+            format: cuid
+            example: clh1234567890abcdef
+        - name: trainer_id
+          in: query
+          description: Filter by trainer ID
+          required: false
+          schema:
+            type: string
+            format: cuid
+            example: clh1234567890abcdef
+        - name: status
+          in: query
+          description: Filter by session status
+          required: false
+          schema:
+            type: string
+            enum:
+              - scheduled
+              - in-progress
+              - completed
+              - cancelled
+            example: scheduled
+        - name: location
+          in: query
+          description: Filter by location (partial match)
+          required: false
+          schema:
+            type: string
+            example: Community Center
+      responses:
+        '200':
+          description: Training sessions retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/training_session'
+                  pagination:
+                    type: object
+                    properties:
+                      limit:
+                        type: integer
+                        example: 20
+                      offset:
+                        type: integer
+                        example: 0
+                      total:
+                        type: integer
+                        example: 50
+                      page_count:
+                        type: integer
+                        example: 3
+                      has_next:
+                        type: boolean
+                        example: true
+                      has_prev:
+                        type: boolean
+                        example: false
+                  summary:
+                    type: object
+                    properties:
+                      total_sessions:
+                        type: integer
+                        example: 50
+                      completed_sessions:
+                        type: integer
+                        example: 35
+                      total_participants:
+                        type: integer
+                        example: 1200
+              example:
+                data:
+                  - id: clh1234567890abcdef
+                    training_id: clh1234567890abcdef
+                    session_date: '2024-01-15'
+                    start_time: '09:00'
+                    end_time: '17:00'
+                    location: Community Center
+                    trainer_id: clh1234567890abcdef
+                    max_participants: 30
+                    current_participants: 25
+                    status: scheduled
+                    created_at: '2024-01-15T10:30:00Z'
+                    updated_at: '2024-01-15T10:30:00Z'
+                  - id: clh1234567890abcdeg
+                    training_id: clh1234567890abcdef
+                    session_date: '2024-01-16'
+                    start_time: '09:00'
+                    end_time: '17:00'
+                    location: Village Hall
+                    trainer_id: clh1234567890abcdeg
+                    max_participants: 25
+                    current_participants: 20
+                    status: scheduled
+                    created_at: '2024-01-14T09:15:00Z'
+                    updated_at: '2024-01-14T09:15:00Z'
+                pagination:
+                  limit: 20
+                  offset: 0
+                  total: 50
+                  page_count: 3
+                  has_next: true
+                  has_prev: false
+                summary:
+                  total_sessions: 50
+                  completed_sessions: 35
+                  total_participants: 1200
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    put:
+      tags:
+        - 🎓 Training
+      summary: Update training session
+      description: |
+        Update an existing training session.
+
+        **Required Permissions:** `write:training`
+
+        **Business Rules:**
+        - Cannot update completed sessions
+        - Cannot reduce max_participants below current_participants
+        - Cannot change session date if participants are already registered
+        - Only the original trainer or admin can update session
+      operationId: updateTrainingSession
       security:
         - BearerAuth: []
       requestBody:
@@ -3564,13 +5109,191 @@ paths:
           application/json:
             schema:
               type: object
-              $ref: '#/components/schemas/training_session'
+              properties:
+                session_date:
+                  type: string
+                  format: date
+                  description: Updated session date
+                  example: '2024-01-16'
+                start_time:
+                  type: string
+                  description: Updated start time
+                  example: '10:00'
+                end_time:
+                  type: string
+                  description: Updated end time
+                  example: '18:00'
+                location:
+                  type: string
+                  description: Updated location
+                  example: Updated Community Center
+                max_participants:
+                  type: integer
+                  minimum: 1
+                  description: Updated maximum participants
+                  example: 35
+                status:
+                  type: string
+                  enum:
+                    - scheduled
+                    - in-progress
+                    - completed
+                    - cancelled
+                  description: Updated session status
+                  example: in-progress
+                description:
+                  type: string
+                  description: Updated session description
+                  example: Updated sustainable farming practices workshop
+            examples:
+              update_schedule:
+                summary: Update session schedule
+                description: Update session date and times
+                value:
+                  session_date: '2024-01-16'
+                  start_time: '10:00'
+                  end_time: '18:00'
+              update_details:
+                summary: Update session details
+                description: Update comprehensive session details
+                value:
+                  location: Updated Community Center
+                  max_participants: 35
+                  status: in-progress
+                  description: Updated sustainable farming practices workshop
+      responses:
+        '200':
+          description: Training session updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/training_session'
+              example:
+                id: clh1234567890abcdef
+                training_id: clh1234567890abcdef
+                session_date: '2024-01-16'
+                start_time: '10:00'
+                end_time: '18:00'
+                location: Updated Community Center
+                trainer_id: clh1234567890abcdef
+                max_participants: 35
+                current_participants: 25
+                status: in-progress
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T11:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Training session not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Training Session Not Found
+                  message:
+                    type: string
+                    example: Training session with the specified ID was not found
+                  code:
+                    type: string
+                    example: TRAINING_SESSION_NOT_FOUND
+        '409':
+          description: Training session update conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Training Session Update Conflict
+                  message:
+                    type: string
+                    example: Cannot reduce max_participants below current_participants
+                  code:
+                    type: string
+                    example: TRAINING_SESSION_UPDATE_CONFLICT
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    delete:
+      tags:
+        - 🎓 Training
+      summary: Delete training session
+      description: |
+        Delete a training session from the system.
+
+        **Required Permissions:** `write:training`
+
+        **Business Rules:**
+        - Cannot delete sessions with registered participants
+        - Cannot delete completed sessions
+        - Only admin users can delete training sessions
+        - Soft delete - marks as deleted but preserves data for audit
+      operationId: deleteTrainingSession
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Training session deleted successfully
+        '400':
+          description: Cannot delete training session
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Cannot Delete Training Session
+                  message:
+                    type: string
+                    example: Cannot delete session with registered participants
+                  code:
+                    type: string
+                    example: TRAINING_SESSION_HAS_PARTICIPANTS
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Training session not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Training Session Not Found
+                  message:
+                    type: string
+                    example: Training session with the specified ID was not found
+                  code:
+                    type: string
+                    example: TRAINING_SESSION_NOT_FOUND
+        '500':
+          $ref: '#/components/responses/ServerError-2'
   /price_plan_requirements:
     post:
       tags:
-        - PricePlanRequirement
-      summary: create a price plan requirement
-      description: To create a price plan requirement that represents the requirements corresponding to a particular price plan.
+        - 💰 Transactions
+      summary: Create price plan requirement
+      description: |
+        Create a new price plan requirement that represents the requirements corresponding to a particular price plan.
+
+        **Required Permissions:** `write:price_plan_requirement`
+
+        **Business Rules:**
+        - Price plan requirement must be associated with a valid price plan
+        - Requirement must have a valid category and type
+        - Only authorized users can create price plan requirements
+        - Requirements must be unique per price plan
       operationId: createPricePlanRequirement
       security:
         - BearerAuth: []
@@ -3580,58 +5303,416 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/price_plan_requirement'
+            examples:
+              basic_requirement:
+                summary: Basic price plan requirement
+                description: Create a price plan requirement with minimal information
+                value:
+                  price_plan_id: clh1234567890abcdef
+                  requirement_name: Quality Standards
+                  requirement_type: quality
+                  is_mandatory: true
+              detailed_requirement:
+                summary: Detailed price plan requirement
+                description: Create a price plan requirement with comprehensive details
+                value:
+                  price_plan_id: clh1234567890abcdef
+                  requirement_name: Quality Standards
+                  requirement_type: quality
+                  requirement_description: Must meet minimum quality standards for cocoa beans
+                  is_mandatory: true
+                  min_value: 80
+                  max_value: 100
+                  unit: percentage
+                  validation_rules:
+                    - Must be organic certified
+                    - No chemical residues
       responses:
         '201':
-          description: price plan requirement created
-        '401':
-          description: Unauthorized access
-        '403':
-          description: Forbidden access
-        '500':
-          description: internal server error
-    get:
-      tags:
-        - PricePlanRequirement
-      summary: get all requirement corresponding to a particular offer
-      description: To list all requirements corresponding to a particular offer plan.
-      operationId: getAllPricePlanRequirement
-      security:
-        - BearerAuth: []
-      parameters:
-        - name: price_plan_id
-          in: query
-          description: get the receipt produced during a single market
-          schema:
-            format: cuid
-            type: string
-          required: false
-        - name: page
-          in: query
-          description: page number
-          required: false
-          schema:
-            type: integer
-            example: 1
-        - name: limit
-          in: query
-          description: page size
-          required: false
-          schema:
-            type: integer
-            example: 20
-      responses:
-        '200':
-          description: price plan requirement
+          description: Price plan requirement created successfully
+          headers:
+            Location:
+              description: URL of the created price plan requirement resource
+              schema:
+                type: string
+                format: uri
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/price_plan_requirement'
+              example:
+                id: clh1234567890abcdef
+                price_plan_id: clh1234567890abcdef
+                requirement_name: Quality Standards
+                requirement_type: quality
+                requirement_description: Must meet minimum quality standards for cocoa beans
+                is_mandatory: true
+                min_value: 80
+                max_value: 100
+                unit: percentage
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T10:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
         '401':
-          description: Unauthorized access
+          $ref: '#/components/responses/UnauthorizedError-2'
         '403':
-          description: Forbidden access
+          $ref: '#/components/responses/ForbiddenError-2'
+        '409':
+          description: Price plan requirement already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Price Plan Requirement Already Exists
+                  message:
+                    type: string
+                    example: A requirement with this name already exists for this price plan
+                  code:
+                    type: string
+                    example: PRICE_PLAN_REQUIREMENT_ALREADY_EXISTS
         '500':
-          description: internal server error
+          $ref: '#/components/responses/ServerError-2'
+    get:
+      tags:
+        - 💰 Transactions
+      summary: List all price plan requirements
+      description: |
+        Retrieve a paginated list of price plan requirements with optional filtering capabilities.
+
+        **Required Permissions:** `read:price_plan_requirement`
+
+        **Filtering Options:**
+        - Filter by price plan ID
+        - Filter by requirement type
+        - Filter by mandatory status
+        - Filter by company ID
+
+        **Pagination:**
+        - Default limit: 20 items per page
+        - Maximum limit: 100 items per page
+      operationId: getAllPricePlanRequirement
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationOffset'
+        - $ref: '#/components/parameters/CompanyId'
+        - name: price_plan_id
+          in: query
+          description: Filter by price plan ID
+          schema:
+            format: cuid
+            type: string
+            example: clh1234567890abcdef
+          required: false
+        - name: requirement_type
+          in: query
+          description: Filter by requirement type
+          required: false
+          schema:
+            type: string
+            enum:
+              - quality
+              - quantity
+              - certification
+              - documentation
+              - other
+            example: quality
+        - name: is_mandatory
+          in: query
+          description: Filter by mandatory status
+          required: false
+          schema:
+            type: boolean
+            example: true
+      responses:
+        '200':
+          description: Price plan requirements retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/price_plan_requirement'
+                  pagination:
+                    type: object
+                    properties:
+                      limit:
+                        type: integer
+                        example: 20
+                      offset:
+                        type: integer
+                        example: 0
+                      total:
+                        type: integer
+                        example: 25
+                      page_count:
+                        type: integer
+                        example: 2
+                      has_next:
+                        type: boolean
+                        example: true
+                      has_prev:
+                        type: boolean
+                        example: false
+                  summary:
+                    type: object
+                    properties:
+                      total_requirements:
+                        type: integer
+                        example: 25
+                      mandatory_requirements:
+                        type: integer
+                        example: 15
+                      optional_requirements:
+                        type: integer
+                        example: 10
+              example:
+                data:
+                  - id: clh1234567890abcdef
+                    price_plan_id: clh1234567890abcdef
+                    requirement_name: Quality Standards
+                    requirement_type: quality
+                    requirement_description: Must meet minimum quality standards for cocoa beans
+                    is_mandatory: true
+                    min_value: 80
+                    max_value: 100
+                    unit: percentage
+                    created_at: '2024-01-15T10:30:00Z'
+                    updated_at: '2024-01-15T10:30:00Z'
+                  - id: clh1234567890abcdeg
+                    price_plan_id: clh1234567890abcdef
+                    requirement_name: Organic Certification
+                    requirement_type: certification
+                    requirement_description: Must have valid organic certification
+                    is_mandatory: true
+                    created_at: '2024-01-15T09:15:00Z'
+                    updated_at: '2024-01-15T09:15:00Z'
+                pagination:
+                  limit: 20
+                  offset: 0
+                  total: 25
+                  page_count: 2
+                  has_next: true
+                  has_prev: false
+                summary:
+                  total_requirements: 25
+                  mandatory_requirements: 15
+                  optional_requirements: 10
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    put:
+      tags:
+        - 💰 Transactions
+      summary: Update price plan requirement
+      description: |
+        Update an existing price plan requirement.
+
+        **Required Permissions:** `write:price_plan_requirement`
+
+        **Business Rules:**
+        - Cannot update requirements that are already in use by active price plans
+        - Cannot change requirement type after creation
+        - Only authorized users can update price plan requirements
+        - All changes are logged for audit purposes
+      operationId: updatePricePlanRequirement
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                requirement_name:
+                  type: string
+                  description: Updated requirement name
+                  example: Updated Quality Standards
+                requirement_description:
+                  type: string
+                  description: Updated requirement description
+                  example: Updated quality standards for cocoa beans
+                is_mandatory:
+                  type: boolean
+                  description: Updated mandatory status
+                  example: true
+                min_value:
+                  type: number
+                  description: Updated minimum value
+                  example: 85
+                max_value:
+                  type: number
+                  description: Updated maximum value
+                  example: 100
+                unit:
+                  type: string
+                  description: Updated unit of measurement
+                  example: percentage
+                validation_rules:
+                  type: array
+                  items:
+                    type: string
+                  description: Updated validation rules
+                  example:
+                    - Must be organic certified
+                    - No chemical residues
+                    - Fair trade certified
+            examples:
+              update_basic:
+                summary: Update basic requirement details
+                description: Update requirement name and description
+                value:
+                  requirement_name: Updated Quality Standards
+                  requirement_description: Updated quality standards for cocoa beans
+              update_detailed:
+                summary: Update detailed requirement details
+                description: Update comprehensive requirement details
+                value:
+                  requirement_name: Updated Quality Standards
+                  requirement_description: Updated quality standards for cocoa beans
+                  is_mandatory: true
+                  min_value: 85
+                  max_value: 100
+                  unit: percentage
+                  validation_rules:
+                    - Must be organic certified
+                    - No chemical residues
+                    - Fair trade certified
+      responses:
+        '200':
+          description: Price plan requirement updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/price_plan_requirement'
+              example:
+                id: clh1234567890abcdef
+                price_plan_id: clh1234567890abcdef
+                requirement_name: Updated Quality Standards
+                requirement_type: quality
+                requirement_description: Updated quality standards for cocoa beans
+                is_mandatory: true
+                min_value: 85
+                max_value: 100
+                unit: percentage
+                validation_rules:
+                  - Must be organic certified
+                  - No chemical residues
+                  - Fair trade certified
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T11:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Price plan requirement not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Price Plan Requirement Not Found
+                  message:
+                    type: string
+                    example: Price plan requirement with the specified ID was not found
+                  code:
+                    type: string
+                    example: PRICE_PLAN_REQUIREMENT_NOT_FOUND
+        '409':
+          description: Price plan requirement update conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Price Plan Requirement Update Conflict
+                  message:
+                    type: string
+                    example: Cannot update requirement that is in use by active price plans
+                  code:
+                    type: string
+                    example: PRICE_PLAN_REQUIREMENT_UPDATE_CONFLICT
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    delete:
+      tags:
+        - 💰 Transactions
+      summary: Delete price plan requirement
+      description: |
+        Delete a price plan requirement from the system.
+
+        **Required Permissions:** `write:price_plan_requirement`
+
+        **Business Rules:**
+        - Cannot delete requirements that are in use by active price plans
+        - Cannot delete mandatory requirements for active plans
+        - Only admin users can delete price plan requirements
+        - Soft delete - marks as deleted but preserves data for audit
+      operationId: deletePricePlanRequirement
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Price plan requirement deleted successfully
+        '400':
+          description: Cannot delete price plan requirement
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Cannot Delete Price Plan Requirement
+                  message:
+                    type: string
+                    example: Cannot delete requirement that is in use by active price plans
+                  code:
+                    type: string
+                    example: PRICE_PLAN_REQUIREMENT_IN_USE
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Price plan requirement not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Price Plan Requirement Not Found
+                  message:
+                    type: string
+                    example: Price plan requirement with the specified ID was not found
+                  code:
+                    type: string
+                    example: PRICE_PLAN_REQUIREMENT_NOT_FOUND
+        '500':
+          $ref: '#/components/responses/ServerError-2'
 webhooks:
   userInfo:
     post:
@@ -5283,6 +7364,14 @@ x-tagGroups:
       - 👥 Users
       - 👨‍🌾 Farmers
       - 🏡 Farms
+      - 🌿 Projects
+      - 📈 Campaigns
+      - 🔍 Inspection
+      - 📊 Analytics
+      - 🔐 Authentication
+      - 🏪 Markets
+      - 💰 Transactions
+      - 🎓 Training
   - name: 🌿 Certification & Compliance
     tags:
       - 🌿 Projects

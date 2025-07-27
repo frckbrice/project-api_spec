@@ -1,10 +1,268 @@
 #create participant object
 post:
   tags:
-    - Participant
-  summary: create participant
-  description: To create a participant. This information is used in the company dashboard to display all the participants. Only administrators can use this operation.
-  operationId: createParticipant
+    - 🎓 Training
+  summary: Create training session
+  description: |
+    Create a new training session for farmers.
+    
+    **Required Permissions:** `write:training`
+    
+    **Business Rules:**
+    - Training session must be associated with a valid training program
+    - Session dates must be within campaign period
+    - Maximum participants per session: 50
+    - Only authorized trainers can create sessions
+  operationId: createTrainingSession
+  security:
+    - BearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../components/schemas/training_session.yaml"
+        examples:
+          basic_session:
+            summary: Basic training session
+            description: Create a training session with minimal information
+            value:
+              training_id: "clh1234567890abcdef"
+              session_date: "2024-01-15"
+              location: "Community Center"
+              trainer_id: "clh1234567890abcdef"
+              max_participants: 30
+          detailed_session:
+            summary: Detailed training session
+            description: Create a training session with comprehensive details
+            value:
+              training_id: "clh1234567890abcdef"
+              session_date: "2024-01-15"
+              start_time: "09:00"
+              end_time: "17:00"
+              location: "Community Center"
+              trainer_id: "clh1234567890abcdef"
+              max_participants: 30
+              description: "Sustainable farming practices workshop"
+              materials_required: ["Notebook", "Pen", "Safety equipment"]
+  responses:
+    "201":
+      description: Training session created successfully
+      headers:
+        Location:
+          description: URL of the created training session resource
+          schema:
+            type: string
+            format: uri
+      content:
+        application/json:
+          schema:
+            $ref: "../components/schemas/training_session.yaml"
+          example:
+            id: "clh1234567890abcdef"
+            training_id: "clh1234567890abcdef"
+            session_date: "2024-01-15"
+            start_time: "09:00"
+            end_time: "17:00"
+            location: "Community Center"
+            trainer_id: "clh1234567890abcdef"
+            max_participants: 30
+            current_participants: 0
+            status: "scheduled"
+            created_at: "2024-01-15T10:30:00Z"
+            updated_at: "2024-01-15T10:30:00Z"
+    "400":
+      $ref: "../components/responses/ValidationError.yaml"
+    "401":
+      $ref: "../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../components/responses/ForbiddenError.yaml"
+    "409":
+      description: Training session already exists for this date and location
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Training Session Already Exists"
+              message:
+                type: string
+                example: "A training session already exists for this date and location"
+              code:
+                type: string
+                example: "TRAINING_SESSION_ALREADY_EXISTS"
+    "500":
+      $ref: "../components/responses/ServerError.yaml"
+
+# retrieve all training sessions
+get:
+  tags:
+    - 🎓 Training
+  summary: List all training sessions
+  description: |
+    Retrieve a paginated list of training sessions with optional filtering capabilities.
+    
+    **Required Permissions:** `read:training`
+    
+    **Filtering Options:**
+    - Filter by training ID
+    - Filter by trainer ID
+    - Filter by session date range
+    - Filter by status (scheduled, in-progress, completed, cancelled)
+    - Filter by location
+    
+    **Pagination:**
+    - Default limit: 20 items per page
+    - Maximum limit: 100 items per page
+  operationId: getAllTrainingSessions
+  security:
+    - BearerAuth: []
+  parameters:
+    - $ref: "../components/parameters/PaginationLimit.yaml"
+    - $ref: "../components/parameters/PaginationOffset.yaml"
+    - $ref: "../components/parameters/CompanyId.yaml"
+    - $ref: "../components/parameters/DateRangeStart.yaml"
+    - $ref: "../components/parameters/DateRangeEnd.yaml"
+    - name: training_id
+      in: query
+      description: Filter by training ID
+      required: false
+      schema:
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
+    - name: trainer_id
+      in: query
+      description: Filter by trainer ID
+      required: false
+      schema:
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
+    - name: status
+      in: query
+      description: Filter by session status
+      required: false
+      schema:
+        type: string
+        enum: [scheduled, in-progress, completed, cancelled]
+        example: "scheduled"
+    - name: location
+      in: query
+      description: Filter by location (partial match)
+      required: false
+      schema:
+        type: string
+        example: "Community Center"
+  responses:
+    "200":
+      description: Training sessions retrieved successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: "../components/schemas/training_session.yaml"
+              pagination:
+                type: object
+                properties:
+                  limit:
+                    type: integer
+                    example: 20
+                  offset:
+                    type: integer
+                    example: 0
+                  total:
+                    type: integer
+                    example: 50
+                  page_count:
+                    type: integer
+                    example: 3
+                  has_next:
+                    type: boolean
+                    example: true
+                  has_prev:
+                    type: boolean
+                    example: false
+              summary:
+                type: object
+                properties:
+                  total_sessions:
+                    type: integer
+                    example: 50
+                  completed_sessions:
+                    type: integer
+                    example: 35
+                  total_participants:
+                    type: integer
+                    example: 1200
+          example:
+            data:
+              - id: "clh1234567890abcdef"
+                training_id: "clh1234567890abcdef"
+                session_date: "2024-01-15"
+                start_time: "09:00"
+                end_time: "17:00"
+                location: "Community Center"
+                trainer_id: "clh1234567890abcdef"
+                max_participants: 30
+                current_participants: 25
+                status: "scheduled"
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+              - id: "clh1234567890abcdeg"
+                training_id: "clh1234567890abcdef"
+                session_date: "2024-01-16"
+                start_time: "09:00"
+                end_time: "17:00"
+                location: "Village Hall"
+                trainer_id: "clh1234567890abcdeg"
+                max_participants: 25
+                current_participants: 20
+                status: "scheduled"
+                created_at: "2024-01-14T09:15:00Z"
+                updated_at: "2024-01-14T09:15:00Z"
+            pagination:
+              limit: 20
+              offset: 0
+              total: 50
+              page_count: 3
+              has_next: true
+              has_prev: false
+            summary:
+              total_sessions: 50
+              completed_sessions: 35
+              total_participants: 1200
+    "400":
+      $ref: "../components/responses/ValidationError.yaml"
+    "401":
+      $ref: "../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../components/responses/ForbiddenError.yaml"
+    "500":
+      $ref: "../components/responses/ServerError.yaml"
+
+# update training session
+put:
+  tags:
+    - 🎓 Training
+  summary: Update training session
+  description: |
+    Update an existing training session.
+    
+    **Required Permissions:** `write:training`
+    
+    **Business Rules:**
+    - Cannot update completed sessions
+    - Cannot reduce max_participants below current_participants
+    - Cannot change session date if participants are already registered
+    - Only the original trainer or admin can update session
+  operationId: updateTrainingSession
   security:
     - BearerAuth: []
   requestBody:
@@ -13,4 +271,171 @@ post:
       application/json:
         schema:
           type: object
-          $ref: "../components/schemas/training_session.yaml"
+          properties:
+            session_date:
+              type: string
+              format: date
+              description: Updated session date
+              example: "2024-01-16"
+            start_time:
+              type: string
+              description: Updated start time
+              example: "10:00"
+            end_time:
+              type: string
+              description: Updated end time
+              example: "18:00"
+            location:
+              type: string
+              description: Updated location
+              example: "Updated Community Center"
+            max_participants:
+              type: integer
+              minimum: 1
+              description: Updated maximum participants
+              example: 35
+            status:
+              type: string
+              enum: [scheduled, in-progress, completed, cancelled]
+              description: Updated session status
+              example: "in-progress"
+            description:
+              type: string
+              description: Updated session description
+              example: "Updated sustainable farming practices workshop"
+        examples:
+          update_schedule:
+            summary: Update session schedule
+            description: Update session date and times
+            value:
+              session_date: "2024-01-16"
+              start_time: "10:00"
+              end_time: "18:00"
+          update_details:
+            summary: Update session details
+            description: Update comprehensive session details
+            value:
+              location: "Updated Community Center"
+              max_participants: 35
+              status: "in-progress"
+              description: "Updated sustainable farming practices workshop"
+  responses:
+    "200":
+      description: Training session updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: "../components/schemas/training_session.yaml"
+          example:
+            id: "clh1234567890abcdef"
+            training_id: "clh1234567890abcdef"
+            session_date: "2024-01-16"
+            start_time: "10:00"
+            end_time: "18:00"
+            location: "Updated Community Center"
+            trainer_id: "clh1234567890abcdef"
+            max_participants: 35
+            current_participants: 25
+            status: "in-progress"
+            created_at: "2024-01-15T10:30:00Z"
+            updated_at: "2024-01-15T11:30:00Z"
+    "400":
+      $ref: "../components/responses/ValidationError.yaml"
+    "401":
+      $ref: "../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../components/responses/ForbiddenError.yaml"
+    "404":
+      description: Training session not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Training Session Not Found"
+              message:
+                type: string
+                example: "Training session with the specified ID was not found"
+              code:
+                type: string
+                example: "TRAINING_SESSION_NOT_FOUND"
+    "409":
+      description: Training session update conflict
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Training Session Update Conflict"
+              message:
+                type: string
+                example: "Cannot reduce max_participants below current_participants"
+              code:
+                type: string
+                example: "TRAINING_SESSION_UPDATE_CONFLICT"
+    "500":
+      $ref: "../components/responses/ServerError.yaml"
+
+# delete training session
+delete:
+  tags:
+    - 🎓 Training
+  summary: Delete training session
+  description: |
+    Delete a training session from the system.
+    
+    **Required Permissions:** `write:training`
+    
+    **Business Rules:**
+    - Cannot delete sessions with registered participants
+    - Cannot delete completed sessions
+    - Only admin users can delete training sessions
+    - Soft delete - marks as deleted but preserves data for audit
+  operationId: deleteTrainingSession
+  security:
+    - BearerAuth: []
+  responses:
+    "204":
+      description: Training session deleted successfully
+    "400":
+      description: Cannot delete training session
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Cannot Delete Training Session"
+              message:
+                type: string
+                example: "Cannot delete session with registered participants"
+              code:
+                type: string
+                example: "TRAINING_SESSION_HAS_PARTICIPANTS"
+    "401":
+      $ref: "../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../components/responses/ForbiddenError.yaml"
+    "404":
+      description: Training session not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Training Session Not Found"
+              message:
+                type: string
+                example: "Training session with the specified ID was not found"
+              code:
+                type: string
+                example: "TRAINING_SESSION_NOT_FOUND"
+    "500":
+      $ref: "../components/responses/ServerError.yaml"

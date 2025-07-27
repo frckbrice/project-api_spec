@@ -1,6 +1,6 @@
 # Deployment Guide
 
-This guide explains how to deploy the SenWiseTool API documentation.
+This guide explains how to deploy the CocoaFlow API documentation.
 
 ## 🚀 Vercel Deployment
 
@@ -58,11 +58,11 @@ vercel ls
 
 ```bash
 # Build and run documentation server
-docker build -t senwisetool-api-docs .
-docker run -p 8080:8080 -v $(pwd):/app senwisetool-api-docs
+docker build -t cocoaflow-api-docs .
+docker run -p 8080:8080 -v $(pwd):/app cocoaflow-api-docs
 
 # Or run in detached mode
-docker run -d -p 8080:8080 -v $(pwd):/app --name api-docs senwisetool-api-docs
+docker run -d -p 8080:8080 -v $(pwd):/app --name api-docs cocoaflow-api-docs
 ```
 
 ### Why Docker for API Specs?
@@ -97,8 +97,8 @@ The CI/CD pipeline automatically deploys to GitHub Pages when you push to the `m
 npm run docs:serve
 
 # Docker way
-docker build -t senwisetool-api-docs .
-docker run -p 8080:8080 -v $(pwd):/app senwisetool-api-docs
+docker build -t cocoaflow-api-docs .
+docker run -p 8080:8080 -v $(pwd):/app cocoaflow-api-docs
 ```
 
 ### Documentation Updates
@@ -160,7 +160,7 @@ Security headers are configured in `vercel.json` for Vercel deployment.
    docker logs api-docs
    
    # Rebuild image
-   docker build --no-cache -t senwisetool-api-docs .
+   docker build --no-cache -t cocoaflow-api-docs .
    ```
 
 3. **Vercel Issues**
