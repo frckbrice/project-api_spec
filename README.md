@@ -98,6 +98,7 @@ npm run prepare          # Prepare for publishing
 | Environment | URL | Status |
 |-------------|-----|--------|
 | Specification | `./swt_api_spec/senwisetool.yaml` | ✅ Available |
+| Production | [https://project-apispec.vercel.app](https://project-apispec.vercel.app) | ✅ Available |
 | Local Preview | `http://localhost:8080` | ✅ Available |
 
 ### Authentication Examples
@@ -319,9 +320,9 @@ This API specification follows industry best practices:
 ## 👨‍💻 Developer
 
 ### Portfolio & Links
-- **Portfolio**: [https://maebrieporfolio.vercel.app](https://maebrieporfolio.vercel.app)
+- **Portfolio**: [https://maebrieporfolio.vercel.app/](https://maebrieporfolio.vercel.app/)
 - **GitHub**: [https://github.com/frckbrice](https://github.com/frckbrice)
-- **LinkedIn**: [https://linkedin.com/company/avombrice](https://linkedin.com/company/avombrice)
+- **LinkedIn**: [https://linkedin.com/in/avombrice](https://linkedin.com/in/avombrice)
 
 
 ## 📞 Support

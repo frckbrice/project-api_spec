@@ -22,25 +22,24 @@ info:
     4. Rate limiting: 1000 requests per hour per API key
     
     ## Environment
-    - **Documentation (Vercel)**: [https://senwisetool-api-docs.vercel.app](https://senwisetool-api-docs.vercel.app)
-    - **Documentation (GitHub Pages)**: [https://github.com/frckbrice/project-api_spec](https://github.com/frckbrice/project-api_spec)
+    - **Documentation**: [https://project-apispec.vercel.app](https://project-apispec.vercel.app)
     - **Local Development**: `http://localhost:8080`
     
     ## Support
-    - **Documentation**: [https://senwisetool-api-docs.vercel.app](https://senwisetool-api-docs.vercel.app)
+    - **Documentation**: [https://project-apispec.vercel.app](https://project-apispec.vercel.app)
     - **Support Email**: bricefrkc@gmail.com
-    - **Community**: [https://community.senwisetool.com](https://community.senwisetool.com)
+  
     
     ## SDKs & Libraries
     - [JavaScript/TypeScript SDK](https://github.com/senwisetool/js-sdk)
     - [Python SDK](https://github.com/senwisetool/python-sdk)
     - [Postman Collection](https://github.com/senwisetool/postman-collection)
     
-  termsOfService: ""
+  termsOfService: "https://senwisetool.com/terms"
   contact:
-    email: bricefrkc@gmail.com
-    url: "https://maebrieporfolio.vercel.app/"
-    name: avom brice
+    email: support@senwisetool.com
+    url: "https://senwisetool.com/contact"
+    name: SenWiseTool Support Team
   license:
     name: Apache 2.0
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -50,7 +49,7 @@ info:
 
 externalDocs:
   description: "GitHub Repository"
-  url: "https://github.com/frckbrice/senwisetool-api-spec"
+  url: "https://github.com/senwisetool/api-specification"
 
 tags:
   - name: Authentication
@@ -110,10 +109,8 @@ x-tagGroups:
       - Analytics
 
 servers:
-  - url: https://senwisetool-api-docs.vercel.app
-    description: Documentation and API specification (Vercel)
-  - url: https://github.com/frckbrice/project-api_spec
-    description: Documentation and API specification (GitHub Pages)
+  - url: https://project-apispec.vercel.app
+    description: Documentation and API specification
   - url: http://localhost:8080
     description: Local development environment
 
