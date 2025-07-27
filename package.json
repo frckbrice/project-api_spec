@@ -18,7 +18,7 @@
     "email": "bricefrkc@gmail.com",
     "url": "https://maebrieporfolio.vercel.app/"
   },
-      "main": "swt_api_spec/cocoaflow-api.yaml",
+  "main": "swt_api_spec/cocoaflow-api.yaml",
   "repository": {
     "type": "git",
     "url": "git@github.com:frckbrice/project-api_spec.git",
@@ -32,14 +32,17 @@
     "npm": ">=8.0.0"
   },
   "scripts": {
+    "prepare": "husky install",
     "preview": "redocly preview-docs ./swt_api_spec/cocoaflow-api.yaml",
     "build": "redocly build-docs ./swt_api_spec/cocoaflow-api.yaml -o ./public/index.html",
     "bundle": "redocly bundle ./swt_api_spec/cocoaflow-api.yaml -o ./dist/cocoaflow-api.yaml",
     "bundle-deref": "redocly bundle ./swt_api_spec/cocoaflow-api.yaml -o ./dist/cocoaflow-api-deref.yaml -d true",
     "lint": "redocly lint ./swt_api_spec/cocoaflow-api.yaml",
-    "lint:fix": "redocly lint ./swt_api_spec/cocoaflow-api.yaml --fix",
+    "lint:fix": "redocly lint ./swt_api_spec/cocoaflow-api.yaml",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md,yaml,yml}\"",
+    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md,yaml,yml}\"",
     "validate": "redocly validate ./swt_api_spec/cocoaflow-api.yaml",
-    "test": "npm run lint && npm run validate",
+    "test": "npm run lint && npm run validate && npm run format:check",
     "docs:serve": "redocly preview-docs ./swt_api_spec/cocoaflow-api.yaml --port 8080",
     "docs:build": "redocly build-docs ./swt_api_spec/cocoaflow-api.yaml -o ./public/index.html",
     "generate:client": "openapi-generator-cli generate -i ./dist/cocoaflow-api.yaml -g typescript-axios -o ./generated/typescript",
@@ -56,13 +59,14 @@
     "lint-staged": "^13.0.0"
   },
   "lint-staged": {
-    "*.{yaml,yml}": [
-      "redocly lint --fix"
+    "*.{js,jsx,ts,tsx,json,md,yaml,yml}": [
+      "prettier --write"
     ]
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged",
+      "pre-push": "npm test"
     }
   },
   "files": [
