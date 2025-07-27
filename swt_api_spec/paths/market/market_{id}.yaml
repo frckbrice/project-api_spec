@@ -1,7 +1,7 @@
 # get a specific market by its id
 get:
   tags:
-    - Market
+    - 🏪 Markets
   summary: Get market by id
   operationId: getMarketById
   description: To get a specific market by id. Only administrators can use this operation. If you want to get a specific market by id, use the **getMarketById** operation.
@@ -35,7 +35,7 @@ get:
 # update a market
 put:
   tags:
-    - Market
+    - 🏪 Markets
   summary: Update market
   operationId: updateMarket
   description: To update a market by id. Only administrators can use this operation. If you want to update a market, use the **updateMarket** operation.
@@ -72,7 +72,7 @@ put:
 # delete a market
 delete:
   tags:
-    - Market
+    - 🏪 Markets
   summary: Delete market
   operationId: deleteMarket
   description: To delete a market by id. Only administrators can use this operation. If you want to delete a market, use the **deleteMarket** operation.

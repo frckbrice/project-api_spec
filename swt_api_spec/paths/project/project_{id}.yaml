@@ -1,6 +1,6 @@
 get:
   tags:
-    - Project
+    - 🌿 Projects
   description: Returns Project based on its id
   summary: Find project by id
   operationId: getProjectById
@@ -37,7 +37,7 @@ get:
 # update project
 put:
   tags:
-    - Project
+    - 🌿 Projects
   description: To update a project by id. Only administrators can use this operation.
   summary: Update a project by id
   operationId: updateProjectById
@@ -72,7 +72,7 @@ put:
 
 delete:
   tags:
-    - Project
+    - 🌿 Projects
   description: To delete a project by id. Only administrators can use this operation. If you want to delete a project, use the **deleteProject** operation.
   summary: Delete a project by id
   operationId: deleteProjectById

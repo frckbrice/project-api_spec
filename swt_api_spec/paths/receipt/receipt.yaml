@@ -1,8 +1,8 @@
 # create a data for a receipt
 post:
   tags:
-    - Receipt
-  summary: Create a data for a receipt
+    - 💰 Transactions
+  summary: Create a receipt
   description: The receipt data are created after a specific transaction between the farmer and the company during the buying process.
   security:
     - BearerAuth: []
@@ -28,7 +28,7 @@ post:
 # get all the receipt produced during a single market
 get:
   tags:
-    - Receipt
+    - 💰 Transactions
   summary: Get all receipts
   description: To get all receipt produced during a single market.
   operationId: getMarketReceipts

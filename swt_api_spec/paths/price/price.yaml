@@ -23,7 +23,7 @@ post:
 get:
   tags:
     - Price
-  summary: Get all price
+  summary: Get all prices
   operationId: getAllPrice
   description: To get all price. Only administrators can use this operation. If you want to get all price, use the **getAllPrice** operation.
   responses:

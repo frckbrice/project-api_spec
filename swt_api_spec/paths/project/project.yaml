@@ -1,8 +1,8 @@
 # list all users
 post:
   tags:
-    - Project
-  summary: get all project done by this company by archived, active, draft
+    - 🌿 Projects
+  summary: Create a new project
   description: To create the project form by a specific company administrator (ADG).
   operationId: getAllProjectsByCompany
   security:

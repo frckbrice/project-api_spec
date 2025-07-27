@@ -1,17 +1,17 @@
 get:
   tags:
     - 🏡 Farms
-  summary: Get farm by id
-  operationId: getFarmById
+  summary: Get farm by ID
   description: |
-    Retrieve a single farm by its ID.
+    Returns a specific farm by its ID.
 
     **Required Permissions:** `read:farms`
 
     **Business Rules:**
-    - Users can only access farms in their company
-    - GPS coordinates are returned with high precision
-    - Farm images are returned as signed URLs
+    - Farm data includes location, farmer, and status
+    - GPS coordinates are validated
+    - Image URLs are checked for accessibility
+  operationId: getFarmById
   parameters:
     - name: id
       in: path
@@ -51,86 +51,21 @@ get:
     "500":
       $ref: "../../components/responses/ServerError.yaml"
 
-delete:
-  tags:
-    - 🏡 Farms
-  summary: Delete farm by id
-  operationId: deleteFarmById
-  description: |
-    Delete a farm from the system.
-
-    **Required Permissions:** `write:farms`
-
-    **Business Rules:**
-    - Cannot delete farms with active projects
-    - Farm data is preserved for audit purposes
-    - Associated resources are marked as inactive
-  parameters:
-    - name: id
-      in: path
-      description: The ID of the farm to delete
-      required: true
-      schema:
-        type: string
-        format: cuid
-        example: "clh1234567890abcdef"
-  responses:
-    "204":
-      description: Farm deleted successfully
-    "400":
-      description: Cannot delete farm
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Cannot Delete Farm"
-              message:
-                type: string
-                example: "Farm has active projects"
-              code:
-                type: string
-                example: "FARM_HAS_ACTIVE_PROJECTS"
-    "401":
-      $ref: "../../components/responses/UnauthorizedError.yaml"
-    "403":
-      $ref: "../../components/responses/ForbiddenError.yaml"
-    "404":
-      description: Farm not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Farm Not Found"
-              message:
-                type: string
-                example: "Farm with the specified ID was not found"
-              code:
-                type: string
-                example: "FARM_NOT_FOUND"
-    "500":
-      $ref: "../../components/responses/ServerError.yaml"
-
 patch:
   tags:
     - 🏡 Farms
-  summary: Update farm by id
-  operationId: updateFarmById
+  summary: Update farm
   description: |
-    Update a farm's information.
+    Update an existing farm's details.
 
     **Required Permissions:** `write:farms`
 
     **Business Rules:**
-    - GPS coordinates must be valid
-    - Farm images are uploaded separately
-    - Updates are logged for audit purposes
     - Only specific fields can be updated
+    - GPS coordinates must be valid
+    - Status changes are logged
+    - Image URLs are validated
+  operationId: updateFarmById
   parameters:
     - name: id
       in: path
@@ -184,6 +119,71 @@ patch:
             $ref: "../../components/schemas/farm.yaml"
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "404":
+      description: Farm not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Farm Not Found"
+              message:
+                type: string
+                example: "Farm with the specified ID was not found"
+              code:
+                type: string
+                example: "FARM_NOT_FOUND"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"
+
+delete:
+  tags:
+    - 🏡 Farms
+  summary: Delete farm
+  description: |
+    Delete a farm from the system.
+
+    **Required Permissions:** `write:farms`
+
+    **Business Rules:**
+    - Cannot delete farms with active projects
+    - Farm data is preserved for audit purposes
+    - Associated resources are marked as inactive
+  operationId: deleteFarmById
+  parameters:
+    - name: id
+      in: path
+      description: The ID of the farm to delete
+      required: true
+      schema:
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
+  responses:
+    "204":
+      description: Farm deleted successfully
+    "400":
+      description: Cannot delete farm
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Cannot Delete Farm"
+              message:
+                type: string
+                example: "Farm has active projects"
+              code:
+                type: string
+                example: "FARM_HAS_ACTIVE_PROJECTS"
     "401":
       $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":

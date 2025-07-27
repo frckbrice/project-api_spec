@@ -5,9 +5,9 @@ post:
   summary: Create inspection data
   description: |
     Create inspection data for each farm inspected.
-    
+
     **Required Permissions:** `write:inspection`
-    
+
     **Business Rules:**
     - Inspection data must be associated with a valid farm
     - GPS coordinates are required for compliance tracking
@@ -27,26 +27,24 @@ post:
             summary: Basic inspection data
             description: Create inspection data with minimal information
             value:
-              farm_id: "clh1234567890abcdef"
-              inspector_id: "clh1234567890abcdef"
-              inspection_date: "2024-01-15"
-              compliance_score: 85
-              notes: "Farm meets basic compliance requirements"
+              project_id: "clh1234567890abcdef"
+              project_data:
+                field_1: "value_1"
+                field_2: "value_2"
+              collected_by: "clh1234567890abcdef"
+              collected_at: "2024-01-15T10:30:00Z"
           detailed_inspection:
             summary: Detailed inspection data
             description: Create inspection data with comprehensive details
             value:
-              farm_id: "clh1234567890abcdef"
-              inspector_id: "clh1234567890abcdef"
-              inspection_date: "2024-01-15"
-              compliance_score: 85
-              notes: "Farm meets basic compliance requirements"
-              gps_coordinates:
-                lat: 6.5244
-                lng: 3.3792
-              photos: ["https://storage.cocoaflow.com/inspections/photo1.jpg"]
-              violations: []
-              recommendations: ["Improve soil management practices"]
+              project_id: "clh1234567890abcdef"
+              project_data:
+                field_1: "value_1"
+                field_2: "value_2"
+                field_3: "value_3"
+              collected_by: "clh1234567890abcdef"
+              project_data_url: "https://storage.cocoaflow.com/projects/data1.json"
+              collected_at: "2024-01-15T10:30:00Z"
   responses:
     "201":
       description: Inspection data created successfully
@@ -62,11 +60,13 @@ post:
             $ref: "../../components/schemas/inspection_data.yaml"
           example:
             id: "clh1234567890abcdef"
-            farm_id: "clh1234567890abcdef"
-            inspector_id: "clh1234567890abcdef"
-            inspection_date: "2024-01-15"
-            compliance_score: 85
-            notes: "Farm meets basic compliance requirements"
+            project_id: "clh1234567890abcdef"
+            project_data:
+              field_1: "value_1"
+              field_2: "value_2"
+            collected_by: "clh1234567890abcdef"
+            project_data_url: "https://storage.cocoaflow.com/projects/data1.json"
+            collected_at: "2024-01-15T10:30:00Z"
             created_at: "2024-01-15T10:30:00Z"
             updated_at: "2024-01-15T10:30:00Z"
     "400":
@@ -75,8 +75,8 @@ post:
       $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
       $ref: "../../components/responses/ForbiddenError.yaml"
-    "409":
-      description: Inspection data already exists for this farm and date
+    "404":
+      description: Project not found
       content:
         application/json:
           schema:
@@ -84,13 +84,29 @@ post:
             properties:
               error:
                 type: string
-                example: "Inspection Already Exists"
+                example: "Project Not Found"
               message:
                 type: string
-                example: "Inspection data already exists for this farm on this date"
+                example: "Project with the specified ID was not found"
               code:
                 type: string
-                example: "INSPECTION_ALREADY_EXISTS"
+                example: "PROJECT_NOT_FOUND"
+    "409":
+      description: Inspection data already exists
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Inspection Data Already Exists"
+              message:
+                type: string
+                example: "Inspection data already exists for this project and date"
+              code:
+                type: string
+                example: "INSPECTION_DATA_ALREADY_EXISTS"
     "500":
       $ref: "../../components/responses/ServerError.yaml"
 
@@ -98,76 +114,57 @@ post:
 get:
   tags:
     - 🔍 Inspection
-  summary: List all inspection data
+  summary: Get all inspection data
   description: |
-    Retrieve a paginated list of inspection data with optional filtering capabilities.
-    
+    Retrieve all inspection data with optional filtering.
+
     **Required Permissions:** `read:inspection`
-    
-    **Filtering Options:**
-    - Filter by farm ID
-    - Filter by inspector ID
-    - Filter by inspection date range
-    - Filter by compliance score range
+
+    **Features:**
     - Filter by project ID
-    
-    **Pagination:**
-    - Default limit: 20 items per page
-    - Maximum limit: 100 items per page
-  operationId: getAllInspectionData
+    - Filter by collector
+    - Filter by date range
+    - Pagination support
+  operationId: listInspectionData
   security:
     - BearerAuth: []
   parameters:
     - $ref: "../../components/parameters/PaginationLimit.yaml"
     - $ref: "../../components/parameters/PaginationOffset.yaml"
-    - $ref: "../../components/parameters/CompanyId.yaml"
     - $ref: "../../components/parameters/DateRangeStart.yaml"
     - $ref: "../../components/parameters/DateRangeEnd.yaml"
-    - name: farm_id
-      in: query
-      description: Filter by farm ID
-      required: false
-      schema:
-        type: string
-        format: cuid
-        example: "clh1234567890abcdef"
-    - name: inspector_id
-      in: query
-      description: Filter by inspector ID
-      required: false
-      schema:
-        type: string
-        format: cuid
-        example: "clh1234567890abcdef"
     - name: project_id
       in: query
-      description: Filter by project ID
       required: false
+      description: Filter by project ID
       schema:
         type: string
         format: cuid
         example: "clh1234567890abcdef"
-    - name: min_score
+    - name: collected_by
       in: query
-      description: Minimum compliance score
       required: false
+      description: Filter by collector ID
       schema:
-        type: integer
-        minimum: 0
-        maximum: 100
-        example: 80
-    - name: max_score
-      in: query
-      description: Maximum compliance score
-      required: false
-      schema:
-        type: integer
-        minimum: 0
-        maximum: 100
-        example: 100
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
   responses:
     "200":
-      description: Inspection data retrieved successfully
+      description: List of inspection data retrieved successfully
+      headers:
+        X-Total-Count:
+          description: Total number of inspection data matching the filter criteria
+          schema:
+            type: integer
+        X-Page-Count:
+          description: Total number of pages
+          schema:
+            type: integer
+        Link:
+          description: Pagination links (first, prev, next, last)
+          schema:
+            type: string
       content:
         application/json:
           schema:
@@ -180,71 +177,53 @@ get:
               pagination:
                 type: object
                 properties:
+                  total:
+                    type: integer
+                    example: 150
                   limit:
                     type: integer
                     example: 20
                   offset:
                     type: integer
                     example: 0
-                  total:
-                    type: integer
-                    example: 150
-                  page_count:
-                    type: integer
-                    example: 8
-                  has_next:
+                  has_more:
                     type: boolean
                     example: true
-                  has_prev:
-                    type: boolean
-                    example: false
-              summary:
-                type: object
-                properties:
-                  average_score:
-                    type: number
-                    example: 87.5
-                  total_inspections:
-                    type: integer
-                    example: 150
-                  compliance_rate:
-                    type: number
-                    example: 92.3
           example:
             data:
               - id: "clh1234567890abcdef"
-                farm_id: "clh1234567890abcdef"
-                inspector_id: "clh1234567890abcdef"
-                inspection_date: "2024-01-15"
-                compliance_score: 85
-                notes: "Farm meets basic compliance requirements"
+                project_id: "clh1234567890abcdef"
+                project_data:
+                  field_1: "value_1"
+                  field_2: "value_2"
+                collected_by: "clh1234567890abcdef"
+                project_data_url: "https://storage.cocoaflow.com/projects/data1.json"
+                collected_at: "2024-01-15T10:30:00Z"
                 created_at: "2024-01-15T10:30:00Z"
                 updated_at: "2024-01-15T10:30:00Z"
               - id: "clh1234567890abcdeg"
-                farm_id: "clh1234567890abcdeg"
-                inspector_id: "clh1234567890abcdef"
-                inspection_date: "2024-01-14"
-                compliance_score: 90
-                notes: "Excellent compliance standards"
+                project_id: "clh1234567890abcdeg"
+                project_data:
+                  field_1: "value_3"
+                  field_2: "value_4"
+                collected_by: "clh1234567890abcdef"
+                project_data_url: "https://storage.cocoaflow.com/projects/data2.json"
+                collected_at: "2024-01-14T09:15:00Z"
                 created_at: "2024-01-14T09:15:00Z"
                 updated_at: "2024-01-14T09:15:00Z"
             pagination:
+              total: 150
               limit: 20
               offset: 0
-              total: 150
-              page_count: 8
-              has_next: true
-              has_prev: false
-            summary:
-              average_score: 87.5
-              total_inspections: 150
-              compliance_rate: 92.3
+              has_more: true
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
       $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
       $ref: "../../components/responses/ForbiddenError.yaml"
+    "429":
+      $ref: "../../components/responses/RateLimitError.yaml"
     "500":
       $ref: "../../components/responses/ServerError.yaml"
 
@@ -254,82 +233,32 @@ put:
     - 🔍 Inspection
   summary: Update inspection data
   description: |
-    Update an existing inspection data record.
-    
+    Update existing inspection data.
+
     **Required Permissions:** `write:inspection`
-    
+
     **Business Rules:**
-    - Cannot update inspection data older than 30 days
-    - Cannot change inspection date after submission
-    - Only the original inspector or admin can update
+    - Cannot update data older than 30 days
+    - Only the original collector or admin can update
     - All changes are logged for audit purposes
   operationId: updateInspectionData
   security:
     - BearerAuth: []
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: ID of the inspection data to update
+      schema:
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
   requestBody:
     required: true
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            compliance_score:
-              type: integer
-              minimum: 0
-              maximum: 100
-              description: Updated compliance score
-              example: 90
-            notes:
-              type: string
-              description: Updated inspection notes
-              example: "Updated compliance assessment"
-            gps_coordinates:
-              type: object
-              properties:
-                lat:
-                  type: number
-                  example: 6.5244
-                lng:
-                  type: number
-                  example: 3.3792
-            photos:
-              type: array
-              items:
-                type: string
-                format: uri
-              description: Updated inspection photos
-              example: ["https://storage.cocoaflow.com/inspections/photo1.jpg"]
-            violations:
-              type: array
-              items:
-                type: string
-              description: Updated violations list
-              example: ["Soil erosion detected"]
-            recommendations:
-              type: array
-              items:
-                type: string
-              description: Updated recommendations
-              example: ["Implement soil conservation measures"]
-        examples:
-          update_score:
-            summary: Update compliance score
-            description: Update the compliance score and notes
-            value:
-              compliance_score: 90
-              notes: "Updated compliance assessment - improved practices observed"
-          update_details:
-            summary: Update inspection details
-            description: Update comprehensive inspection details
-            value:
-              compliance_score: 90
-              notes: "Updated compliance assessment - improved practices observed"
-              gps_coordinates:
-                lat: 6.5244
-                lng: 3.3792
-              photos: ["https://storage.cocoaflow.com/inspections/photo1.jpg"]
-              violations: ["Soil erosion detected"]
-              recommendations: ["Implement soil conservation measures"]
+          $ref: "../../components/schemas/inspection_data.yaml"
   responses:
     "200":
       description: Inspection data updated successfully
@@ -339,17 +268,13 @@ put:
             $ref: "../../components/schemas/inspection_data.yaml"
           example:
             id: "clh1234567890abcdef"
-            farm_id: "clh1234567890abcdef"
-            inspector_id: "clh1234567890abcdef"
-            inspection_date: "2024-01-15"
-            compliance_score: 90
-            notes: "Updated compliance assessment - improved practices observed"
-            gps_coordinates:
-              lat: 6.5244
-              lng: 3.3792
-            photos: ["https://storage.cocoaflow.com/inspections/photo1.jpg"]
-            violations: ["Soil erosion detected"]
-            recommendations: ["Implement soil conservation measures"]
+            project_id: "clh1234567890abcdef"
+            project_data:
+              field_1: "updated_value_1"
+              field_2: "updated_value_2"
+            collected_by: "clh1234567890abcdef"
+            project_data_url: "https://storage.cocoaflow.com/projects/data1.json"
+            collected_at: "2024-01-15T10:30:00Z"
             created_at: "2024-01-15T10:30:00Z"
             updated_at: "2024-01-15T11:30:00Z"
     "400":
@@ -373,9 +298,9 @@ put:
                 example: "Inspection data with the specified ID was not found"
               code:
                 type: string
-                example: "INSPECTION_NOT_FOUND"
+                example: "INSPECTION_DATA_NOT_FOUND"
     "409":
-      description: Inspection data update conflict
+      description: Update conflict
       content:
         application/json:
           schema:
@@ -383,13 +308,13 @@ put:
             properties:
               error:
                 type: string
-                example: "Inspection Update Conflict"
+                example: "Update Conflict"
               message:
                 type: string
                 example: "Cannot update inspection data older than 30 days"
               code:
                 type: string
-                example: "INSPECTION_UPDATE_CONFLICT"
+                example: "UPDATE_CONFLICT"
     "500":
       $ref: "../../components/responses/ServerError.yaml"
 
@@ -400,17 +325,26 @@ delete:
   summary: Delete inspection data
   description: |
     Delete inspection data from the system.
-    
+
     **Required Permissions:** `write:inspection`
-    
+
     **Business Rules:**
-    - Cannot delete inspection data older than 30 days
-    - Cannot delete inspection data that has been submitted for compliance
+    - Cannot delete data older than 30 days
+    - Cannot delete data that has been submitted for compliance
     - Only admin users can delete inspection data
-    - Soft delete - marks as deleted but preserves data for audit
+    - Soft delete - marks as deleted but preserves data for audit trail
   operationId: deleteInspectionData
   security:
     - BearerAuth: []
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: ID of the inspection data to delete
+      schema:
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
   responses:
     "204":
       description: Inspection data deleted successfully
@@ -429,7 +363,7 @@ delete:
                 example: "Cannot delete inspection data that has been submitted for compliance"
               code:
                 type: string
-                example: "INSPECTION_ALREADY_SUBMITTED"
+                example: "INSPECTION_DATA_ALREADY_SUBMITTED"
     "401":
       $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
@@ -449,6 +383,6 @@ delete:
                 example: "Inspection data with the specified ID was not found"
               code:
                 type: string
-                example: "INSPECTION_NOT_FOUND"
+                example: "INSPECTION_DATA_NOT_FOUND"
     "500":
       $ref: "../../components/responses/ServerError.yaml"

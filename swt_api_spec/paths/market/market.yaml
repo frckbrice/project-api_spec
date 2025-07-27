@@ -1,32 +1,6 @@
-#create a market
-post:
-  tags:
-    - Market
-  summary: Create a market
-  operationId: createMarket
-  description: To create a market. This information is used in the company dashboard to display all the markets. Only administrators can use this operation.
-  security:
-    - BearerAuth: []
-  requestBody:
-    required: true
-    content:
-      application/json:
-        schema:
-          $ref: "../../components/schemas/market.yaml"
-  responses:
-    "201":
-      description: market created
-    "401":
-      description: Unauthorized access
-    "403":
-      description: Forbidden access
-    "500":
-      description: internal server error
-
-# get all markets
 get:
   tags:
-    - Market
+    - 🏪 Markets
   summary: Get all markets
   operationId: getAllMarkets
   description: To get all markets. Only administrators can use this operation. If you want to get all markets, use the **getAllMarkets** operation.
@@ -51,3 +25,28 @@ get:
       #application/json:
       #schema:
       #$ref: "../../components/schemas/error.yaml"
+
+#create a market
+post:
+  tags:
+    - 🏪 Markets
+  summary: Create a market
+  operationId: createMarket
+  description: To create a market. This information is used in the company dashboard to display all the markets. Only administrators can use this operation.
+  security:
+    - BearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/market.yaml"
+  responses:
+    "201":
+      description: market created
+    "401":
+      description: Unauthorized access
+    "403":
+      description: Forbidden access
+    "500":
+      description: internal server error
