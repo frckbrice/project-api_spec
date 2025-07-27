@@ -19,16 +19,7 @@ put:
   tags:
     - 🌿 Audits
   summary: Update an audit
-  description: |
-    Update an existing audit.
-
-    **Required Permissions:** `write:audit`
-
-    **Business Rules:**
-    - Cannot update audits older than 30 days
-    - Cannot change audit type or resource ID
-    - Only the original auditor or admin can update
-    - All changes are logged for audit purposes
+  description: Update an existing audit
   operationId: updateAudit
   security:
     - BearerAuth: []
@@ -46,7 +37,7 @@ put:
     content:
       application/json:
         schema:
-          $ref: "../components/schemas/audit.yaml"
+          $ref: "../../components/schemas/audit.yaml"
         examples:
           update_project_audit:
             summary: Update project audit
@@ -82,6 +73,53 @@ put:
                 ["Improve storage facilities", "Enhance quality control"]
               metadata:
                 duration_minutes: 120
+  responses:
+    "200":
+      description: Audit updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/audit.yaml"
+    "400":
+      $ref: "../../components/responses/ValidationError.yaml"
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "404":
+      description: Audit not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Audit Not Found"
+              message:
+                type: string
+                example: "Audit with the specified ID was not found"
+              code:
+                type: string
+                example: "AUDIT_NOT_FOUND"
+    "409":
+      description: Update conflict
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Update Conflict"
+              message:
+                type: string
+                example: "Cannot update audit in current state"
+              code:
+                type: string
+                example: "UPDATE_CONFLICT"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"
 
 delete:
   tags:
@@ -89,3 +127,39 @@ delete:
   summary: Delete an audit
   description: Delete an existing audit
   operationId: deleteAudit
+  security:
+    - BearerAuth: []
+  parameters:
+    - name: audit_id
+      in: path
+      required: true
+      description: ID of the audit to delete
+      schema:
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
+  responses:
+    "204":
+      description: Audit deleted successfully
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "404":
+      description: Audit not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Audit Not Found"
+              message:
+                type: string
+                example: "Audit with the specified ID was not found"
+              code:
+                type: string
+                example: "AUDIT_NOT_FOUND"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"

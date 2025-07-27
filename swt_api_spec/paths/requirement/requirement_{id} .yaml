@@ -1,89 +1,113 @@
 patch:
   tags:
     - Requirement
-  summary: Update a requirement
-  operationId: updateRequirement
-  description: To update a requirement. Only administrators can use this operation. If you want to update a requirement, use the **updateRequirement** operation.
+  summary: Update requirement by id
+  description: Update an existing requirement
+  operationId: updateRequirementById
+  security:
+    - BearerAuth: []
   parameters:
     - name: id
       in: path
-      description: requireement id
       required: true
+      description: ID of the requirement to update
       schema:
         type: string
-        example: "AQA9CNo0cXNLt6sZp5Uc5P0"
-      style: simple
+        format: cuid
+        example: "clh1234567890abcdef"
   requestBody:
     required: true
     content:
       application/json:
         schema:
           $ref: "../../components/schemas/requirement.yaml"
-          properties: {}
   responses:
     "200":
-      description: requirement updated
-    "401":
-      description: Unauthorized access
-    "403":
-      description: Forbidden access
-    "500":
-      description: internal server error
-#get single requirement
-get:
-  tags:
-    - Requirement
-  summary: Get requirement by id
-  operationId: getRequirement
-  description: To get a specific requirement. Only administrators can use this operation. If you want to get a specific requirement, use the **getRequirement** operation.
-  parameters:
-    - name: id
-      in: path
-      description: requirement id
-      required: true
-      schema:
-        type: string
-        example: "AQA9CNo0cXNLt6sZp5Uc5P0"
-      style: simple
-  responses:
-    "200":
-      description: requirement
+      description: Requirement updated successfully
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/requirement.yaml
-    "404":
-      description: requirement not found
+            $ref: "../../components/schemas/requirement.yaml"
+    "400":
+      $ref: "../../components/responses/ValidationError.yaml"
     "401":
-      description: Unauthorized access
+      $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
-      description: Forbidden access
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "404":
+      description: Requirement not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Requirement Not Found"
+              message:
+                type: string
+                example: "Requirement with the specified ID was not found"
+              code:
+                type: string
+                example: "REQUIREMENT_NOT_FOUND"
+    "409":
+      description: Update conflict
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Update Conflict"
+              message:
+                type: string
+                example: "Cannot update requirement in current state"
+              code:
+                type: string
+                example: "UPDATE_CONFLICT"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"
 
-#delete a requirement
 delete:
   tags:
     - Requirement
-  summary: Delete a Requirement
-  operationId: deleteRequirement
-  description: To delete a specific requirement.
+  summary: Delete requirement by id
+  description: Delete an existing requirement
+  operationId: deleteRequirementById
+  security:
+    - BearerAuth: []
   parameters:
     - name: id
       in: path
-      description: Requirement id
       required: true
+      description: ID of the requirement to delete
       schema:
         type: string
-        example: "AQA9CNo0cXNLt6sZp5Uc5P0"
-      style: simple
-
+        format: cuid
+        example: "clh1234567890abcdef"
   responses:
-    "200":
-      description: Requirement deleted
+    "204":
+      description: Requirement deleted successfully
     "401":
-      description: Unauthorized access
+      $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
-      description: Forbidden access
+      $ref: "../../components/responses/ForbiddenError.yaml"
     "404":
-      description: No such Requirement
+      description: Requirement not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Requirement Not Found"
+              message:
+                type: string
+                example: "Requirement with the specified ID was not found"
+              code:
+                type: string
+                example: "REQUIREMENT_NOT_FOUND"
     "500":
-      description: internal server error
+      $ref: "../../components/responses/ServerError.yaml"

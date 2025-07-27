@@ -2,26 +2,42 @@
 delete:
   tags:
     - CollectorAgent
-  summary: Delete collector agent
-  description: the collector agent could be deleted at any moment by the company administrator.
-  operationId: deleteCollectorAgent
+  summary: Delete collector agent by id
+  description: Delete an existing collector agent
+  operationId: deleteCollectorAgentById
+  security:
+    - BearerAuth: []
   parameters:
-    - in: path
-      name: id
-      description: collector agent id
+    - name: id
+      in: path
       required: true
+      description: ID of the collector agent to delete
       schema:
-        # type: array
-        # items:
         type: string
-        example: AQA9CNo0cXNLt6sZp5Uc5P0
-      style: simple
+        format: cuid
+        example: "clh1234567890abcdef"
   responses:
-    "200":
-      description: collector agent deleted
+    "204":
+      description: Collector agent deleted successfully
     "401":
-      description: Unauthorized access
+      $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
-      description: Forbidden access
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "404":
+      description: Collector agent not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Collector Agent Not Found"
+              message:
+                type: string
+                example: "Collector agent with the specified ID was not found"
+              code:
+                type: string
+                example: "COLLECTOR_AGENT_NOT_FOUND"
     "500":
-      description: internal server error
+      $ref: "../../components/responses/ServerError.yaml"

@@ -1,28 +1,20 @@
-type: object
-properties:
-  statusCode:
-    type: number
-    example: 403 | 401 | 403 | 404 | 500
-  timestamp:
-    type: string
-    format: date-time
-    example: "2022-01-01T12:34:56Z"
-    description: The date and time when the response was generated.
-  path:
-    type: string
-    example: "/api/users/123"
-    description: The API endpoint that generated the response.
-    nullable: false
-  message:
-    type: object
-    format: json
-    properties:
-      message:
-        type: string
-        example: "Cannot PUT /v1/requirements"
-      error:
-        type: string
-        example: "NOT FOUND"
-      statusCode:
-        type: number
-        example: 404 | 403 | 401 | 403 | 422 | 500
+schema:
+  type: object
+  properties:
+    statusCode:
+      type: number
+      example: 403
+    message:
+      type: string
+      example: "Access denied"
+    error:
+      type: string
+      example: "Forbidden"
+    code:
+      type: string
+      example: "FORBIDDEN"
+  required:
+    - statusCode
+    - message
+    - error
+    - code

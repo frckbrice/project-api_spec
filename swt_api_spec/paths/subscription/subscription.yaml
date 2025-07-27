@@ -207,7 +207,7 @@ put:
   security:
     - BearerAuth: []
   parameters:
-    - name: id
+    - name: subscription_id
       in: path
       required: true
       description: ID of the subscription to update

@@ -245,7 +245,7 @@ put:
   security:
     - BearerAuth: []
   parameters:
-    - name: id
+    - name: inspection_id
       in: path
       required: true
       description: ID of the inspection data to update
@@ -311,7 +311,7 @@ put:
                 example: "Update Conflict"
               message:
                 type: string
-                example: "Cannot update inspection data older than 30 days"
+                example: "Cannot update inspection data in current state"
               code:
                 type: string
                 example: "UPDATE_CONFLICT"
@@ -337,7 +337,7 @@ delete:
   security:
     - BearerAuth: []
   parameters:
-    - name: id
+    - name: inspection_id
       in: path
       required: true
       description: ID of the inspection data to delete

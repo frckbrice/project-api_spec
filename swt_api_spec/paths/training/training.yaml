@@ -182,7 +182,7 @@ put:
   security:
     - BearerAuth: []
   parameters:
-    - name: id
+    - name: training_id
       in: path
       required: true
       description: ID of the training to update
