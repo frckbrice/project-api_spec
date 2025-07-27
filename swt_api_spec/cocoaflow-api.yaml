@@ -245,6 +245,8 @@ paths:
     $ref: paths/farm/farm_{id}.yaml
   "/audits": # unified audits endpoint
     $ref: paths/audits.yaml
+  "/audits/{audit_id}": # unified audits endpoint
+    $ref: paths/audits.yaml
   "/receipts": # receipts
     $ref: paths/receipt/receipt.yaml
   "/receipts/{id}":
