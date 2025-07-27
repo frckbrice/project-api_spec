@@ -3,16 +3,7 @@ post:
   tags:
     - 💰 Transactions
   summary: Create a transaction
-  description: |
-    Create a transaction made at the end of market that represents the information about this hand on operation.
-    
-    **Required Permissions:** `write:transactions`
-    
-    **Business Rules:**
-    - Transaction amount must be positive
-    - Transaction must be associated with a valid market session
-    - Transaction status starts as 'pending' and can be updated
-    - Only authorized users can create transactions
+  description: Create a new transaction record
   operationId: createTransaction
   security:
     - BearerAuth: []
@@ -21,58 +12,68 @@ post:
     content:
       application/json:
         schema:
-          $ref: ../components/schemas/transaction.yaml
+          $ref: "../../components/schemas/transaction.yaml"
         examples:
           basic_transaction:
             summary: Basic transaction
             description: Create a transaction with minimal information
             value:
               market_id: "clh1234567890abcdef"
-              farmer_id: "clh1234567890abcdef"
-              amount: 150000
-              currency: "USD"
-              transaction_type: "purchase"
+              date: "2024-01-15T10:30:00Z"
+              quantity: 500
+              net_weight_declared_in_Ton: 0.5
+              humidity_level_of_product: 7.5
+              total_quantity_in_bags: 10
+              product_quality: "Grade A"
           detailed_transaction:
             summary: Detailed transaction
-            description: Create a transaction with full details
+            description: Create a transaction with all available information
             value:
               market_id: "clh1234567890abcdef"
-              farmer_id: "clh1234567890abcdef"
-              amount: 150000
-              currency: "USD"
-              transaction_type: "purchase"
-              description: "Cocoa beans purchase - 500kg at 300 NGN/kg"
-              payment_method: "cash"
-              reference_number: "TXN-2024-001"
+              date: "2024-01-15T10:30:00Z"
+              level_of_traceability: "identite preservee"
+              driver_name: "John Smith"
+              quantity: 500
+              net_weight_declared_in_Ton: 0.5
+              humidity_level_of_product: 7.5
+              total_quantity_in_bags: 10
+              receiver_name: "Jane Doe"
+              min_com_verif_agent_name_and_sig: "Agent Smith - Verified"
+              sender_signature: "Sender123"
+              driver_signature: "Driver456"
+              product_quality: "Grade A"
+              vehicule_immatriculation_number: "ABC123XY"
   responses:
     "201":
       description: Transaction created successfully
-      headers:
-        Location:
-          description: URL of the created transaction resource
-          schema:
-            type: string
-            format: uri
       content:
         application/json:
           schema:
-            $ref: ../components/schemas/transaction.yaml
+            $ref: "../../components/schemas/transaction.yaml"
           example:
             id: "clh1234567890abcdef"
             market_id: "clh1234567890abcdef"
-            farmer_id: "clh1234567890abcdef"
-            amount: 150000
-            currency: "USD"
-            transaction_type: "purchase"
-            status: "pending"
+            date: "2024-01-15T10:30:00Z"
+            level_of_traceability: "identite preservee"
+            driver_name: "John Smith"
+            quantity: 500
+            net_weight_declared_in_Ton: 0.5
+            humidity_level_of_product: 7.5
+            total_quantity_in_bags: 10
+            receiver_name: "Jane Doe"
+            min_com_verif_agent_name_and_sig: "Agent Smith - Verified"
+            sender_signature: "Sender123"
+            driver_signature: "Driver456"
+            product_quality: "Grade A"
+            vehicule_immatriculation_number: "ABC123XY"
             created_at: "2024-01-15T10:30:00Z"
             updated_at: "2024-01-15T10:30:00Z"
     "400":
-      $ref: ../components/responses/ValidationError.yaml
+      $ref: "../../components/responses/ValidationError.yaml"
     "401":
-      $ref: ../components/responses/UnauthorizedError.yaml
+      $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
-      $ref: ../components/responses/ForbiddenError.yaml
+      $ref: "../../components/responses/ForbiddenError.yaml"
     "409":
       description: Transaction already exists
       content:
@@ -85,92 +86,44 @@ post:
                 example: "Transaction Already Exists"
               message:
                 type: string
-                example: "A transaction with this reference already exists"
+                example: "A transaction with these details already exists"
               code:
                 type: string
                 example: "TRANSACTION_ALREADY_EXISTS"
     "500":
-      $ref: ../components/responses/ServerError.yaml
+      $ref: "../../components/responses/ServerError.yaml"
 
 # get all transaction
 get:
   tags:
     - 💰 Transactions
-  summary: List all transactions
-  description: |
-    Retrieve a paginated list of transactions with optional filtering capabilities.
-    
-    **Required Permissions:** `read:transactions`
-    
-    **Filtering Options:**
-    - Filter by market ID
-    - Filter by farmer ID
-    - Filter by transaction type
-    - Filter by status
-    - Filter by date range
-    - Filter by amount range
-    
-    **Pagination:**
-    - Default limit: 20 items per page
-    - Maximum limit: 100 items per page
-  operationId: getAllTransaction
+  summary: Get all transactions
+  description: Retrieve all transactions with optional filtering
+  operationId: listTransactions
   security:
     - BearerAuth: []
   parameters:
-    - $ref: ../components/parameters/PaginationLimit.yaml
-    - $ref: ../components/parameters/PaginationOffset.yaml
-    - $ref: ../components/parameters/CompanyId.yaml
-    - $ref: ../components/parameters/DateRangeStart.yaml
-    - $ref: ../components/parameters/DateRangeEnd.yaml
-    - name: market_id
-      in: query
-      description: Filter by market ID
-      required: false
-      schema:
-        type: string
-        format: cuid
-        example: "clh1234567890abcdef"
-    - name: farmer_id
-      in: query
-      description: Filter by farmer ID
-      required: false
-      schema:
-        type: string
-        format: cuid
-        example: "clh1234567890abcdef"
-    - name: transaction_type
-      in: query
-      description: Filter by transaction type
-      required: false
-      schema:
-        type: string
-        enum: [purchase, payment, refund, adjustment]
-        example: "purchase"
-    - name: status
-      in: query
-      description: Filter by transaction status
-      required: false
-      schema:
-        type: string
-        enum: [pending, completed, failed, cancelled]
-        example: "completed"
-    - name: min_amount
-      in: query
-      description: Minimum transaction amount
-      required: false
-      schema:
-        type: number
-        example: 1000
-    - name: max_amount
-      in: query
-      description: Maximum transaction amount
-      required: false
-      schema:
-        type: number
-        example: 1000000
+    - $ref: "../../components/parameters/PaginationLimit.yaml"
+    - $ref: "../../components/parameters/PaginationOffset.yaml"
+    - $ref: "../../components/parameters/CompanyId.yaml"
+    - $ref: "../../components/parameters/DateRangeStart.yaml"
+    - $ref: "../../components/parameters/DateRangeEnd.yaml"
   responses:
     "200":
-      description: Transactions retrieved successfully
+      description: List of transactions retrieved successfully
+      headers:
+        X-Total-Count:
+          description: Total number of transactions matching the filter criteria
+          schema:
+            type: integer
+        X-Page-Count:
+          description: Total number of pages
+          schema:
+            type: integer
+        Link:
+          description: Pagination links (first, prev, next, last)
+          schema:
+            type: string
       content:
         application/json:
           schema:
@@ -179,164 +132,129 @@ get:
               data:
                 type: array
                 items:
-                  $ref: ../components/schemas/transaction.yaml
+                  $ref: "../../components/schemas/transaction.yaml"
               pagination:
                 type: object
                 properties:
+                  total:
+                    type: integer
+                    example: 150
                   limit:
                     type: integer
                     example: 20
                   offset:
                     type: integer
                     example: 0
-                  total:
-                    type: integer
-                    example: 150
-                  page_count:
-                    type: integer
-                    example: 8
-                  has_next:
+                  has_more:
                     type: boolean
                     example: true
-                  has_prev:
-                    type: boolean
-                    example: false
-              summary:
-                type: object
-                properties:
-                  total_amount:
-                    type: number
-                    example: 15000000
-                  total_count:
-                    type: integer
-                    example: 150
-                  average_amount:
-                    type: number
-                    example: 100000
           example:
             data:
               - id: "clh1234567890abcdef"
                 market_id: "clh1234567890abcdef"
-                farmer_id: "clh1234567890abcdef"
-                amount: 150000
-                currency: "USD"
-                transaction_type: "purchase"
-                status: "completed"
+                date: "2024-01-15T10:30:00Z"
+                level_of_traceability: "identite preservee"
+                driver_name: "John Smith"
+                quantity: 500
+                net_weight_declared_in_Ton: 0.5
+                humidity_level_of_product: 7.5
+                total_quantity_in_bags: 10
+                receiver_name: "Jane Doe"
+                min_com_verif_agent_name_and_sig: "Agent Smith - Verified"
+                sender_signature: "Sender123"
+                driver_signature: "Driver456"
+                product_quality: "Grade A"
+                vehicule_immatriculation_number: "ABC123XY"
                 created_at: "2024-01-15T10:30:00Z"
                 updated_at: "2024-01-15T10:30:00Z"
               - id: "clh1234567890abcdeg"
                 market_id: "clh1234567890abcdef"
-                farmer_id: "clh1234567890abcdeg"
-                amount: 200000
-                currency: "USD"
-                transaction_type: "purchase"
-                status: "completed"
+                date: "2024-01-15T09:15:00Z"
+                level_of_traceability: "identite preservee"
+                driver_name: "Bob Johnson"
+                quantity: 750
+                net_weight_declared_in_Ton: 0.75
+                humidity_level_of_product: 8.0
+                total_quantity_in_bags: 15
+                receiver_name: "Alice Brown"
+                min_com_verif_agent_name_and_sig: "Agent Jones - Verified"
+                sender_signature: "Sender789"
+                driver_signature: "Driver012"
+                product_quality: "Grade B"
+                vehicule_immatriculation_number: "XYZ789AB"
                 created_at: "2024-01-15T09:15:00Z"
                 updated_at: "2024-01-15T09:15:00Z"
             pagination:
+              total: 150
               limit: 20
               offset: 0
-              total: 150
-              page_count: 8
-              has_next: true
-              has_prev: false
-            summary:
-              total_amount: 15000000
-              total_count: 150
-              average_amount: 100000
+              has_more: true
     "400":
-      $ref: ../components/responses/ValidationError.yaml
+      $ref: "../../components/responses/ValidationError.yaml"
     "401":
-      $ref: ../components/responses/UnauthorizedError.yaml
+      $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
-      $ref: ../components/responses/ForbiddenError.yaml
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "429":
+      $ref: "../../components/responses/RateLimitError.yaml"
     "500":
-      $ref: ../components/responses/ServerError.yaml
+      $ref: "../../components/responses/ServerError.yaml"
 
 # update a transaction
 put:
   tags:
     - 💰 Transactions
   summary: Update a transaction
-  description: |
-    Update an existing transaction's information.
-    
-    **Required Permissions:** `write:transactions`
-    
-    **Business Rules:**
-    - Cannot update completed transactions
-    - Cannot change transaction amount after completion
-    - Only transaction owner or admin can update transaction
-    - Status changes are logged for audit purposes
+  description: Update an existing transaction record
   operationId: updateTransaction
   security:
     - BearerAuth: []
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: ID of the transaction to update
+      schema:
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
   requestBody:
     required: true
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            status:
-              type: string
-              enum: [pending, completed, failed, cancelled]
-              description: Transaction status
-              example: "completed"
-            description:
-              type: string
-              description: Transaction description
-              example: "Updated transaction description"
-            reference_number:
-              type: string
-              description: Reference number for the transaction
-              example: "TXN-2024-001"
-            payment_method:
-              type: string
-              enum: [cash, bank_transfer, mobile_money, check]
-              description: Payment method used
-              example: "bank_transfer"
-        examples:
-          update_status:
-            summary: Update transaction status
-            description: Update transaction status to completed
-            value:
-              status: "completed"
-              description: "Payment received via bank transfer"
-          update_details:
-            summary: Update transaction details
-            description: Update transaction with additional details
-            value:
-              status: "completed"
-              description: "Payment received via bank transfer"
-              reference_number: "TXN-2024-001"
-              payment_method: "bank_transfer"
+          $ref: "../../components/schemas/transaction.yaml"
   responses:
     "200":
       description: Transaction updated successfully
       content:
         application/json:
           schema:
-            $ref: ../components/schemas/transaction.yaml
+            $ref: "../../components/schemas/transaction.yaml"
           example:
             id: "clh1234567890abcdef"
             market_id: "clh1234567890abcdef"
-            farmer_id: "clh1234567890abcdef"
-            amount: 150000
-            currency: "USD"
-            transaction_type: "purchase"
-            status: "completed"
-            description: "Payment received via bank transfer"
-            reference_number: "TXN-2024-001"
-            payment_method: "bank_transfer"
+            date: "2024-01-15T10:30:00Z"
+            level_of_traceability: "identite preservee"
+            driver_name: "John Smith"
+            quantity: 500
+            net_weight_declared_in_Ton: 0.5
+            humidity_level_of_product: 7.5
+            total_quantity_in_bags: 10
+            receiver_name: "Jane Doe"
+            min_com_verif_agent_name_and_sig: "Agent Smith - Verified"
+            sender_signature: "Sender123"
+            driver_signature: "Driver456"
+            product_quality: "Grade A"
+            vehicule_immatriculation_number: "ABC123XY"
             created_at: "2024-01-15T10:30:00Z"
             updated_at: "2024-01-15T11:30:00Z"
     "400":
-      $ref: ../components/responses/ValidationError.yaml
+      $ref: "../../components/responses/ValidationError.yaml"
     "401":
-      $ref: ../components/responses/UnauthorizedError.yaml
+      $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
-      $ref: ../components/responses/ForbiddenError.yaml
+      $ref: "../../components/responses/ForbiddenError.yaml"
     "404":
       description: Transaction not found
       content:
@@ -354,7 +272,7 @@ put:
                 type: string
                 example: "TRANSACTION_NOT_FOUND"
     "409":
-      description: Transaction update conflict
+      description: Update conflict
       content:
         application/json:
           schema:
@@ -362,15 +280,15 @@ put:
             properties:
               error:
                 type: string
-                example: "Transaction Update Conflict"
+                example: "Update Conflict"
               message:
                 type: string
-                example: "Cannot update completed transaction"
+                example: "Cannot update transaction in current state"
               code:
                 type: string
-                example: "TRANSACTION_UPDATE_CONFLICT"
+                example: "UPDATE_CONFLICT"
     "500":
-      $ref: ../components/responses/ServerError.yaml
+      $ref: "../../components/responses/ServerError.yaml"
 
 # delete a transaction
 delete:
@@ -379,9 +297,9 @@ delete:
   summary: Delete a transaction
   description: |
     Delete a transaction from the system.
-    
+
     **Required Permissions:** `write:transactions`
-    
+
     **Business Rules:**
     - Cannot delete completed transactions
     - Cannot delete transactions older than 30 days
@@ -410,9 +328,9 @@ delete:
                 type: string
                 example: "TRANSACTION_ALREADY_COMPLETED"
     "401":
-      $ref: ../components/responses/UnauthorizedError.yaml
+      $ref: ../../components/responses/UnauthorizedError.yaml
     "403":
-      $ref: ../components/responses/ForbiddenError.yaml
+      $ref: ../../components/responses/ForbiddenError.yaml
     "404":
       description: Transaction not found
       content:
@@ -430,4 +348,4 @@ delete:
                 type: string
                 example: "TRANSACTION_NOT_FOUND"
     "500":
-      $ref: ../components/responses/ServerError.yaml
+      $ref: ../../components/responses/ServerError.yaml
