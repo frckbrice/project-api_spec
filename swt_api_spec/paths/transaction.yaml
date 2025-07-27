@@ -30,7 +30,7 @@ post:
               market_id: "clh1234567890abcdef"
               farmer_id: "clh1234567890abcdef"
               amount: 150000
-              currency: "NGN"
+              currency: "USD"
               transaction_type: "purchase"
           detailed_transaction:
             summary: Detailed transaction
@@ -39,7 +39,7 @@ post:
               market_id: "clh1234567890abcdef"
               farmer_id: "clh1234567890abcdef"
               amount: 150000
-              currency: "NGN"
+              currency: "USD"
               transaction_type: "purchase"
               description: "Cocoa beans purchase - 500kg at 300 NGN/kg"
               payment_method: "cash"
@@ -62,7 +62,7 @@ post:
             market_id: "clh1234567890abcdef"
             farmer_id: "clh1234567890abcdef"
             amount: 150000
-            currency: "NGN"
+            currency: "USD"
             transaction_type: "purchase"
             status: "pending"
             created_at: "2024-01-15T10:30:00Z"
@@ -219,7 +219,7 @@ get:
                 market_id: "clh1234567890abcdef"
                 farmer_id: "clh1234567890abcdef"
                 amount: 150000
-                currency: "NGN"
+                currency: "USD"
                 transaction_type: "purchase"
                 status: "completed"
                 created_at: "2024-01-15T10:30:00Z"
@@ -228,7 +228,7 @@ get:
                 market_id: "clh1234567890abcdef"
                 farmer_id: "clh1234567890abcdeg"
                 amount: 200000
-                currency: "NGN"
+                currency: "USD"
                 transaction_type: "purchase"
                 status: "completed"
                 created_at: "2024-01-15T09:15:00Z"
@@ -323,7 +323,7 @@ put:
             market_id: "clh1234567890abcdef"
             farmer_id: "clh1234567890abcdef"
             amount: 150000
-            currency: "NGN"
+            currency: "USD"
             transaction_type: "purchase"
             status: "completed"
             description: "Payment received via bank transfer"

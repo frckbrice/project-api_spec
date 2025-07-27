@@ -4102,7 +4102,7 @@ paths:
                   market_id: clh1234567890abcdef
                   farmer_id: clh1234567890abcdef
                   amount: 150000
-                  currency: NGN
+                  currency: USD
                   transaction_type: purchase
               detailed_transaction:
                 summary: Detailed transaction
@@ -4111,7 +4111,7 @@ paths:
                   market_id: clh1234567890abcdef
                   farmer_id: clh1234567890abcdef
                   amount: 150000
-                  currency: NGN
+                  currency: USD
                   transaction_type: purchase
                   description: Cocoa beans purchase - 500kg at 300 NGN/kg
                   payment_method: cash
@@ -4134,7 +4134,7 @@ paths:
                 market_id: clh1234567890abcdef
                 farmer_id: clh1234567890abcdef
                 amount: 150000
-                currency: NGN
+                currency: USD
                 transaction_type: purchase
                 status: pending
                 created_at: '2024-01-15T10:30:00Z'
@@ -4297,7 +4297,7 @@ paths:
                     market_id: clh1234567890abcdef
                     farmer_id: clh1234567890abcdef
                     amount: 150000
-                    currency: NGN
+                    currency: USD
                     transaction_type: purchase
                     status: completed
                     created_at: '2024-01-15T10:30:00Z'
@@ -4306,7 +4306,7 @@ paths:
                     market_id: clh1234567890abcdef
                     farmer_id: clh1234567890abcdeg
                     amount: 200000
-                    currency: NGN
+                    currency: USD
                     transaction_type: purchase
                     status: completed
                     created_at: '2024-01-15T09:15:00Z'
@@ -4407,7 +4407,7 @@ paths:
                 market_id: clh1234567890abcdef
                 farmer_id: clh1234567890abcdef
                 amount: 150000
-                currency: NGN
+                currency: USD
                 transaction_type: purchase
                 status: completed
                 description: Payment received via bank transfer
@@ -4588,9 +4588,18 @@ paths:
   /requirements:
     post:
       tags:
-        - Requirement
-      summary: Create a requirement
-      description: To create a requirement from Rainforest Alliance certification requirement dedicated for the offer plan.
+        - 💰 Transactions
+      summary: Create requirement
+      description: |
+        Create a new requirement from Rainforest Alliance certification requirements dedicated for the offer plan.
+
+        **Required Permissions:** `write:requirement`
+
+        **Business Rules:**
+        - Requirement must be associated with a valid certification standard
+        - Requirement name must be unique within the same category
+        - Only authorized users can create requirements
+        - Requirements must have valid validation rules
       operationId: createRequirement
       security:
         - BearerAuth: []
@@ -4601,36 +4610,421 @@ paths:
             schema:
               type: object
               $ref: '#/components/schemas/requirement'
+            examples:
+              basic_requirement:
+                summary: Basic requirement
+                description: Create a requirement with minimal information
+                value:
+                  name: Organic Certification
+                  category: certification
+                  is_mandatory: true
+                  description: Must have valid organic certification
+              detailed_requirement:
+                summary: Detailed requirement
+                description: Create a requirement with comprehensive details
+                value:
+                  name: Organic Certification
+                  category: certification
+                  description: Must have valid organic certification from recognized bodies
+                  is_mandatory: true
+                  validation_rules:
+                    - Valid certification document
+                    - Annual renewal required
+                  min_score: 80
+                  max_score: 100
+                  unit: percentage
       responses:
         '201':
-          description: requirement created
-        '401':
-          description: Unauthorized access
-        '403':
-          description: Forbidden access
-        '500':
-          description: internal server error
-    get:
-      tags:
-        - Requirement
-      summary: Get all requirements
-      operationId: getAllRequirements
-      description: To get all requirements. Only administrators can use this operation. If you want to get all requirements, use the **getAllRequirements** operation.
-      responses:
-        '200':
-          description: requirements
+          description: Requirement created successfully
+          headers:
+            Location:
+              description: URL of the created requirement resource
+              schema:
+                type: string
+                format: uri
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/requirement'
+                $ref: '#/components/schemas/requirement'
+              example:
+                id: clh1234567890abcdef
+                name: Organic Certification
+                category: certification
+                description: Must have valid organic certification from recognized bodies
+                is_mandatory: true
+                validation_rules:
+                  - Valid certification document
+                  - Annual renewal required
+                min_score: 80
+                max_score: 100
+                unit: percentage
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T10:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
         '401':
-          description: Unauthorized access
+          $ref: '#/components/responses/UnauthorizedError-2'
         '403':
-          description: Forbidden access
+          $ref: '#/components/responses/ForbiddenError-2'
+        '409':
+          description: Requirement already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Requirement Already Exists
+                  message:
+                    type: string
+                    example: A requirement with this name already exists in this category
+                  code:
+                    type: string
+                    example: REQUIREMENT_ALREADY_EXISTS
         '500':
-          description: internal server error
+          $ref: '#/components/responses/ServerError-2'
+    get:
+      tags:
+        - 💰 Transactions
+      summary: List all requirements
+      description: |
+        Retrieve a paginated list of requirements with optional filtering capabilities.
+
+        **Required Permissions:** `read:requirement`
+
+        **Filtering Options:**
+        - Filter by category
+        - Filter by mandatory status
+        - Filter by name (partial match)
+        - Filter by company ID
+
+        **Pagination:**
+        - Default limit: 20 items per page
+        - Maximum limit: 100 items per page
+      operationId: getAllRequirements
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationOffset'
+        - $ref: '#/components/parameters/CompanyId'
+        - name: category
+          in: query
+          description: Filter by requirement category
+          required: false
+          schema:
+            type: string
+            enum:
+              - certification
+              - quality
+              - quantity
+              - documentation
+              - safety
+              - environmental
+              - other
+            example: certification
+        - name: is_mandatory
+          in: query
+          description: Filter by mandatory status
+          required: false
+          schema:
+            type: boolean
+            example: true
+        - name: name
+          in: query
+          description: Filter by requirement name (partial match)
+          required: false
+          schema:
+            type: string
+            example: Organic
+      responses:
+        '200':
+          description: Requirements retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/requirement'
+                  pagination:
+                    type: object
+                    properties:
+                      limit:
+                        type: integer
+                        example: 20
+                      offset:
+                        type: integer
+                        example: 0
+                      total:
+                        type: integer
+                        example: 35
+                      page_count:
+                        type: integer
+                        example: 2
+                      has_next:
+                        type: boolean
+                        example: true
+                      has_prev:
+                        type: boolean
+                        example: false
+                  summary:
+                    type: object
+                    properties:
+                      total_requirements:
+                        type: integer
+                        example: 35
+                      mandatory_requirements:
+                        type: integer
+                        example: 25
+                      optional_requirements:
+                        type: integer
+                        example: 10
+              example:
+                data:
+                  - id: clh1234567890abcdef
+                    name: Organic Certification
+                    category: certification
+                    description: Must have valid organic certification from recognized bodies
+                    is_mandatory: true
+                    validation_rules:
+                      - Valid certification document
+                      - Annual renewal required
+                    min_score: 80
+                    max_score: 100
+                    unit: percentage
+                    created_at: '2024-01-15T10:30:00Z'
+                    updated_at: '2024-01-15T10:30:00Z'
+                  - id: clh1234567890abcdeg
+                    name: Quality Standards
+                    category: quality
+                    description: Must meet minimum quality standards
+                    is_mandatory: true
+                    min_score: 85
+                    max_score: 100
+                    unit: percentage
+                    created_at: '2024-01-15T09:15:00Z'
+                    updated_at: '2024-01-15T09:15:00Z'
+                pagination:
+                  limit: 20
+                  offset: 0
+                  total: 35
+                  page_count: 2
+                  has_next: true
+                  has_prev: false
+                summary:
+                  total_requirements: 35
+                  mandatory_requirements: 25
+                  optional_requirements: 10
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    put:
+      tags:
+        - 💰 Transactions
+      summary: Update requirement
+      description: |
+        Update an existing requirement.
+
+        **Required Permissions:** `write:requirement`
+
+        **Business Rules:**
+        - Cannot update requirements that are already in use by active plans
+        - Cannot change requirement category after creation
+        - Only authorized users can update requirements
+        - All changes are logged for audit purposes
+      operationId: updateRequirement
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Updated requirement name
+                  example: Updated Organic Certification
+                description:
+                  type: string
+                  description: Updated requirement description
+                  example: Updated organic certification requirements
+                is_mandatory:
+                  type: boolean
+                  description: Updated mandatory status
+                  example: true
+                validation_rules:
+                  type: array
+                  items:
+                    type: string
+                  description: Updated validation rules
+                  example:
+                    - Valid certification document
+                    - Annual renewal required
+                    - Third-party verification
+                min_score:
+                  type: number
+                  description: Updated minimum score
+                  example: 85
+                max_score:
+                  type: number
+                  description: Updated maximum score
+                  example: 100
+                unit:
+                  type: string
+                  description: Updated unit of measurement
+                  example: percentage
+            examples:
+              update_basic:
+                summary: Update basic requirement details
+                description: Update requirement name and description
+                value:
+                  name: Updated Organic Certification
+                  description: Updated organic certification requirements
+              update_detailed:
+                summary: Update detailed requirement details
+                description: Update comprehensive requirement details
+                value:
+                  name: Updated Organic Certification
+                  description: Updated organic certification requirements
+                  is_mandatory: true
+                  validation_rules:
+                    - Valid certification document
+                    - Annual renewal required
+                    - Third-party verification
+                  min_score: 85
+                  max_score: 100
+                  unit: percentage
+      responses:
+        '200':
+          description: Requirement updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/requirement'
+              example:
+                id: clh1234567890abcdef
+                name: Updated Organic Certification
+                category: certification
+                description: Updated organic certification requirements
+                is_mandatory: true
+                validation_rules:
+                  - Valid certification document
+                  - Annual renewal required
+                  - Third-party verification
+                min_score: 85
+                max_score: 100
+                unit: percentage
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T11:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Requirement not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Requirement Not Found
+                  message:
+                    type: string
+                    example: Requirement with the specified ID was not found
+                  code:
+                    type: string
+                    example: REQUIREMENT_NOT_FOUND
+        '409':
+          description: Requirement update conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Requirement Update Conflict
+                  message:
+                    type: string
+                    example: Cannot update requirement that is in use by active plans
+                  code:
+                    type: string
+                    example: REQUIREMENT_UPDATE_CONFLICT
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    delete:
+      tags:
+        - 💰 Transactions
+      summary: Delete requirement
+      description: |
+        Delete a requirement from the system.
+
+        **Required Permissions:** `write:requirement`
+
+        **Business Rules:**
+        - Cannot delete requirements that are in use by active plans
+        - Cannot delete mandatory requirements for active plans
+        - Only admin users can delete requirements
+        - Soft delete - marks as deleted but preserves data for audit
+      operationId: deleteRequirement
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Requirement deleted successfully
+        '400':
+          description: Cannot delete requirement
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Cannot Delete Requirement
+                  message:
+                    type: string
+                    example: Cannot delete requirement that is in use by active plans
+                  code:
+                    type: string
+                    example: REQUIREMENT_IN_USE
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Requirement not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Requirement Not Found
+                  message:
+                    type: string
+                    example: Requirement with the specified ID was not found
+                  code:
+                    type: string
+                    example: REQUIREMENT_NOT_FOUND
+        '500':
+          $ref: '#/components/responses/ServerError-2'
   /requirement/{id}:
     patch:
       tags:
@@ -4749,9 +5143,18 @@ paths:
   /collector_agents:
     post:
       tags:
-        - CollectorAgent
-      summary: Create a new collector agent
-      description: Create a new collector agent which is in charge of collecting data from farmer. only the administrator of the project can create a new collector agent
+        - 👥 Users
+      summary: Create collector agent
+      description: |
+        Create a new collector agent which is in charge of collecting data from farmers.
+
+        **Required Permissions:** `write:collector_agent`
+
+        **Business Rules:**
+        - Only administrators can create collector agents
+        - Agent must have valid contact information
+        - Agent must be assigned to a specific region or company
+        - Agent status must be active upon creation
       operationId: createCollectorAgent
       security:
         - BearerAuth: []
@@ -4761,53 +5164,473 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/collector_agent'
+            examples:
+              basic_agent:
+                summary: Basic collector agent
+                description: Create a collector agent with minimal information
+                value:
+                  name: John Doe
+                  email: john.doe@cocoaflow.com
+                  phone: '+2348012345678'
+                  company_id: clh1234567890abcdef
+                  status: active
+              detailed_agent:
+                summary: Detailed collector agent
+                description: Create a collector agent with comprehensive details
+                value:
+                  name: John Doe
+                  email: john.doe@cocoaflow.com
+                  phone: '+2348012345678'
+                  company_id: clh1234567890abcdef
+                  status: active
+                  region: Southwest Nigeria
+                  assigned_farms: 25
+                  experience_years: 3
+                  specializations:
+                    - Quality Assessment
+                    - Data Collection
       responses:
         '201':
-          description: CollectorAgent created
-        '401':
-          description: Unauthorized
-        '403':
-          description: Forbidden
-        '422':
-          description: Unprocessable Entity
-        '500':
-          description: internal server error
-    get:
-      tags:
-        - CollectorAgent
-      summary: Get all collector agents
-      operationId: getAllCollectorAgents
-      description: To get all collector agents. Only administrators can use this operation. If you want to get all collector agents, use the **getAllCollectorAgents** operation.
-      parameters:
-        - name: page
-          in: query
-          description: page number
-          required: false
-          schema:
-            type: integer
-            example: 1
-        - name: limit
-          in: query
-          description: page size
-          required: false
-          schema:
-            type: integer
-            example: 20
-      responses:
-        '200':
-          description: CollectorAgents
+          description: Collector agent created successfully
+          headers:
+            Location:
+              description: URL of the created collector agent resource
+              schema:
+                type: string
+                format: uri
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/collector_agent'
+                $ref: '#/components/schemas/collector_agent'
+              example:
+                id: clh1234567890abcdef
+                name: John Doe
+                email: john.doe@cocoaflow.com
+                phone: '+2348012345678'
+                company_id: clh1234567890abcdef
+                status: active
+                region: Southwest Nigeria
+                assigned_farms: 25
+                experience_years: 3
+                specializations:
+                  - Quality Assessment
+                  - Data Collection
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T10:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
         '401':
-          description: Unauthorized access
+          $ref: '#/components/responses/UnauthorizedError-2'
         '403':
-          description: Forbidden access
+          $ref: '#/components/responses/ForbiddenError-2'
+        '409':
+          description: Collector agent already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Collector Agent Already Exists
+                  message:
+                    type: string
+                    example: A collector agent with this email already exists
+                  code:
+                    type: string
+                    example: COLLECTOR_AGENT_ALREADY_EXISTS
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Validation Error
+                  message:
+                    type: string
+                    example: Invalid data provided
+                  code:
+                    type: string
+                    example: VALIDATION_ERROR
         '500':
-          description: internal server error
+          $ref: '#/components/responses/ServerError-2'
+    get:
+      tags:
+        - 👥 Users
+      summary: List all collector agents
+      description: |
+        Retrieve a paginated list of collector agents with optional filtering capabilities.
+
+        **Required Permissions:** `read:collector_agent`
+
+        **Filtering Options:**
+        - Filter by company ID
+        - Filter by status (active, inactive, suspended)
+        - Filter by region
+        - Filter by name (partial match)
+        - Filter by email (partial match)
+
+        **Pagination:**
+        - Default limit: 20 items per page
+        - Maximum limit: 100 items per page
+      operationId: getAllCollectorAgents
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationOffset'
+        - $ref: '#/components/parameters/CompanyId'
+        - name: status
+          in: query
+          description: Filter by agent status
+          required: false
+          schema:
+            type: string
+            enum:
+              - active
+              - inactive
+              - suspended
+            example: active
+        - name: region
+          in: query
+          description: Filter by region (partial match)
+          required: false
+          schema:
+            type: string
+            example: Southwest
+        - name: name
+          in: query
+          description: Filter by agent name (partial match)
+          required: false
+          schema:
+            type: string
+            example: John
+        - name: email
+          in: query
+          description: Filter by agent email (partial match)
+          required: false
+          schema:
+            type: string
+            example: john.doe
+      responses:
+        '200':
+          description: Collector agents retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/collector_agent'
+                  pagination:
+                    type: object
+                    properties:
+                      limit:
+                        type: integer
+                        example: 20
+                      offset:
+                        type: integer
+                        example: 0
+                      total:
+                        type: integer
+                        example: 45
+                      page_count:
+                        type: integer
+                        example: 3
+                      has_next:
+                        type: boolean
+                        example: true
+                      has_prev:
+                        type: boolean
+                        example: false
+                  summary:
+                    type: object
+                    properties:
+                      total_agents:
+                        type: integer
+                        example: 45
+                      active_agents:
+                        type: integer
+                        example: 38
+                      total_farms_covered:
+                        type: integer
+                        example: 1250
+              example:
+                data:
+                  - id: clh1234567890abcdef
+                    name: John Doe
+                    email: john.doe@cocoaflow.com
+                    phone: '+2348012345678'
+                    company_id: clh1234567890abcdef
+                    status: active
+                    region: Southwest Nigeria
+                    assigned_farms: 25
+                    experience_years: 3
+                    specializations:
+                      - Quality Assessment
+                      - Data Collection
+                    created_at: '2024-01-15T10:30:00Z'
+                    updated_at: '2024-01-15T10:30:00Z'
+                  - id: clh1234567890abcdeg
+                    name: Jane Smith
+                    email: jane.smith@cocoaflow.com
+                    phone: '+2348012345679'
+                    company_id: clh1234567890abcdef
+                    status: active
+                    region: Southeast Nigeria
+                    assigned_farms: 30
+                    experience_years: 5
+                    specializations:
+                      - Data Collection
+                      - Training
+                    created_at: '2024-01-14T09:15:00Z'
+                    updated_at: '2024-01-14T09:15:00Z'
+                pagination:
+                  limit: 20
+                  offset: 0
+                  total: 45
+                  page_count: 3
+                  has_next: true
+                  has_prev: false
+                summary:
+                  total_agents: 45
+                  active_agents: 38
+                  total_farms_covered: 1250
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    put:
+      tags:
+        - 👥 Users
+      summary: Update collector agent
+      description: |
+        Update an existing collector agent.
+
+        **Required Permissions:** `write:collector_agent`
+
+        **Business Rules:**
+        - Cannot update agent status if they have active assignments
+        - Cannot change email if it's already in use by another agent
+        - Only administrators can update collector agents
+        - All changes are logged for audit purposes
+      operationId: updateCollectorAgent
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Updated agent name
+                  example: Updated John Doe
+                email:
+                  type: string
+                  format: email
+                  description: Updated agent email
+                  example: updated.john.doe@cocoaflow.com
+                phone:
+                  type: string
+                  description: Updated agent phone number
+                  example: '+2348012345680'
+                status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                    - suspended
+                  description: Updated agent status
+                  example: active
+                region:
+                  type: string
+                  description: Updated assigned region
+                  example: Updated Southwest Nigeria
+                experience_years:
+                  type: integer
+                  minimum: 0
+                  description: Updated years of experience
+                  example: 4
+                specializations:
+                  type: array
+                  items:
+                    type: string
+                  description: Updated specializations
+                  example:
+                    - Quality Assessment
+                    - Data Collection
+                    - Training
+            examples:
+              update_basic:
+                summary: Update basic agent details
+                description: Update agent name and contact information
+                value:
+                  name: Updated John Doe
+                  email: updated.john.doe@cocoaflow.com
+                  phone: '+2348012345680'
+              update_detailed:
+                summary: Update detailed agent details
+                description: Update comprehensive agent details
+                value:
+                  name: Updated John Doe
+                  email: updated.john.doe@cocoaflow.com
+                  phone: '+2348012345680'
+                  status: active
+                  region: Updated Southwest Nigeria
+                  experience_years: 4
+                  specializations:
+                    - Quality Assessment
+                    - Data Collection
+                    - Training
+      responses:
+        '200':
+          description: Collector agent updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/collector_agent'
+              example:
+                id: clh1234567890abcdef
+                name: Updated John Doe
+                email: updated.john.doe@cocoaflow.com
+                phone: '+2348012345680'
+                company_id: clh1234567890abcdef
+                status: active
+                region: Updated Southwest Nigeria
+                assigned_farms: 25
+                experience_years: 4
+                specializations:
+                  - Quality Assessment
+                  - Data Collection
+                  - Training
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T11:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Collector agent not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Collector Agent Not Found
+                  message:
+                    type: string
+                    example: Collector agent with the specified ID was not found
+                  code:
+                    type: string
+                    example: COLLECTOR_AGENT_NOT_FOUND
+        '409':
+          description: Collector agent update conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Collector Agent Update Conflict
+                  message:
+                    type: string
+                    example: Cannot update agent status while they have active assignments
+                  code:
+                    type: string
+                    example: COLLECTOR_AGENT_UPDATE_CONFLICT
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Validation Error
+                  message:
+                    type: string
+                    example: Invalid data provided
+                  code:
+                    type: string
+                    example: VALIDATION_ERROR
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    delete:
+      tags:
+        - 👥 Users
+      summary: Delete collector agent
+      description: |
+        Delete a collector agent from the system.
+
+        **Required Permissions:** `write:collector_agent`
+
+        **Business Rules:**
+        - Cannot delete agents with active assignments
+        - Cannot delete agents with pending data collection tasks
+        - Only administrators can delete collector agents
+        - Soft delete - marks as deleted but preserves data for audit
+      operationId: deleteCollectorAgent
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Collector agent deleted successfully
+        '400':
+          description: Cannot delete collector agent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Cannot Delete Collector Agent
+                  message:
+                    type: string
+                    example: Cannot delete agent with active assignments
+                  code:
+                    type: string
+                    example: COLLECTOR_AGENT_HAS_ASSIGNMENTS
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Collector agent not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Collector Agent Not Found
+                  message:
+                    type: string
+                    example: Collector agent with the specified ID was not found
+                  code:
+                    type: string
+                    example: COLLECTOR_AGENT_NOT_FOUND
+        '500':
+          $ref: '#/components/responses/ServerError-2'
   /collector_agents/{id}:
     delete:
       tags:
