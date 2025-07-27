@@ -31,14 +31,14 @@ info:
 
 
     ## SDKs & Libraries
-    - [JavaScript/TypeScript SDK](https://github.com/senwisetool/js-sdk)
-    - [Python SDK](https://github.com/senwisetool/python-sdk)
-    - [Postman Collection](https://github.com/senwisetool/postman-collection)
-  termsOfService: https://senwisetool.com/terms
+    - [JavaScript/TypeScript SDK](https://github.com/frckbrice/project-api_spec/tree/main/sdks/javascript)
+    - [Python SDK](https://github.com/frckbrice/project-api_spec/tree/main/sdks/python)
+    - [Postman Collection](https://github.com/frckbrice/project-api_spec/tree/main/postman)
+  termsOfService: ''
   contact:
-    email: support@senwisetool.com
-    url: https://senwisetool.com/contact
-    name: SenWiseTool Support Team
+    email: bricefrkc@gmail.com
+    url: https://maebrieporfolio.vercel.app/
+    name: avom brice
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -86,7 +86,7 @@ tags:
     description: System administration and configuration
 externalDocs:
   description: GitHub Repository
-  url: https://github.com/senwisetool/api-specification
+  url: https://github.com/frckbrice/project-api_spec
 paths:
   /users:
     post:
