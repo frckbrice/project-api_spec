@@ -328,9 +328,9 @@ delete:
                 type: string
                 example: "TRANSACTION_ALREADY_COMPLETED"
     "401":
-      $ref: ../../components/responses/UnauthorizedError.yaml
+      $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
-      $ref: ../../components/responses/ForbiddenError.yaml
+      $ref: "../../components/responses/ForbiddenError.yaml"
     "404":
       description: Transaction not found
       content:
@@ -348,4 +348,4 @@ delete:
                 type: string
                 example: "TRANSACTION_NOT_FOUND"
     "500":
-      $ref: ../../components/responses/ServerError.yaml
+      $ref: "../../components/responses/ServerError.yaml"
