@@ -137,160 +137,42 @@ externalDocs:
   url: "https://github.com/frckbrice/project-api_spec"
 
 tags:
-  - name: 🔐 Authentication
-    description: |
-      **User authentication and authorization endpoints**
-
-      Secure JWT Bearer token authentication with OAuth 2.0 support for third-party integrations.
-
-      **Features:**
-      - JWT Token Management
-      - OAuth 2.0 Authorization
-      - Role-based Access Control
-      - Session Management
-  - name: 🏢 Companies
-    description: |
-      **Company management operations for cocoa industry organizations**
-
-      Complete company profile management with multi-tenant support and organizational hierarchy.
-
-      **Features:**
-      - Company Registration & Onboarding
-      - Multi-tenant Architecture
-      - Organizational Hierarchy
-      - Compliance Management
-  - name: 👥 Users
-    description: |
-      **User management for system administrators and company employees**
-
-      Comprehensive user management with role-based permissions and activity tracking.
-
-      **Features:**
-      - User Registration & Profiles
-      - Role-based Permissions
-      - Activity Tracking
-      - Password Management
-  - name: 👨‍🌾 Farmers
-    description: |
-      **Farmer profile and relationship management**
-
-      Digital farmer onboarding with comprehensive profile management and relationship tracking.
-
-      **Features:**
-      - Digital Onboarding
-      - Profile Management
-      - Contract Management
-      - Performance Tracking
-  - name: 🏡 Farms
-    description: |
-      **Farm registration, GPS tracking, and compliance monitoring**
-
-      GPS-enabled farm management with real-time tracking and compliance monitoring.
-
-      **Features:**
-      - GPS Coordinates
-      - Real-time Tracking
-      - Compliance Monitoring
-      - Inspection Data
-  - name: 🌿 Projects
-    description: |
-      **Rainforest Alliance certification projects and compliance tracking**
-
-      Automated compliance tracking with audit trails and certification management.
-
-      **Features:**
-      - Certification Tracking
-      - Audit Trails
-      - Compliance Automation
-      - Reporting Tools
-  - name: 📈 Campaigns
-    description: |
-      **Seasonal campaign management and data collection periods**
-
-      Seasonal campaign management with performance analytics and data collection.
-
-      **Features:**
-      - Campaign Planning
-      - Data Collection
-      - Performance Analytics
-      - Seasonal Management
-  - name: 🏪 Markets
-    description: |
-      **Market sessions for cocoa trading between companies and farmers**
-
-      Digital marketplace for cocoa trading with transaction management and pricing.
-
-      **Features:**
-      - Digital Marketplace
-      - Transaction Management
-      - Pricing Models
-      - Market Analytics
-  - name: 💰 Transactions
-    description: |
-      **Financial transactions and payment processing**
-
-      Secure payment processing with transaction history and financial reporting.
-
-      **Features:**
-      - Payment Processing
-      - Transaction History
-      - Financial Reporting
-      - Audit Trails
-  - name: 🎓 Training
-    description: |
-      **Farmer training sessions and educational content management**
-
-      Comprehensive training management with learning analytics and certification tracking.
-
-      **Features:**
-      - Session Management
-      - Learning Analytics
-      - Certification Tracking
-      - Content Management
-  - name: 🔍 Inspection
-    description: |
-      **Farm inspection data collection and compliance verification**
-
-      Digital inspection tools with automated compliance verification and reporting.
-
-      **Features:**
-      - Digital Inspections
-      - Compliance Verification
-      - Automated Reporting
-      - Data Collection
-  - name: 📊 Analytics
-    description: |
-      **Data analytics and reporting endpoints**
-
-      Comprehensive business intelligence with real-time analytics and custom reporting.
-
-      **Features:**
-      - Business Intelligence
-      - Real-time Analytics
-      - Custom Reporting
-      - Data Visualization
-  - name: ⚙️ Administration
-    description: |
-      **System administration and configuration**
-
-      System-wide administration tools with configuration management and monitoring.
-
-      **Features:**
-      - System Configuration
-      - User Management
-      - Monitoring & Alerts
-      - Backup & Recovery
-  - name: 🌿 Audits
-    description: |
-      **Audit and compliance verification endpoints**
-
-      Comprehensive audit management with compliance verification and reporting.
-
-      **Features:**
-      - Project Audits
-      - Market Audits
-      - Compliance Verification
-      - Audit Reporting
+  - name: "🔐 Authentication"
+    description: "Authentication and authorization endpoints"
+  - name: "🏡 Farms"
+    description: "Farm management operations"
+  - name: "📈 Campaigns"
+    description: "Campaign and stock management"
+  - name: "🏢 Companies"
+    description: "Company management and subscriptions"
+  - name: "💰 Transactions"
+    description: "Transaction processing and management"
+  - name: "💰 Receipts"
+    description: "Receipt generation and management"
+  - name: "🔍 Inspection"
+    description: "Inspection data management"
+  - name: "🎓 Training"
+    description: "Training sessions and management"
+  - name: "User"
+    description: "User account management"
+  - name: "Price"
+    description: "Pricing and subscription plans"
+  - name: "Farm_coodinates"
+    description: "Farm location and mapping data"
+  - name: "Subscription"
+    description: "Subscription management"
+  - name: "Company"
+    description: "Company profile management"
+  - name: "Receipt"
+    description: "Receipt operations"
+  - name: "Inspection_data"
+    description: "Detailed inspection records"
+  - name: "🌿 Projects"
+    description: "Project management and certification tracking"
+  - name: "🏪 Markets"
+    description: "Market session management and trading"
+  - name: "🌿 Audits"
+    description: "Project and market audit management"
 
 x-tagGroups:
   - name: 🏢 Core Operations

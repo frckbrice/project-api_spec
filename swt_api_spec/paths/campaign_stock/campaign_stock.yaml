@@ -1,20 +1,67 @@
+get:
+  tags:
+    - 📈 Campaigns
+  summary: List all campaign stocks
+  description: |
+    Retrieve a list of all campaign stocks.
+    This endpoint supports pagination and filtering.
+  operationId: listCampaignStocks
+  parameters:
+    - name: page
+      in: query
+      description: Page number for pagination
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    - name: limit
+      in: query
+      description: Number of items per page
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+  responses:
+    "200":
+      description: List of campaign stocks retrieved successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: "../../components/schemas/campaign_stock.yaml"
+              meta:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    example: 100
+                  pages:
+                    type: integer
+                    example: 5
+                  current_page:
+                    type: integer
+                    example: 1
+                  per_page:
+                    type: integer
+                    example: 20
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"
+
 post:
   tags:
     - 📈 Campaigns
-  summary: Create campaign stock
-  description: |
-    Create a campaign stock of products that wasn't sold during a specific campaign.
-    
-    **Required Permissions:** `write:campaign_stock`
-    
-    **Business Rules:**
-    - Only administrators can create campaign stock
-    - Stock must be associated with a valid campaign
-    - Stock quantities must be positive numbers
-    - Stock must have valid expiration dates
-  operationId: createcampaignstock
-  security:
-    - BearerAuth: []
+  summary: Create a new campaign stock
+  description: Create a new stock entry for a campaign
+  operationId: createCampaignStock
   requestBody:
     required: true
     content:
@@ -31,9 +78,10 @@ post:
               quantity: 1000
               unit: "kg"
               stock_date: "2024-01-15"
+              unit_price: 2.50
           detailed_stock:
             summary: Detailed campaign stock
-            description: Create campaign stock with comprehensive details
+            description: Create campaign stock with all available information
             value:
               campaign_id: "clh1234567890abcdef"
               product_name: "Premium Cocoa Beans"
@@ -48,30 +96,10 @@ post:
   responses:
     "201":
       description: Campaign stock created successfully
-      headers:
-        Location:
-          description: URL of the created campaign stock resource
-          schema:
-            type: string
-            format: uri
       content:
         application/json:
           schema:
             $ref: "../../components/schemas/campaign_stock.yaml"
-          example:
-            id: "clh1234567890abcdef"
-            campaign_id: "clh1234567890abcdef"
-            product_name: "Premium Cocoa Beans"
-            quantity: 1000
-            unit: "kg"
-            stock_date: "2024-01-15"
-            unit_price: 2.50
-            total_value: 2500.00
-            location: "Warehouse A"
-            condition: "excellent"
-            notes: "High-quality beans from organic farms"
-            created_at: "2024-01-15T10:30:00Z"
-            updated_at: "2024-01-15T10:30:00Z"
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
@@ -87,363 +115,12 @@ post:
             properties:
               error:
                 type: string
-                example: "Campaign Stock Already Exists"
+                example: "Conflict"
               message:
                 type: string
-                example: "Stock for this product already exists in this campaign"
+                example: "Campaign stock already exists"
               code:
                 type: string
-                example: "CAMPAIGN_STOCK_ALREADY_EXISTS"
-    "500":
-      $ref: "../../components/responses/ServerError.yaml"
-
-# get all campaign stocks
-get:
-  tags:
-    - 📈 Campaigns
-  summary: List all campaign stocks
-  description: |
-    Retrieve a paginated list of campaign stocks with optional filtering capabilities.
-    
-    **Required Permissions:** `read:campaign_stock`
-    
-    **Filtering Options:**
-    - Filter by campaign ID
-    - Filter by product name
-    - Filter by stock date range
-    - Filter by condition
-    - Filter by company ID
-    
-    **Pagination:**
-    - Default limit: 20 items per page
-    - Maximum limit: 100 items per page
-  operationId: getAllCampaignStocks
-  security:
-    - BearerAuth: []
-  parameters:
-    - $ref: "../../components/parameters/PaginationLimit.yaml"
-    - $ref: "../../components/parameters/PaginationOffset.yaml"
-    - $ref: "../../components/parameters/CompanyId.yaml"
-    - $ref: "../../components/parameters/DateRangeStart.yaml"
-    - $ref: "../../components/parameters/DateRangeEnd.yaml"
-    - name: campaign_id
-      in: query
-      description: Filter by campaign ID
-      required: false
-      schema:
-        type: string
-        format: cuid
-        example: "clh1234567890abcdef"
-    - name: product_name
-      in: query
-      description: Filter by product name (partial match)
-      required: false
-      schema:
-        type: string
-        example: "Premium Cocoa"
-    - name: condition
-      in: query
-      description: Filter by stock condition
-      required: false
-      schema:
-        type: string
-        enum: [excellent, good, fair, poor]
-        example: "excellent"
-    - name: min_quantity
-      in: query
-      description: Minimum quantity filter
-      required: false
-      schema:
-        type: number
-        minimum: 0
-        example: 100
-    - name: max_quantity
-      in: query
-      description: Maximum quantity filter
-      required: false
-      schema:
-        type: number
-        minimum: 0
-        example: 5000
-  responses:
-    "200":
-      description: Campaign stocks retrieved successfully
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: "../../components/schemas/campaign_stock.yaml"
-              pagination:
-                type: object
-                properties:
-                  limit:
-                    type: integer
-                    example: 20
-                  offset:
-                    type: integer
-                    example: 0
-                  total:
-                    type: integer
-                    example: 30
-                  page_count:
-                    type: integer
-                    example: 2
-                  has_next:
-                    type: boolean
-                    example: true
-                  has_prev:
-                    type: boolean
-                    example: false
-              summary:
-                type: object
-                properties:
-                  total_stocks:
-                    type: integer
-                    example: 30
-                  total_quantity:
-                    type: number
-                    example: 25000
-                  total_value:
-                    type: number
-                    example: 62500.00
-                  average_unit_price:
-                    type: number
-                    example: 2.50
-          example:
-            data:
-              - id: "clh1234567890abcdef"
-                campaign_id: "clh1234567890abcdef"
-                product_name: "Premium Cocoa Beans"
-                quantity: 1000
-                unit: "kg"
-                stock_date: "2024-01-15"
-                unit_price: 2.50
-                total_value: 2500.00
-                location: "Warehouse A"
-                condition: "excellent"
-                notes: "High-quality beans from organic farms"
-                created_at: "2024-01-15T10:30:00Z"
-                updated_at: "2024-01-15T10:30:00Z"
-              - id: "clh1234567890abcdeg"
-                campaign_id: "clh1234567890abcdef"
-                product_name: "Standard Cocoa Beans"
-                quantity: 1500
-                unit: "kg"
-                stock_date: "2024-01-14"
-                unit_price: 2.00
-                total_value: 3000.00
-                location: "Warehouse B"
-                condition: "good"
-                notes: "Standard quality beans"
-                created_at: "2024-01-14T09:15:00Z"
-                updated_at: "2024-01-14T09:15:00Z"
-            pagination:
-              limit: 20
-              offset: 0
-              total: 30
-              page_count: 2
-              has_next: true
-              has_prev: false
-            summary:
-              total_stocks: 30
-              total_quantity: 25000
-              total_value: 62500.00
-              average_unit_price: 2.50
-    "400":
-      $ref: "../../components/responses/ValidationError.yaml"
-    "401":
-      $ref: "../../components/responses/UnauthorizedError.yaml"
-    "403":
-      $ref: "../../components/responses/ForbiddenError.yaml"
-    "500":
-      $ref: "../../components/responses/ServerError.yaml"
-
-# update campaign stock
-put:
-  tags:
-    - 📈 Campaigns
-  summary: Update campaign stock
-  description: |
-    Update an existing campaign stock.
-    
-    **Required Permissions:** `write:campaign_stock`
-    
-    **Business Rules:**
-    - Cannot update stock that has been sold or allocated
-    - Cannot reduce quantity below zero
-    - Only administrators can update campaign stock
-    - All changes are logged for audit purposes
-  operationId: updateCampaignStock
-  security:
-    - BearerAuth: []
-  requestBody:
-    required: true
-    content:
-      application/json:
-        schema:
-          type: object
-          properties:
-            quantity:
-              type: number
-              minimum: 0
-              description: Updated stock quantity
-              example: 1200
-            unit_price:
-              type: number
-              minimum: 0
-              description: Updated unit price
-              example: 2.75
-            location:
-              type: string
-              description: Updated storage location
-              example: "Updated Warehouse A"
-            condition:
-              type: string
-              enum: [excellent, good, fair, poor]
-              description: Updated stock condition
-              example: "excellent"
-            notes:
-              type: string
-              description: Updated notes
-              example: "Updated stock notes"
-        examples:
-          update_quantity:
-            summary: Update stock quantity
-            description: Update the stock quantity and recalculate total value
-            value:
-              quantity: 1200
-              unit_price: 2.75
-          update_details:
-            summary: Update stock details
-            description: Update comprehensive stock details
-            value:
-              quantity: 1200
-              unit_price: 2.75
-              location: "Updated Warehouse A"
-              condition: "excellent"
-              notes: "Updated stock notes"
-  responses:
-    "200":
-      description: Campaign stock updated successfully
-      content:
-        application/json:
-          schema:
-            $ref: "../../components/schemas/campaign_stock.yaml"
-          example:
-            id: "clh1234567890abcdef"
-            campaign_id: "clh1234567890abcdef"
-            product_name: "Premium Cocoa Beans"
-            quantity: 1200
-            unit: "kg"
-            stock_date: "2024-01-15"
-            unit_price: 2.75
-            total_value: 3300.00
-            location: "Updated Warehouse A"
-            condition: "excellent"
-            notes: "Updated stock notes"
-            created_at: "2024-01-15T10:30:00Z"
-            updated_at: "2024-01-15T11:30:00Z"
-    "400":
-      $ref: "../../components/responses/ValidationError.yaml"
-    "401":
-      $ref: "../../components/responses/UnauthorizedError.yaml"
-    "403":
-      $ref: "../../components/responses/ForbiddenError.yaml"
-    "404":
-      description: Campaign stock not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Campaign Stock Not Found"
-              message:
-                type: string
-                example: "Campaign stock with the specified ID was not found"
-              code:
-                type: string
-                example: "CAMPAIGN_STOCK_NOT_FOUND"
-    "409":
-      description: Campaign stock update conflict
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Campaign Stock Update Conflict"
-              message:
-                type: string
-                example: "Cannot update stock that has been sold or allocated"
-              code:
-                type: string
-                example: "CAMPAIGN_STOCK_UPDATE_CONFLICT"
-    "500":
-      $ref: "../../components/responses/ServerError.yaml"
-
-# delete campaign stock
-delete:
-  tags:
-    - 📈 Campaigns
-  summary: Delete campaign stock
-  description: |
-    Delete a campaign stock from the system.
-    
-    **Required Permissions:** `write:campaign_stock`
-    
-    **Business Rules:**
-    - Cannot delete stock that has been sold or allocated
-    - Cannot delete stock with positive quantity
-    - Only administrators can delete campaign stock
-    - Soft delete - marks as deleted but preserves data for audit
-  operationId: deleteCampaignStock
-  security:
-    - BearerAuth: []
-  responses:
-    "204":
-      description: Campaign stock deleted successfully
-    "400":
-      description: Cannot delete campaign stock
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Cannot Delete Campaign Stock"
-              message:
-                type: string
-                example: "Cannot delete stock that has been sold or allocated"
-              code:
-                type: string
-                example: "CAMPAIGN_STOCK_HAS_ALLOCATIONS"
-    "401":
-      $ref: "../../components/responses/UnauthorizedError.yaml"
-    "403":
-      $ref: "../../components/responses/ForbiddenError.yaml"
-    "404":
-      description: Campaign stock not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Campaign Stock Not Found"
-              message:
-                type: string
-                example: "Campaign stock with the specified ID was not found"
-              code:
-                type: string
-                example: "CAMPAIGN_STOCK_NOT_FOUND"
+                example: "STOCK_EXISTS"
     "500":
       $ref: "../../components/responses/ServerError.yaml"

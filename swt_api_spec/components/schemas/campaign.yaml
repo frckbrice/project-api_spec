@@ -1,36 +1,48 @@
 type: object
+required:
+  - name
+  - start_date
+  - end_date
+  - status
 properties:
   id:
     type: string
     format: cuid
     readOnly: true
-    description: "The unique Id of the campaign."
+    description: "The unique ID of the campaign"
+    example: "clh1234567890abcdef"
   name:
     type: string
-    description: "title of the campaign"
-    readOnly: true
+    description: "The name of the campaign"
+    example: "Spring 2024 Harvest"
   description:
     type: string
-    description: "description of the campaign"
+    description: "Detailed description of the campaign"
+    example: "Main cocoa harvest campaign for Spring 2024"
   start_date:
     type: string
     format: date
-    description: "start date of the campaign"
+    description: "When the campaign starts"
+    example: "2024-09-01"
   end_date:
     type: string
     format: date
-    description: "end date of the campaign"
+    description: "When the campaign ends"
+    example: "2025-03-31"
   status:
     type: string
     enum: ["OPEN", "CLOSED"]
-    description: "status of the campaign"
+    description: "Current status of the campaign"
+    example: "OPEN"
   created_at:
     type: string
     format: date-time
-    example: "2020-01-01T00:00:00Z"
-    description: "the date and time when the campaign was created"
+    readOnly: true
+    description: "When the campaign was created"
+    example: "2024-01-15T10:30:00Z"
   updated_at:
     type: string
     format: date-time
-    example: "2020-01-01T00:00:00Z"
-    description: "the date and time when the campaign was updated"
+    readOnly: true
+    description: "When the campaign was last updated"
+    example: "2024-01-15T10:30:00Z"

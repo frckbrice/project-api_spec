@@ -5,9 +5,9 @@ post:
   summary: Create a new campaign
   description: |
     Create a new campaign from which all the operations like projects will be performed.
-    
+
     **Required Permissions:** `write:campaigns`
-    
+
     **Business Rules:**
     - Campaign names must be unique within a company
     - Campaign dates cannot overlap with existing campaigns
@@ -81,12 +81,11 @@ post:
             $ref: ../components/schemas/campaign.yaml
           example:
             id: "clh1234567890abcdef"
-            name: "2024-2025 Season"
-            description: "Main cocoa harvesting campaign for 2024-2025 season"
+            name: "Spring 2024 Harvest"
+            description: "Main cocoa harvest campaign for Spring 2024"
             start_date: "2024-09-01"
             end_date: "2025-03-31"
-            company_id: "clh1234567890abcdef"
-            status: "active"
+            status: "OPEN"
             created_at: "2024-01-15T10:30:00Z"
             updated_at: "2024-01-15T10:30:00Z"
     "400":
@@ -121,15 +120,15 @@ get:
   summary: List all campaigns
   description: |
     Retrieve a paginated list of campaigns with optional filtering capabilities.
-    
+
     **Required Permissions:** `read:campaigns`
-    
+
     **Filtering Options:**
     - Filter by company ID
     - Filter by status (active, inactive, completed)
     - Filter by date range
     - Filter by campaign name
-    
+
     **Pagination:**
     - Default limit: 20 items per page
     - Maximum limit: 100 items per page
@@ -193,21 +192,19 @@ get:
           example:
             data:
               - id: "clh1234567890abcdef"
-                name: "2024-2025 Season"
-                description: "Main cocoa harvesting campaign for 2024-2025 season"
+                name: "Spring 2024 Harvest"
+                description: "Main cocoa harvest campaign for Spring 2024"
                 start_date: "2024-09-01"
                 end_date: "2025-03-31"
-                company_id: "clh1234567890abcdef"
-                status: "active"
+                status: "OPEN"
                 created_at: "2024-01-15T10:30:00Z"
                 updated_at: "2024-01-15T10:30:00Z"
               - id: "clh1234567890abcdeg"
-                name: "2023-2024 Season"
-                description: "Previous cocoa harvesting campaign"
+                name: "Fall 2023 Harvest"
+                description: "Main cocoa harvest campaign for Fall 2023"
                 start_date: "2023-09-01"
                 end_date: "2024-03-31"
-                company_id: "clh1234567890abcdef"
-                status: "completed"
+                status: "CLOSED"
                 created_at: "2023-08-15T10:30:00Z"
                 updated_at: "2024-03-31T23:59:59Z"
             pagination:
@@ -233,9 +230,9 @@ put:
   summary: Update a campaign
   description: |
     Update an existing campaign's information.
-    
+
     **Required Permissions:** `write:campaigns`
-    
+
     **Business Rules:**
     - Cannot update campaign dates if projects are already associated
     - Cannot change status to inactive if campaign has active projects
@@ -290,12 +287,11 @@ put:
             $ref: ../components/schemas/campaign.yaml
           example:
             id: "clh1234567890abcdef"
-            name: "2024-2025 Season Updated"
-            description: "Updated campaign description"
+            name: "Spring 2024 Harvest"
+            description: "Main cocoa harvest campaign for Spring 2024"
             start_date: "2024-09-01"
             end_date: "2025-03-31"
-            company_id: "clh1234567890abcdef"
-            status: "active"
+            status: "OPEN"
             created_at: "2024-01-15T10:30:00Z"
             updated_at: "2024-01-15T11:30:00Z"
     "400":
@@ -346,9 +342,9 @@ delete:
   summary: Delete a campaign
   description: |
     Delete a campaign from the system.
-    
+
     **Required Permissions:** `write:campaigns`
-    
+
     **Business Rules:**
     - Cannot delete campaigns with associated projects
     - Cannot delete active campaigns

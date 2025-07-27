@@ -1,39 +1,72 @@
-#the campaign stock object to be stored
 type: object
+required:
+  - campaign_id
+  - product_name
+  - quantity
+  - unit
+  - stock_date
+  - unit_price
 properties:
   id:
     type: string
-    description: the unique identifier of a specific campaign stock
     format: cuid
     readOnly: true
-  quantity:
-    type: number
-    description: the quantity stored as not sold for a specific campaign.
-    format: int32
-  weight:
-    type: string
-    description: the weight use to mesure the stock
-    format: int32
-    example: 5kg
+    description: "The unique ID of the stock entry"
+    example: "clh1234567890abcdef"
   campaign_id:
     type: string
     format: cuid
-    description: the identifier of the campaign
-  company_id:
-    description: the companies ID to which the stock belongs to.
+    description: "The ID of the campaign this stock belongs to"
+    example: "clh1234567890abcdef"
+  product_name:
     type: string
-    format: cuid
-    example: "AQA9CNo0cXNLt6sZp5Uc5P0"
-  unit_of_mesure:
-    description: The unit used to mesure the stock
-    type: integer
-    format: int32
-    example: 5 Ton, 5kg
+    description: "Name of the product"
+    example: "Premium Cocoa Beans"
+  quantity:
+    type: number
+    minimum: 0
+    description: "Quantity of product in stock"
+    example: 1000
+  unit:
+    type: string
+    description: "Unit of measurement"
+    example: "kg"
+  stock_date:
+    type: string
+    format: date
+    description: "Date when the stock was recorded"
+    example: "2024-01-15"
+  unit_price:
+    type: number
+    minimum: 0
+    description: "Price per unit"
+    example: 2.50
+  total_value:
+    type: number
+    minimum: 0
+    description: "Total value of the stock"
+    example: 2500.00
+  location:
+    type: string
+    description: "Storage location"
+    example: "Warehouse A"
+  condition:
+    type: string
+    description: "Condition of the stock"
+    example: "excellent"
+  notes:
+    type: string
+    description: "Additional notes about the stock"
+    example: "High-quality beans from organic farms"
   created_at:
     type: string
     format: date-time
-    description: the date and time when the stock was created
+    readOnly: true
+    description: "When the stock entry was created"
+    example: "2024-01-15T10:30:00Z"
   updated_at:
     type: string
     format: date-time
-    description: the date and time when the stock was updated
+    readOnly: true
+    description: "When the stock entry was last updated"
+    example: "2024-01-15T10:30:00Z"

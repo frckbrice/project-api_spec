@@ -1,126 +1,36 @@
-post:
-  tags:
-    - User
-  summary: user stored after registration from clerk.
-  description: The user object that is stored to the system after being authenticated by the third party authentication system.
-  operationId: createUser
-
-  requestBody:
-    content:
-      application/json:
-        schema:
-          type: object
-          properties:
-            schema:
-              discriminator:
-                propertyName: userType
-                mapping:
-                  admin: "../../components/schemas/admin.yaml"
-                  basic: "../../components/schemas/member.yaml"
-              anyOf:
-                - $ref: "../../components/schemas/admin.yaml"
-                - $ref: "../../components/schemas/member.yaml"
-  responses:
-    "201":
-      description: User created
-      content:
-        application/json:
-          schema:
-            $ref: ../../components/schemas/user.yaml
-    "422":
-      description: "Unprocessable Entity"
-    "500":
-      description: Internal server error
-  security:
-    - BearerAuth: []
-
-# list all users
 get:
   tags:
     - User
   summary: List all users
   description: |
-    Retrieve a paginated list of users with optional filtering capabilities.
-    Only administrators can access this endpoint.
-
-    **Required Permissions:** `read:users`
-
-    **Filtering Options:**
-    - Filter by status (active, banned, inactive)
-    - Filter by role
-    - Filter by company ID
-    - Filter by creation date range
-
-    **Pagination:**
-    - Default limit: 20 items per page
-    - Maximum limit: 100 items per page
-  operationId: getAllUsers
-  security:
-    - BearerAuth: []
+    Retrieve a list of all users in the system.
+    This endpoint supports pagination and filtering.
+  operationId: listUsers
   parameters:
-    - $ref: "../../components/parameters/PaginationLimit.yaml"
-    - $ref: "../../components/parameters/PaginationOffset.yaml"
-    - $ref: "../../components/parameters/CompanyId.yaml"
-    - $ref: "../../components/parameters/DateRangeStart.yaml"
-    - $ref: "../../components/parameters/DateRangeEnd.yaml"
-    - name: status
+    - name: page
       in: query
-      description: Filter by user status
-      required: false
+      description: Page number for pagination
       schema:
-        type: string
-        enum: [active, banned, inactive]
-        default: "active"
-        example: "active"
+        type: integer
+        minimum: 1
+        default: 1
+    - name: limit
+      in: query
+      description: Number of items per page
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
     - name: role
       in: query
-      description: Filter by user role
-      required: false
+      description: Filter users by role
       schema:
         type: string
-        enum: [admin, manager, auditor, user]
-        example: "manager"
-    - name: search
-      in: query
-      description: Search users by name, email, or username
-      required: false
-      schema:
-        type: string
-        example: "john"
-    - name: sort_by
-      in: query
-      description: Sort field
-      required: false
-      schema:
-        type: string
-        enum: [created_at, username, role]
-        default: "created_at"
-        example: "created_at"
-    - name: sort_order
-      in: query
-      description: Sort direction
-      required: false
-      schema:
-        type: string
-        enum: [asc, desc]
-        default: "desc"
-        example: "desc"
+        enum: [admin, user]
   responses:
     "200":
       description: List of users retrieved successfully
-      headers:
-        X-Total-Count:
-          description: Total number of users matching the filter criteria
-          schema:
-            type: integer
-        X-Page-Count:
-          description: Total number of pages
-          schema:
-            type: integer
-        Link:
-          description: Pagination links (first, prev, next, last)
-          schema:
-            type: string
       content:
         application/json:
           schema:
@@ -130,79 +40,68 @@ get:
                 type: array
                 items:
                   $ref: "../../components/schemas/user.yaml"
-              pagination:
-                type: object
-                properties:
-                  limit:
-                    type: integer
-                    example: 20
-                  offset:
-                    type: integer
-                    example: 0
-                  total:
-                    type: integer
-                    example: 150
-                  page_count:
-                    type: integer
-                    example: 8
-                  has_next:
-                    type: boolean
-                    example: true
-                  has_prev:
-                    type: boolean
-                    example: false
               meta:
                 type: object
                 properties:
-                  filters_applied:
-                    type: object
-                    example:
-                      status: "active"
-                      role: "manager"
-                      company_id: "clh1234567890abcdef"
-          example:
-            data:
-              - id: "clh1234567890abcdef"
-                username: "john.doe"
-                email: "john.doe@example.com"
-                first_name: "John"
-                last_name: "Doe"
-                role: "manager"
-                company_id: "clh1234567890abcdef"
-                phone_number: "+1234567890"
-                status: "active"
-                created_at: "2024-01-01T00:00:00Z"
-                updated_at: "2024-01-15T10:30:00Z"
-              - id: "clh1234567890abcdeg"
-                username: "jane.smith"
-                email: "jane.smith@example.com"
-                first_name: "Jane"
-                last_name: "Smith"
-                role: "auditor"
-                company_id: "clh1234567890abcdef"
-                phone_number: "+1234567891"
-                status: "active"
-                created_at: "2024-01-02T00:00:00Z"
-                updated_at: "2024-01-15T11:30:00Z"
-            pagination:
-              limit: 20
-              offset: 0
-              total: 150
-              page_count: 8
-              has_next: true
-              has_prev: false
-            meta:
-              filters_applied:
-                status: "active"
-                role: "manager"
-                company_id: "clh1234567890abcdef"
+                  total:
+                    type: integer
+                    example: 100
+                  pages:
+                    type: integer
+                    example: 5
+                  current_page:
+                    type: integer
+                    example: 1
+                  per_page:
+                    type: integer
+                    example: 20
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"
+
+post:
+  tags:
+    - User
+  summary: Create a new user
+  description: Create a new user in the system
+  operationId: createUser
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/user.yaml"
+  responses:
+    "201":
+      description: User created successfully
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/user.yaml"
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
       $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
       $ref: "../../components/responses/ForbiddenError.yaml"
-    "429":
-      $ref: "../../components/responses/RateLimitError.yaml"
+    "409":
+      description: User already exists
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Conflict"
+              message:
+                type: string
+                example: "User already exists"
+              code:
+                type: string
+                example: "USER_EXISTS"
     "500":
       $ref: "../../components/responses/ServerError.yaml"

@@ -1,42 +1,63 @@
 # specify object for requirement of rainforest alliance certification specification
 type: object
+required:
+  - name
+  - category
+  - is_mandatory
 properties:
   id:
     type: string
     format: cuid
     readOnly: true
-    description: "The unique Id of the requirement."
-  title:
+    description: "The unique ID of the requirement"
+    example: "clh1234567890abcdef"
+  name:
     type: string
-    description: "To specify the label of the requirement used"
-    example: "chapter 1 | chapter 2 | chapter 3 ..."
-  numero:
+    description: "Name of the requirement"
+    example: "Organic Certification"
+  category:
     type: string
-    description: "The number representing the entry in the title. "
-  content:
+    description: "Category of the requirement"
+    example: "certification"
+  description:
+    type: string
+    description: "Detailed description of the requirement"
+    example: "Must have valid organic certification from recognized bodies"
+  is_mandatory:
+    type: boolean
+    description: "Whether this requirement is mandatory"
+    example: true
+  validation_rules:
     type: array
-    format: json
-    description: "Content of the requirement"
+    description: "List of validation rules"
     items:
-      type: object
-      format: json
-      properties:
-        text:
-          type: string
-          description: "Content of the requirement"
-        num:
-          type: string
-          description: "Title of the requirement subtitle"
-        certif_de_group:
-          type: object
-          format: json
-          properties:
-            direction_du_group:
-              type: string
-              description: "auto check requirement"
-            petite_exploitation_agricole:
-              type: string
-              description: "auto check requirement"
-            grande_exploitation_agricole:
-              type: string
-              description: "auto check requirement"
+      type: string
+    example: ["Valid certification document", "Annual renewal required"]
+  min_score:
+    type: integer
+    minimum: 0
+    maximum: 100
+    description: "Minimum score required"
+    example: 80
+  max_score:
+    type: integer
+    minimum: 0
+    maximum: 100
+    description: "Maximum possible score"
+    example: 100
+  unit:
+    type: string
+    description: "Unit of measurement for scores"
+    example: "percentage"
+  created_at:
+    type: string
+    format: date-time
+    readOnly: true
+    description: "When the requirement was created"
+    example: "2024-01-15T10:30:00Z"
+  updated_at:
+    type: string
+    format: date-time
+    readOnly: true
+    description: "When the requirement was last updated"
+    example: "2024-01-15T10:30:00Z"
