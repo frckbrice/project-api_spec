@@ -1,0 +1,22 @@
+description: Authentication credentials were missing or invalid
+content:
+  application/json:
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Unauthorized"
+        message:
+          type: string
+          example: "Invalid or missing authentication token"
+        code:
+          type: string
+          example: "AUTH_REQUIRED"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2024-01-15T10:30:00Z"
+        request_id:
+          type: string
+          example: "req_1234567890abcdef" 

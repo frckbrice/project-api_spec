@@ -1,0 +1,27 @@
+description: The request was understood but the server is refusing to authorize it
+content:
+  application/json:
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Forbidden"
+        message:
+          type: string
+          example: "Insufficient permissions to access this resource"
+        code:
+          type: string
+          example: "INSUFFICIENT_PERMISSIONS"
+        required_permissions:
+          type: array
+          items:
+            type: string
+          example: ["write:farms", "admin:companies"]
+        timestamp:
+          type: string
+          format: date-time
+          example: "2024-01-15T10:30:00Z"
+        request_id:
+          type: string
+          example: "req_1234567890abcdef" 

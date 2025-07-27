@@ -1,0 +1,8 @@
+name: start_date
+in: query
+description: Start date for filtering (ISO 8601 format)
+required: false
+schema:
+  type: string
+  format: date
+  example: "2024-01-01" 

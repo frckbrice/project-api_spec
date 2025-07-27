@@ -1,0 +1,38 @@
+description: Too many requests, please try again later
+headers:
+  X-RateLimit-Limit:
+    description: The number of allowed requests in the current period
+    schema:
+      type: integer
+  X-RateLimit-Remaining:
+    description: The number of remaining requests in the current period
+    schema:
+      type: integer
+  X-RateLimit-Reset:
+    description: The number of seconds left in the current period
+    schema:
+      type: integer
+content:
+  application/json:
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Rate Limit Exceeded"
+        message:
+          type: string
+          example: "Too many requests, please try again later"
+        retry_after:
+          type: integer
+          example: 3600
+        code:
+          type: string
+          example: "RATE_LIMIT_EXCEEDED"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2024-01-15T10:30:00Z"
+        request_id:
+          type: string
+          example: "req_1234567890abcdef" 

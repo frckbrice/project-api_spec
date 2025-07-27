@@ -1,110 +1,122 @@
 openapi: 3.1.0
 info:
   version: 1.0.0
-  title: senwisetool.com
-  termsOfService: "https://senwisetool.com/terms/"
+  title: SenWiseTool API
+  description: |
+    # SenWiseTool - Cocoa Industry Management API
+    
+    ## Overview
+    SenWiseTool is a comprehensive API for managing cocoa industry operations, including farmer management, farm tracking, certification compliance, and supply chain optimization.
+    
+    ## Key Features
+    - **Farmer Management**: Complete farmer profiles, contracts, and relationship tracking
+    - **Farm Operations**: GPS coordinates, inspection data, and compliance monitoring
+    - **Certification Support**: Rainforest Alliance compliance tracking and audit trails
+    - **Supply Chain**: Market management, transactions, and inventory tracking
+    - **Training & Education**: Session management and participant tracking
+    
+    ## Getting Started
+    1. Obtain API credentials from your administrator
+    2. Use JWT Bearer token authentication
+    3. All requests should include `Content-Type: application/json`
+    4. Rate limiting: 1000 requests per hour per API key
+    
+    ## Environment
+    - **Documentation (Vercel)**: [https://senwisetool-api-docs.vercel.app](https://senwisetool-api-docs.vercel.app)
+    - **Documentation (GitHub Pages)**: [https://github.com/frckbrice/project-api_spec](https://github.com/frckbrice/project-api_spec)
+    - **Local Development**: `http://localhost:8080`
+    
+    ## Support
+    - **Documentation**: [https://senwisetool-api-docs.vercel.app](https://senwisetool-api-docs.vercel.app)
+    - **Support Email**: bricefrkc@gmail.com
+    - **Community**: [https://community.senwisetool.com](https://community.senwisetool.com)
+    
+    ## SDKs & Libraries
+    - [JavaScript/TypeScript SDK](https://github.com/senwisetool/js-sdk)
+    - [Python SDK](https://github.com/senwisetool/python-sdk)
+    - [Postman Collection](https://github.com/senwisetool/postman-collection)
+    
+  termsOfService: ""
   contact:
-    email: senmima-support@senima.com
-    url: "http://senwisetool.com/contact"
-    name: senmima
-
+    email: bricefrkc@gmail.com
+    url: "https://maebrieporfolio.vercel.app/"
+    name: avom brice
   license:
     name: Apache 2.0
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
   x-logo:
-    url: "https://zfmlvubvatipllsqsehh.supabase.co/storage/v1/object/sign/my_blog_stuffs/senwiseTool.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJteV9ibG9nX3N0dWZmcy9zZW53aXNlVG9vbC5wbmciLCJpYXQiOjE3MjQzNDk5NDgsImV4cCI6MTg4MjAyOTk0OH0.wx1eEMRztMVBPWk1LVWMISbUC2VJmUFEirubfzcqGGc&t=2024-08-22T18%3A05%3A49.101Z"
-  description: >
-    THE API SPECIFICATION FOR **SENWISETOOL** PROJECT.
+    url: "../docs/senwiseTool.png"
 
 
-    # description
-
-    This API definition is intended to to be a good starting point for developers and consumers of the **sendwisetool** project based on REST-API specifications. It represents a contract between the two teams involved, front-end and backend of the project.
-
-    I allows every stakeholder (Human and computer) to discover and understand the capabilities of the service without access to source
-    code, documentation, or through network traffic inspection. 
-    When properly defined, any team member can understand and interact with the remote service with a minimal amount of implementation logic.
 externalDocs:
-  description: "corresponding repository for the project"
-  url: "https://github.com/frckbrice/senwisetool-project-backend"
+  description: "GitHub Repository"
+  url: "https://github.com/frckbrice/senwisetool-api-spec"
+
 tags:
-  - name: Project
-    description: The project represents any operation made by the company to make sur the requirements specified in the Rainforest Alliance specification are respected either by the company or by the farmers. And also the process of collecting data from the farms.
-  - name: User
-    description: the users on the subscribed companies.
-  - name: Campaign
-    description: The Campaign is the main element that wraps all the operations made by companies during the defined periods. For example a campain can be 2023-2024 and wraps everythings done by the company during this campaign.
-  - name: Inspection_data
-    description: The Inspection_data represents data collected during the inspection organised by the company on the farms.
+  - name: Authentication
+    description: User authentication and authorization endpoints
+    externalDocs:
+      description: "Authentication Guide"
+      url: "https://docs.senwisetool.com/authentication"
+  - name: Companies
+    description: Company management operations for cocoa industry organizations
+  - name: Users
+    description: User management for system administrators and company employees
+  - name: Farmers
+    description: Farmer profile and relationship management
   - name: Farms
-    description: the farm owned by the farmers that are part of the company registered to Rainforest alliance certification
-  - name: Market
-    description: Martket represents the meeting between the company and the farmers to buy and sell their crops.
-  - name: Receipt
-    description: Receipt represents all the information involved in the transaction made by between the farmer and the company.
-  - name: Transaction
-    description: Transaction represents all the operations made by the companies after the market has taken place. The company transfers its products purchassed from the farmers to another buyer company.
-  - name: Subscription
-    description: Subscription represents the registration of the company to the system based on a specific plan.
-  - name: Price
-    description: Price is the product offer price.
-  - name: Offer
-    description: The Offer represents the offer of the product that the company owning the system is selling.
-  - name: Requirement
-    description: Requirement represents the main reason behind the offer plan. The company subscribe to an offer plan.
+    description: Farm registration, GPS tracking, and compliance monitoring
+  - name: Projects
+    description: Rainforest Alliance certification projects and compliance tracking
+  - name: Campaigns
+    description: Seasonal campaign management and data collection periods
+  - name: Markets
+    description: Market sessions for cocoa trading between companies and farmers
+  - name: Transactions
+    description: Financial transactions and payment processing
   - name: Training
-    description: Training is the one of the operation organised by the company that concerns the farmers to follow the specifications of the Rainforest Alliance norms.
-  - name: Campaign_stock
-    description: Campaign_stock represents the rest of the non sold product by the certified company during one Campaign.
-  - name: Company
-    description: Company is the moral person that register to the system and is  (potential) certified Rainforest alliance.
-  - name: Collector_agent
-    description: Collector_agent represents the person appointed to the collection of the data on ground zero from farmers and farms.
-  - name: Farm_coodinates
-    description: Coordinate represents information about the farms dimensions.
-  - name: Participants
-    description: participants represents the persons who took part on a training session.
-  - name: Project_audit
-    description: Project_audit represents the the storage of the information about the person in the company who was in charge of conducting the project.
-  - name: Market_audit
-    description: represents the the storage of the information about the person in the company who was in charge of conducting the Market..
-  - name: Admin
-    description: Administration of the system.
-  - name: Price_plan_requirements
-    description: The Price_plan_requirements represents the resulting table between the price_plan and requirement. It define the requirements corresponding to a particular price plan.
-x-tagGroups:
-  - name: General
-    tags:
-      - Company
-      - User
-      - Farm
-      - Transaction
-      - Campaign
-      - Market
-      - Receipt
-      - Project
-      - Inspection_data
-      - Subscription
-      - Requirement
-      - Training
-      - Campaign_stock
-      - Collector_agent
-      - Farm_coodinates
-      - Project_audit
-      - Price
-      - Offer
-      - Market_audit
-      - Plan_requirement
+    description: Farmer training sessions and educational content management
+  - name: Inspection
+    description: Farm inspection data collection and compliance verification
+  - name: Subscriptions
+    description: Company subscription and pricing plan management
+  - name: Analytics
+    description: Data analytics and reporting endpoints
   - name: Administration
+    description: System administration and configuration
+
+x-tagGroups:
+  - name: Core Operations
     tags:
-      - Admin
+      - Companies
+      - Users
+      - Farmers
+      - Farms
+  - name: Certification & Compliance
+    tags:
+      - Projects
+      - Campaigns
+      - Inspection
+  - name: Business Operations
+    tags:
+      - Markets
+      - Transactions
+      - Training
+  - name: System Management
+    tags:
+      - Authentication
+      - Subscriptions
+      - Administration
+      - Analytics
+
 servers:
-  - url: https://{tenant}/v1
-    variables:
-      tenant:
-        default: www
-        description: Your tenant id
-  - url: https://senw***seTool.com/v1
+  - url: https://senwisetool-api-docs.vercel.app
+    description: Documentation and API specification (Vercel)
+  - url: https://github.com/frckbrice/project-api_spec
+    description: Documentation and API specification (GitHub Pages)
+  - url: http://localhost:8080
+    description: Local development environment
+
 paths:
   "/users": # user
     $ref: paths/user/user.yaml
@@ -187,8 +199,216 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+      description: |
+        JWT Bearer token authentication. Include your JWT token in the Authorization header.
+        
+        **Example:**
+        ```
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        ```
+        
+        **Token Format:**
+        - Header: `{"alg": "HS256", "typ": "JWT"}`
+        - Payload: `{"sub": "user_id", "company_id": "company_id", "role": "user_role", "exp": 1640995200}`
+        - Signature: HMAC SHA256
+        
+        **Token Expiration:** 24 hours
+        **Refresh Token:** Available via `/auth/refresh` endpoint
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: |
+        API Key for service-to-service authentication.
+        Used for webhook endpoints and automated integrations.
+        
+        **Example:**
+        ```
+        X-API-Key: sk_live_1234567890abcdef
+        ```
+    OAuth2Auth:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://senwisetool.com/oauth/authorize
+          tokenUrl: https://senwisetool.com/oauth/token
+          scopes:
+            read:users: Read user information
+            write:users: Create and update users
+            read:farms: Read farm data
+            write:farms: Create and update farms
+            read:companies: Read company information
+            write:companies: Create and update companies
+            admin: Full administrative access
+      description: |
+        OAuth 2.0 authorization code flow for third-party integrations.
+        Recommended for public integrations and mobile applications.
+
+  parameters:
+    PaginationLimit:
+      name: limit
+      in: query
+      description: Number of items to return (max 100)
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+        example: 20
+    PaginationOffset:
+      name: offset
+      in: query
+      description: Number of items to skip for pagination
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+        example: 0
+    CompanyId:
+      name: company_id
+      in: query
+      description: Filter by company ID
+      required: false
+      schema:
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
+    DateRangeStart:
+      name: start_date
+      in: query
+      description: Start date for filtering (ISO 8601 format)
+      required: false
+      schema:
+        type: string
+        format: date
+        example: "2024-01-01"
+    DateRangeEnd:
+      name: end_date
+      in: query
+      description: End date for filtering (ISO 8601 format)
+      required: false
+      schema:
+        type: string
+        format: date
+        example: "2024-12-31"
+
+  responses:
+    UnauthorizedError:
+      description: Authentication credentials were missing or invalid
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Unauthorized"
+              message:
+                type: string
+                example: "Invalid or missing authentication token"
+              code:
+                type: string
+                example: "AUTH_REQUIRED"
+    ForbiddenError:
+      description: The request was understood but the server is refusing to authorize it
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Forbidden"
+              message:
+                type: string
+                example: "Insufficient permissions to access this resource"
+              code:
+                type: string
+                example: "INSUFFICIENT_PERMISSIONS"
+    ValidationError:
+      description: The request was well-formed but contains invalid parameters
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Validation Error"
+              message:
+                type: string
+                example: "Request validation failed"
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                      example: "email"
+                    message:
+                      type: string
+                      example: "Invalid email format"
+              code:
+                type: string
+                example: "VALIDATION_ERROR"
+    RateLimitError:
+      description: Too many requests, please try again later
+      headers:
+        X-RateLimit-Limit:
+          description: The number of allowed requests in the current period
+          schema:
+            type: integer
+        X-RateLimit-Remaining:
+          description: The number of remaining requests in the current period
+          schema:
+            type: integer
+        X-RateLimit-Reset:
+          description: The number of seconds left in the current period
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Rate Limit Exceeded"
+              message:
+                type: string
+                example: "Too many requests, please try again later"
+              retry_after:
+                type: integer
+                example: 3600
+              code:
+                type: string
+                example: "RATE_LIMIT_EXCEEDED"
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Internal Server Error"
+              message:
+                type: string
+                example: "An unexpected error occurred"
+              request_id:
+                type: string
+                example: "req_1234567890abcdef"
+              code:
+                type: string
+                example: "INTERNAL_ERROR"
+
 security:
   - BearerAuth: []
+  - ApiKeyAuth: []
 webhooks:
   userInfo:
     post:

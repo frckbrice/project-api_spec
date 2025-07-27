@@ -1,24 +1,82 @@
 post:
   tags:
-    - Farm
+    - Farms
   summary: Create a new farm
-  description: To create a new farm model that is owned by a specific farmer.
+  description: |
+    Create a new farm record for a farmer. This endpoint registers a farm with GPS coordinates, location details, and basic information.
+    
+    **Required Permissions:** `write:farms`
+    
+    **Business Rules:**
+    - Each farmer can have multiple farms
+    - GPS coordinates are required for compliance tracking
+    - Farm images are optional but recommended for verification
   operationId: createFarm
+  security:
+    - BearerAuth: []
   requestBody:
     required: true
     content:
       application/json:
         schema:
           $ref: "../../components/schemas/farm.yaml"
+        examples:
+          basic_farm:
+            summary: Basic farm creation
+            description: Create a farm with minimal required information
+            value:
+              location:
+                lat: 6.5244
+                lng: 3.3792
+              farmer_id: "clh1234567890abcdef"
+              village: "Ibadan Village"
+              division: "Oyo Division"
+              council: "Ibadan Council"
+          complete_farm:
+            summary: Complete farm with image
+            description: Create a farm with all available information including image
+            value:
+              location:
+                lat: 6.5244
+                lng: 3.3792
+              farmer_id: "clh1234567890abcdef"
+              village: "Ibadan Village"
+              division: "Oyo Division"
+              council: "Ibadan Council"
+              farm_image_url: "https://storage.senwisetool.com/farms/farm_123.jpg"
   responses:
     "201":
-      description: Farm created
+      description: Farm created successfully
+      headers:
+        Location:
+          description: URL of the created farm resource
+          schema:
+            type: string
+            format: uri
       content:
         application/json:
           schema:
             $ref: "../../components/schemas/farm.yaml"
+          example:
+            id: "clh1234567890abcdef"
+            location:
+              lat: 6.5244
+              lng: 3.3792
+            farmer_id: "clh1234567890abcdef"
+            village: "Ibadan Village"
+            division: "Oyo Division"
+            council: "Ibadan Council"
+            farm_image_url: "https://storage.senwisetool.com/farms/farm_123.jpg"
+            created_at: "2024-01-15T10:30:00Z"
+            updated_at: "2024-01-15T10:30:00Z"
     "400":
-      description: "bad request"
+      $ref: "../../components/responses/ValidationError.yaml"
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "409":
+      description: Farm already exists for this location
       content:
         application/json:
           schema:
@@ -26,61 +84,197 @@ post:
             properties:
               error:
                 type: string
-                example: "Invalid input data"
-    "401":
-      description: "Unauthorized"
-    "403":
-      description: "Forbidden"
+                example: "Farm Already Exists"
+              message:
+                type: string
+                example: "A farm already exists at these coordinates"
+              existing_farm_id:
+                type: string
+                example: "clh1234567890abcdef"
+              code:
+                type: string
+                example: "FARM_ALREADY_EXISTS"
+    "429":
+      $ref: "../../components/responses/RateLimitError.yaml"
     "500":
-      description: internal server error
+      $ref: "../../components/responses/ServerError.yaml"
 
-# get all the farms
 get:
   tags:
-    - Farm
-  summary: list all the farms .
-  description: To list all the farms that are supervised by a company.
+    - Farms
+  summary: List all farms
+  description: |
+    Retrieve a paginated list of farms with optional filtering capabilities.
+    
+    **Required Permissions:** `read:farms`
+    
+    **Filtering Options:**
+    - Filter by company ID to see farms under specific companies
+    - Filter by date range for farm creation
+    - Filter by geographical region (village, division, council)
+    
+    **Pagination:**
+    - Default limit: 20 items per page
+    - Maximum limit: 100 items per page
+    - Use offset for pagination
   operationId: getAllFarms
+  security:
+    - BearerAuth: []
   parameters:
-    - name: limit
+    - $ref: "../../components/parameters/PaginationLimit.yaml"
+    - $ref: "../../components/parameters/PaginationOffset.yaml"
+    - $ref: "../../components/parameters/CompanyId.yaml"
+    - $ref: "../../components/parameters/DateRangeStart.yaml"
+    - $ref: "../../components/parameters/DateRangeEnd.yaml"
+    - name: farmer_id
       in: query
-      description: number of resource to fetch
+      description: Filter by specific farmer ID
       required: false
-      schema:
-        type: integer
-    - name: skip
-      in: query
-      description: number of page to skip
-      required: false
-      schema:
-        type: integer
-    - name: company_id
-      in: query
       schema:
         type: string
         format: cuid
-        example: 123456hgfdjhgfshCVF2
-      description: the ID of the company in charge of supervising the farm.
+        example: "clh1234567890abcdef"
+    - name: village
+      in: query
+      description: Filter by village name
       required: false
+      schema:
+        type: string
+        example: "Ibadan Village"
+    - name: division
+      in: query
+      description: Filter by division name
+      required: false
+      schema:
+        type: string
+        example: "Oyo Division"
+    - name: council
+      in: query
+      description: Filter by council name
+      required: false
+      schema:
+        type: string
+        example: "Ibadan Council"
+    - name: include_inactive
+      in: query
+      description: Include inactive farms in results
+      required: false
+      schema:
+        type: boolean
+        default: false
+        example: false
+    - name: sort_by
+      in: query
+      description: Sort order for results
+      required: false
+      schema:
+        type: string
+        enum: [created_at, updated_at, village, farmer_id]
+        default: created_at
+        example: "created_at"
+    - name: sort_order
+      in: query
+      description: Sort direction
+      required: false
+      schema:
+        type: string
+        enum: [asc, desc]
+        default: desc
+        example: "desc"
   responses:
     "200":
-      description: farms
-      content:
-        application/json:
+      description: List of farms retrieved successfully
+      headers:
+        X-Total-Count:
+          description: Total number of farms matching the filter criteria
           schema:
-            type: array
-            items:
-              $ref: ../../components/schemas/farm.yaml
-
-    "400":
-      description: "Invalid Inputs"
+            type: integer
+        X-Page-Count:
+          description: Total number of pages
+          schema:
+            type: integer
+        Link:
+          description: Pagination links (first, prev, next, last)
+          schema:
+            type: string
       content:
         application/json:
           schema:
             type: object
             properties:
-              error:
-                type: string
-                example: "Invalid input data"
+              data:
+                type: array
+                items:
+                  $ref: "../../components/schemas/farm.yaml"
+              pagination:
+                type: object
+                properties:
+                  limit:
+                    type: integer
+                    example: 20
+                  offset:
+                    type: integer
+                    example: 0
+                  total:
+                    type: integer
+                    example: 150
+                  page_count:
+                    type: integer
+                    example: 8
+                  has_next:
+                    type: boolean
+                    example: true
+                  has_prev:
+                    type: boolean
+                    example: false
+              meta:
+                type: object
+                properties:
+                  filters_applied:
+                    type: object
+                    example:
+                      company_id: "clh1234567890abcdef"
+                      village: "Ibadan Village"
+          example:
+            data:
+              - id: "clh1234567890abcdef"
+                location:
+                  lat: 6.5244
+                  lng: 3.3792
+                farmer_id: "clh1234567890abcdef"
+                village: "Ibadan Village"
+                division: "Oyo Division"
+                council: "Ibadan Council"
+                farm_image_url: "https://storage.senwisetool.com/farms/farm_123.jpg"
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+              - id: "clh1234567890abcdeg"
+                location:
+                  lat: 6.5245
+                  lng: 3.3793
+                farmer_id: "clh1234567890abcdeg"
+                village: "Lagos Village"
+                division: "Lagos Division"
+                council: "Lagos Council"
+                created_at: "2024-01-14T09:15:00Z"
+                updated_at: "2024-01-14T09:15:00Z"
+            pagination:
+              limit: 20
+              offset: 0
+              total: 150
+              page_count: 8
+              has_next: true
+              has_prev: false
+            meta:
+              filters_applied:
+                company_id: "clh1234567890abcdef"
+    "400":
+      $ref: "../../components/responses/ValidationError.yaml"
     "401":
-      description: "Unauthorized access"
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "429":
+      $ref: "../../components/responses/RateLimitError.yaml"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"

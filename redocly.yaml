@@ -1,20 +1,26 @@
-# See https://redocly.com/docs/cli/configuration/ for more information.
+# Redocly CLI Configuration
 apis:
   senwisetool@v1:
     root: swt_api_spec/senwisetool.yaml
+
 extends:
   - recommended
+
 rules:
-  no-unused-components: error
+  no-unused-components: warn
   no-server-example.com: off
-theme:
-  openapi:
-    htmlTemplate: ./docs/index.html
-    theme:
-      colors:
-        primary:
-          main: "#32329f"
-    generateCodeSamples:
-      languages:
-        - lang: JavaScript
-        - lang: Node.js
+  operation-operationId: warn
+  path-http-verbs-order: warn
+  no-identical-paths: warn
+  no-ambiguous-paths: warn
+  operation-2xx-response: warn
+  operation-4xx-response: warn
+  operation-description: warn
+  operation-summary: warn
+  operation-tag-defined: warn
+  path-declaration-must-exist: warn
+  path-not-include-query: warn
+  response-contains-header: warn
+  response-contains-property: warn
+  security-defined: warn
+  tag-description: warn

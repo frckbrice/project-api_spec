@@ -1,0 +1,157 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    name: Validate OpenAPI Specification
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Validate OpenAPI spec
+      run: npm run validate
+      
+    - name: Lint OpenAPI spec
+      run: npm run lint
+      
+    - name: Build documentation
+      run: npm run docs:build
+      
+    - name: Bundle specification
+      run: npm run bundle
+      
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: api-specification
+        path: |
+          dist/
+          docs/
+        retention-days: 30
+
+  test:
+    name: Test Generated Clients
+    runs-on: ubuntu-latest
+    needs: validate
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Generate TypeScript client
+      run: npm run generate:client
+      
+    - name: Generate Postman collection
+      run: npm run generate:postman
+      
+    - name: Test TypeScript client
+      run: |
+        cd generated/typescript
+        npm install
+        npm test
+
+  docker-test:
+    name: Test Docker Container
+    runs-on: ubuntu-latest
+    needs: [validate, test]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Build Docker image
+      run: docker build -t senwisetool-api-docs .
+        
+    - name: Test Docker container
+      run: |
+        # Test container
+        docker run -d --name test-container -p 8080:8080 senwisetool-api-docs
+        sleep 10
+        curl -f http://localhost:8080 || exit 1
+        docker stop test-container && docker rm test-container
+
+  deploy:
+    name: Deploy Documentation
+    runs-on: ubuntu-latest
+    needs: [validate, test, docker-test]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build documentation
+      run: npm run docs:build
+      
+    - name: Deploy to Vercel
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: ./
+        vercel-args: '--prod'
+        
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs
+        destination_dir: .
+        force_orphan: true
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif' 
