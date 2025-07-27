@@ -3898,23 +3898,446 @@ paths:
   /subscriptions:
     post:
       tags:
-        - Company
-      summary: Subscribe company to an offer plan
+        - 🏢 Companies
+      summary: Create subscription
+      description: |
+        Subscribe a company to an offer plan.
+
+        **Required Permissions:** `write:subscription`
+
+        **Business Rules:**
+        - Only administrators can create subscriptions
+        - Company must not have an active subscription to the same plan
+        - Subscription start date must be in the future
+        - Payment must be confirmed before activation
       operationId: subscribeCompanyToOfferPlan
-      description: To subscribe a company to an offer plan. This information is used in the company dashboard to display all the subscriptions. Only administrators can use this operation.
+      security:
+        - BearerAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/subscription'
+            examples:
+              basic_subscription:
+                summary: Basic subscription
+                description: Create a basic subscription with minimal information
+                value:
+                  company_id: clh1234567890abcdef
+                  plan_id: clh1234567890abcdeg
+                  start_date: '2024-02-01'
+                  end_date: '2025-02-01'
+                  payment_method: credit_card
+              detailed_subscription:
+                summary: Detailed subscription
+                description: Create a comprehensive subscription
+                value:
+                  company_id: clh1234567890abcdef
+                  plan_id: clh1234567890abcdeg
+                  start_date: '2024-02-01'
+                  end_date: '2025-02-01'
+                  payment_method: credit_card
+                  billing_cycle: monthly
+                  auto_renew: true
+                  discount_code: WELCOME10
+                  notes: Enterprise subscription with premium support
       responses:
         '201':
-          description: company subscribed to an offer plan
+          description: Subscription created successfully
+          headers:
+            Location:
+              description: URL of the created subscription resource
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/subscription'
+              example:
+                id: clh1234567890abcdef
+                company_id: clh1234567890abcdef
+                plan_id: clh1234567890abcdeg
+                start_date: '2024-02-01'
+                end_date: '2025-02-01'
+                status: active
+                payment_method: credit_card
+                billing_cycle: monthly
+                auto_renew: true
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T10:30:00Z'
         '400':
-          description: Invalid Input
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '409':
+          description: Subscription already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Subscription Already Exists
+                  message:
+                    type: string
+                    example: Company already has an active subscription to this plan
+                  code:
+                    type: string
+                    example: SUBSCRIPTION_ALREADY_EXISTS
         '500':
-          description: internal server error
+          $ref: '#/components/responses/ServerError-2'
+    get:
+      tags:
+        - 🏢 Companies
+      summary: List all subscriptions
+      description: |
+        Retrieve a paginated list of subscriptions with optional filtering capabilities.
+
+        **Required Permissions:** `read:subscription`
+
+        **Filtering Options:**
+        - Filter by company ID
+        - Filter by subscription status
+        - Filter by date range
+        - Filter by payment method
+        - Filter by billing cycle
+
+        **Pagination:**
+        - Default limit: 20 items per page
+        - Maximum limit: 100 items per page
+      operationId: getAllSubscriptions
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationOffset'
+        - $ref: '#/components/parameters/CompanyId'
+        - $ref: '#/components/parameters/DateRangeStart'
+        - $ref: '#/components/parameters/DateRangeEnd'
+        - name: status
+          in: query
+          description: Filter by subscription status
+          required: false
+          schema:
+            type: string
+            enum:
+              - active
+              - inactive
+              - expired
+              - cancelled
+              - pending
+            example: active
+        - name: payment_method
+          in: query
+          description: Filter by payment method
+          required: false
+          schema:
+            type: string
+            enum:
+              - credit_card
+              - bank_transfer
+              - paypal
+              - crypto
+            example: credit_card
+        - name: billing_cycle
+          in: query
+          description: Filter by billing cycle
+          required: false
+          schema:
+            type: string
+            enum:
+              - monthly
+              - quarterly
+              - yearly
+            example: monthly
+        - name: auto_renew
+          in: query
+          description: Filter by auto-renewal status
+          required: false
+          schema:
+            type: boolean
+            example: true
+      responses:
+        '200':
+          description: Subscriptions retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/subscription'
+                  pagination:
+                    type: object
+                    properties:
+                      limit:
+                        type: integer
+                        example: 20
+                      offset:
+                        type: integer
+                        example: 0
+                      total:
+                        type: integer
+                        example: 15
+                      page_count:
+                        type: integer
+                        example: 1
+                      has_next:
+                        type: boolean
+                        example: false
+                      has_prev:
+                        type: boolean
+                        example: false
+                  summary:
+                    type: object
+                    properties:
+                      total_subscriptions:
+                        type: integer
+                        example: 15
+                      active_subscriptions:
+                        type: integer
+                        example: 12
+                      expired_subscriptions:
+                        type: integer
+                        example: 2
+                      cancelled_subscriptions:
+                        type: integer
+                        example: 1
+              example:
+                data:
+                  - id: clh1234567890abcdef
+                    company_id: clh1234567890abcdef
+                    plan_id: clh1234567890abcdeg
+                    start_date: '2024-02-01'
+                    end_date: '2025-02-01'
+                    status: active
+                    payment_method: credit_card
+                    billing_cycle: monthly
+                    auto_renew: true
+                    created_at: '2024-01-15T10:30:00Z'
+                    updated_at: '2024-01-15T10:30:00Z'
+                  - id: clh1234567890abcdeh
+                    company_id: clh1234567890abcdei
+                    plan_id: clh1234567890abcdeg
+                    start_date: '2024-01-01'
+                    end_date: '2024-12-31'
+                    status: active
+                    payment_method: bank_transfer
+                    billing_cycle: yearly
+                    auto_renew: false
+                    created_at: '2023-12-15T09:00:00Z'
+                    updated_at: '2023-12-15T09:00:00Z'
+                pagination:
+                  limit: 20
+                  offset: 0
+                  total: 15
+                  page_count: 1
+                  has_next: false
+                  has_prev: false
+                summary:
+                  total_subscriptions: 15
+                  active_subscriptions: 12
+                  expired_subscriptions: 2
+                  cancelled_subscriptions: 1
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    put:
+      tags:
+        - 🏢 Companies
+      summary: Update subscription
+      description: |
+        Update an existing subscription.
+
+        **Required Permissions:** `write:subscription`
+
+        **Business Rules:**
+        - Cannot update expired subscriptions
+        - Cannot change payment method for active subscriptions
+        - Only administrators can update subscriptions
+        - All changes are logged for audit purposes
+      operationId: updateSubscription
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                end_date:
+                  type: string
+                  format: date
+                  description: Updated end date
+                  example: '2025-03-01'
+                status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                    - cancelled
+                  description: Updated subscription status
+                  example: active
+                auto_renew:
+                  type: boolean
+                  description: Updated auto-renewal setting
+                  example: false
+                billing_cycle:
+                  type: string
+                  enum:
+                    - monthly
+                    - quarterly
+                    - yearly
+                  description: Updated billing cycle
+                  example: quarterly
+                notes:
+                  type: string
+                  description: Updated notes
+                  example: Updated subscription notes
+            examples:
+              update_status:
+                summary: Update subscription status
+                description: Update the subscription status
+                value:
+                  status: active
+                  auto_renew: false
+              update_billing:
+                summary: Update billing details
+                description: Update billing cycle and end date
+                value:
+                  billing_cycle: quarterly
+                  end_date: '2025-03-01'
+      responses:
+        '200':
+          description: Subscription updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/subscription'
+              example:
+                id: clh1234567890abcdef
+                company_id: clh1234567890abcdef
+                plan_id: clh1234567890abcdeg
+                start_date: '2024-02-01'
+                end_date: '2025-03-01'
+                status: active
+                payment_method: credit_card
+                billing_cycle: quarterly
+                auto_renew: false
+                notes: Updated subscription notes
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T11:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Subscription not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Subscription Not Found
+                  message:
+                    type: string
+                    example: Subscription with the specified ID was not found
+                  code:
+                    type: string
+                    example: SUBSCRIPTION_NOT_FOUND
+        '409':
+          description: Subscription update conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Subscription Update Conflict
+                  message:
+                    type: string
+                    example: Cannot update expired subscription
+                  code:
+                    type: string
+                    example: SUBSCRIPTION_EXPIRED
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    delete:
+      tags:
+        - 🏢 Companies
+      summary: Cancel subscription
+      description: |
+        Cancel a subscription.
+
+        **Required Permissions:** `write:subscription`
+
+        **Business Rules:**
+        - Cannot cancel already cancelled subscriptions
+        - Cancellation takes effect at the end of the current billing period
+        - Only administrators can cancel subscriptions
+        - Soft delete - marks as cancelled but preserves data for audit
+      operationId: cancelSubscription
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Subscription cancelled successfully
+        '400':
+          description: Cannot cancel subscription
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Cannot Cancel Subscription
+                  message:
+                    type: string
+                    example: Cannot cancel already cancelled subscription
+                  code:
+                    type: string
+                    example: SUBSCRIPTION_ALREADY_CANCELLED
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Subscription not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Subscription Not Found
+                  message:
+                    type: string
+                    example: Subscription with the specified ID was not found
+                  code:
+                    type: string
+                    example: SUBSCRIPTION_NOT_FOUND
+        '500':
+          $ref: '#/components/responses/ServerError-2'
   /subscriptions/{id}:
     get:
       tags:
@@ -3975,70 +4398,459 @@ paths:
   /trainings:
     post:
       tags:
-        - Training
-      summary: Create a training data
+        - 🎓 Training
+      summary: Create training
+      description: |
+        Create a new training program for farmers and staff.
+
+        **Required Permissions:** `write:training`
+
+        **Business Rules:**
+        - Only administrators can create training programs
+        - Training must have valid start and end dates
+        - Maximum capacity must be positive
+        - Training location must be specified
       operationId: createTraining
-      description: To create a training data. This information is used in the company dashboard to display all the training data. Only administrators can use this operation.
+      security:
+        - BearerAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/training'
+            examples:
+              basic_training:
+                summary: Basic training program
+                description: Create a training program with minimal information
+                value:
+                  title: Cocoa Farming Best Practices
+                  description: Learn modern cocoa farming techniques
+                  start_date: '2024-02-01'
+                  end_date: '2024-02-03'
+                  location: Training Center A
+                  max_capacity: 50
+              detailed_training:
+                summary: Detailed training program
+                description: Create a comprehensive training program
+                value:
+                  title: Advanced Cocoa Processing Techniques
+                  description: Comprehensive training on cocoa processing and quality control
+                  start_date: '2024-02-01'
+                  end_date: '2024-02-05'
+                  location: Training Center A
+                  max_capacity: 30
+                  instructor: Dr. John Smith
+                  materials_required:
+                    - Notebook
+                    - Safety gear
+                  certification_provided: true
+                  cost: 150
       responses:
         '201':
-          description: training data created
-        '401':
-          description: Unauthorized access
-        '403':
-          description: Forbidden access
-        '500':
-          description: internal server error
-      security:
-        - BearerAuth: []
-    get:
-      tags:
-        - Training
-      summary: Get all training data
-      operationId: getAllTraining
-      description: To get all training data. Only administrators can use this operation. If you want to get all training data, use the **getAllTraining** operation.
-      parameters:
-        - name: skip
-          in: query
-          description: number of items to skip
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: limit
-          in: query
-          description: max records to return
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: company_id
-          in: query
-          required: false
-          schema:
-            type: string
-            format: cuid
-          description: the id of the company
-      responses:
-        '200':
-          description: training data
+          description: Training created successfully
+          headers:
+            Location:
+              description: URL of the created training resource
+              schema:
+                type: string
+                format: uri
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/training'
+              example:
+                id: clh1234567890abcdef
+                title: Cocoa Farming Best Practices
+                description: Learn modern cocoa farming techniques
+                start_date: '2024-02-01'
+                end_date: '2024-02-03'
+                location: Training Center A
+                max_capacity: 50
+                current_enrollment: 0
+                status: upcoming
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T10:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
         '401':
-          description: Unauthorized access
+          $ref: '#/components/responses/UnauthorizedError-2'
         '403':
-          description: Forbidden access
+          $ref: '#/components/responses/ForbiddenError-2'
+        '409':
+          description: Training already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Training Already Exists
+                  message:
+                    type: string
+                    example: Training with this title and date range already exists
+                  code:
+                    type: string
+                    example: TRAINING_ALREADY_EXISTS
         '500':
-          description: internal server error
+          $ref: '#/components/responses/ServerError-2'
+    get:
+      tags:
+        - 🎓 Training
+      summary: List all trainings
+      description: |
+        Retrieve a paginated list of training programs with optional filtering capabilities.
+
+        **Required Permissions:** `read:training`
+
+        **Filtering Options:**
+        - Filter by company ID
+        - Filter by training status
+        - Filter by date range
+        - Filter by location
+        - Filter by instructor
+
+        **Pagination:**
+        - Default limit: 20 items per page
+        - Maximum limit: 100 items per page
+      operationId: getAllTraining
       security:
         - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationOffset'
+        - $ref: '#/components/parameters/CompanyId'
+        - $ref: '#/components/parameters/DateRangeStart'
+        - $ref: '#/components/parameters/DateRangeEnd'
+        - name: status
+          in: query
+          description: Filter by training status
+          required: false
+          schema:
+            type: string
+            enum:
+              - upcoming
+              - ongoing
+              - completed
+              - cancelled
+            example: upcoming
+        - name: location
+          in: query
+          description: Filter by training location (partial match)
+          required: false
+          schema:
+            type: string
+            example: Training Center
+        - name: instructor
+          in: query
+          description: Filter by instructor name (partial match)
+          required: false
+          schema:
+            type: string
+            example: Dr. Smith
+        - name: min_capacity
+          in: query
+          description: Minimum capacity filter
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            example: 20
+        - name: max_capacity
+          in: query
+          description: Maximum capacity filter
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            example: 100
+      responses:
+        '200':
+          description: Trainings retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/training'
+                  pagination:
+                    type: object
+                    properties:
+                      limit:
+                        type: integer
+                        example: 20
+                      offset:
+                        type: integer
+                        example: 0
+                      total:
+                        type: integer
+                        example: 25
+                      page_count:
+                        type: integer
+                        example: 2
+                      has_next:
+                        type: boolean
+                        example: true
+                      has_prev:
+                        type: boolean
+                        example: false
+                  summary:
+                    type: object
+                    properties:
+                      total_trainings:
+                        type: integer
+                        example: 25
+                      upcoming_trainings:
+                        type: integer
+                        example: 10
+                      ongoing_trainings:
+                        type: integer
+                        example: 5
+                      completed_trainings:
+                        type: integer
+                        example: 10
+              example:
+                data:
+                  - id: clh1234567890abcdef
+                    title: Cocoa Farming Best Practices
+                    description: Learn modern cocoa farming techniques
+                    start_date: '2024-02-01'
+                    end_date: '2024-02-03'
+                    location: Training Center A
+                    max_capacity: 50
+                    current_enrollment: 25
+                    status: upcoming
+                    created_at: '2024-01-15T10:30:00Z'
+                    updated_at: '2024-01-15T10:30:00Z'
+                  - id: clh1234567890abcdeg
+                    title: Advanced Cocoa Processing
+                    description: Advanced techniques for cocoa processing
+                    start_date: '2024-02-05'
+                    end_date: '2024-02-07'
+                    location: Training Center B
+                    max_capacity: 30
+                    current_enrollment: 15
+                    status: upcoming
+                    created_at: '2024-01-14T09:15:00Z'
+                    updated_at: '2024-01-14T09:15:00Z'
+                pagination:
+                  limit: 20
+                  offset: 0
+                  total: 25
+                  page_count: 2
+                  has_next: true
+                  has_prev: false
+                summary:
+                  total_trainings: 25
+                  upcoming_trainings: 10
+                  ongoing_trainings: 5
+                  completed_trainings: 10
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    put:
+      tags:
+        - 🎓 Training
+      summary: Update training
+      description: |
+        Update an existing training program.
+
+        **Required Permissions:** `write:training`
+
+        **Business Rules:**
+        - Cannot update training that has already started
+        - Cannot reduce capacity below current enrollment
+        - Only administrators can update training programs
+        - All changes are logged for audit purposes
+      operationId: updateTraining
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: Updated training title
+                  example: Updated Cocoa Farming Best Practices
+                description:
+                  type: string
+                  description: Updated training description
+                  example: Updated description with new techniques
+                start_date:
+                  type: string
+                  format: date
+                  description: Updated start date
+                  example: '2024-02-02'
+                end_date:
+                  type: string
+                  format: date
+                  description: Updated end date
+                  example: '2024-02-04'
+                location:
+                  type: string
+                  description: Updated training location
+                  example: Updated Training Center A
+                max_capacity:
+                  type: integer
+                  minimum: 1
+                  description: Updated maximum capacity
+                  example: 60
+                instructor:
+                  type: string
+                  description: Updated instructor name
+                  example: Dr. Jane Doe
+                cost:
+                  type: number
+                  minimum: 0
+                  description: Updated training cost
+                  example: 175
+            examples:
+              update_basic:
+                summary: Update basic training details
+                description: Update title, description, and location
+                value:
+                  title: Updated Cocoa Farming Best Practices
+                  description: Updated description with new techniques
+                  location: Updated Training Center A
+              update_schedule:
+                summary: Update training schedule
+                description: Update dates and capacity
+                value:
+                  start_date: '2024-02-02'
+                  end_date: '2024-02-04'
+                  max_capacity: 60
+      responses:
+        '200':
+          description: Training updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/training'
+              example:
+                id: clh1234567890abcdef
+                title: Updated Cocoa Farming Best Practices
+                description: Updated description with new techniques
+                start_date: '2024-02-02'
+                end_date: '2024-02-04'
+                location: Updated Training Center A
+                max_capacity: 60
+                current_enrollment: 25
+                status: upcoming
+                instructor: Dr. Jane Doe
+                cost: 175
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T11:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Training not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Training Not Found
+                  message:
+                    type: string
+                    example: Training with the specified ID was not found
+                  code:
+                    type: string
+                    example: TRAINING_NOT_FOUND
+        '409':
+          description: Training update conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Training Update Conflict
+                  message:
+                    type: string
+                    example: Cannot update training that has already started
+                  code:
+                    type: string
+                    example: TRAINING_ALREADY_STARTED
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    delete:
+      tags:
+        - 🎓 Training
+      summary: Delete training
+      description: |
+        Delete a training program from the system.
+
+        **Required Permissions:** `write:training`
+
+        **Business Rules:**
+        - Cannot delete training that has already started
+        - Cannot delete training with enrolled participants
+        - Only administrators can delete training programs
+        - Soft delete - marks as deleted but preserves data for audit
+      operationId: deleteTraining
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Training deleted successfully
+        '400':
+          description: Cannot delete training
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Cannot Delete Training
+                  message:
+                    type: string
+                    example: Cannot delete training that has already started or has enrolled participants
+                  code:
+                    type: string
+                    example: TRAINING_HAS_ENROLLMENTS
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Training not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Training Not Found
+                  message:
+                    type: string
+                    example: Training with the specified ID was not found
+                  code:
+                    type: string
+                    example: TRAINING_NOT_FOUND
+        '500':
+          $ref: '#/components/responses/ServerError-2'
   /trainings/{id}:
     get:
       tags:

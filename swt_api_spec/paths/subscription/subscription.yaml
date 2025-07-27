@@ -1,19 +1,430 @@
 post:
   tags:
-    - Company
-  summary: Subscribe company to an offer plan
+    - 🏢 Companies
+  summary: Create subscription
+  description: |
+    Subscribe a company to an offer plan.
+    
+    **Required Permissions:** `write:subscription`
+    
+    **Business Rules:**
+    - Only administrators can create subscriptions
+    - Company must not have an active subscription to the same plan
+    - Subscription start date must be in the future
+    - Payment must be confirmed before activation
   operationId: subscribeCompanyToOfferPlan
-  description: To subscribe a company to an offer plan. This information is used in the company dashboard to display all the subscriptions. Only administrators can use this operation.
+  security:
+    - BearerAuth: []
   requestBody:
     required: true
     content:
       application/json:
         schema:
           $ref: "../../components/schemas/subscription.yaml"
+        examples:
+          basic_subscription:
+            summary: Basic subscription
+            description: Create a basic subscription with minimal information
+            value:
+              company_id: "clh1234567890abcdef"
+              plan_id: "clh1234567890abcdeg"
+              start_date: "2024-02-01"
+              end_date: "2025-02-01"
+              payment_method: "credit_card"
+          detailed_subscription:
+            summary: Detailed subscription
+            description: Create a comprehensive subscription
+            value:
+              company_id: "clh1234567890abcdef"
+              plan_id: "clh1234567890abcdeg"
+              start_date: "2024-02-01"
+              end_date: "2025-02-01"
+              payment_method: "credit_card"
+              billing_cycle: "monthly"
+              auto_renew: true
+              discount_code: "WELCOME10"
+              notes: "Enterprise subscription with premium support"
   responses:
     "201":
-      description: company subscribed to an offer plan
-    "500":
-      description: internal server error
+      description: Subscription created successfully
+      headers:
+        Location:
+          description: URL of the created subscription resource
+          schema:
+            type: string
+            format: uri
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/subscription.yaml"
+          example:
+            id: "clh1234567890abcdef"
+            company_id: "clh1234567890abcdef"
+            plan_id: "clh1234567890abcdeg"
+            start_date: "2024-02-01"
+            end_date: "2025-02-01"
+            status: "active"
+            payment_method: "credit_card"
+            billing_cycle: "monthly"
+            auto_renew: true
+            created_at: "2024-01-15T10:30:00Z"
+            updated_at: "2024-01-15T10:30:00Z"
     "400":
-      description: Invalid Input
+      $ref: "../../components/responses/ValidationError.yaml"
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "409":
+      description: Subscription already exists
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Subscription Already Exists"
+              message:
+                type: string
+                example: "Company already has an active subscription to this plan"
+              code:
+                type: string
+                example: "SUBSCRIPTION_ALREADY_EXISTS"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"
+
+# get all subscriptions
+get:
+  tags:
+    - 🏢 Companies
+  summary: List all subscriptions
+  description: |
+    Retrieve a paginated list of subscriptions with optional filtering capabilities.
+    
+    **Required Permissions:** `read:subscription`
+    
+    **Filtering Options:**
+    - Filter by company ID
+    - Filter by subscription status
+    - Filter by date range
+    - Filter by payment method
+    - Filter by billing cycle
+    
+    **Pagination:**
+    - Default limit: 20 items per page
+    - Maximum limit: 100 items per page
+  operationId: getAllSubscriptions
+  security:
+    - BearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/PaginationLimit.yaml"
+    - $ref: "../../components/parameters/PaginationOffset.yaml"
+    - $ref: "../../components/parameters/CompanyId.yaml"
+    - $ref: "../../components/parameters/DateRangeStart.yaml"
+    - $ref: "../../components/parameters/DateRangeEnd.yaml"
+    - name: status
+      in: query
+      description: Filter by subscription status
+      required: false
+      schema:
+        type: string
+        enum: [active, inactive, expired, cancelled, pending]
+        example: "active"
+    - name: payment_method
+      in: query
+      description: Filter by payment method
+      required: false
+      schema:
+        type: string
+        enum: [credit_card, bank_transfer, paypal, crypto]
+        example: "credit_card"
+    - name: billing_cycle
+      in: query
+      description: Filter by billing cycle
+      required: false
+      schema:
+        type: string
+        enum: [monthly, quarterly, yearly]
+        example: "monthly"
+    - name: auto_renew
+      in: query
+      description: Filter by auto-renewal status
+      required: false
+      schema:
+        type: boolean
+        example: true
+  responses:
+    "200":
+      description: Subscriptions retrieved successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: "../../components/schemas/subscription.yaml"
+              pagination:
+                type: object
+                properties:
+                  limit:
+                    type: integer
+                    example: 20
+                  offset:
+                    type: integer
+                    example: 0
+                  total:
+                    type: integer
+                    example: 15
+                  page_count:
+                    type: integer
+                    example: 1
+                  has_next:
+                    type: boolean
+                    example: false
+                  has_prev:
+                    type: boolean
+                    example: false
+              summary:
+                type: object
+                properties:
+                  total_subscriptions:
+                    type: integer
+                    example: 15
+                  active_subscriptions:
+                    type: integer
+                    example: 12
+                  expired_subscriptions:
+                    type: integer
+                    example: 2
+                  cancelled_subscriptions:
+                    type: integer
+                    example: 1
+          example:
+            data:
+              - id: "clh1234567890abcdef"
+                company_id: "clh1234567890abcdef"
+                plan_id: "clh1234567890abcdeg"
+                start_date: "2024-02-01"
+                end_date: "2025-02-01"
+                status: "active"
+                payment_method: "credit_card"
+                billing_cycle: "monthly"
+                auto_renew: true
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+              - id: "clh1234567890abcdeh"
+                company_id: "clh1234567890abcdei"
+                plan_id: "clh1234567890abcdeg"
+                start_date: "2024-01-01"
+                end_date: "2024-12-31"
+                status: "active"
+                payment_method: "bank_transfer"
+                billing_cycle: "yearly"
+                auto_renew: false
+                created_at: "2023-12-15T09:00:00Z"
+                updated_at: "2023-12-15T09:00:00Z"
+            pagination:
+              limit: 20
+              offset: 0
+              total: 15
+              page_count: 1
+              has_next: false
+              has_prev: false
+            summary:
+              total_subscriptions: 15
+              active_subscriptions: 12
+              expired_subscriptions: 2
+              cancelled_subscriptions: 1
+    "400":
+      $ref: "../../components/responses/ValidationError.yaml"
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"
+
+# update subscription
+put:
+  tags:
+    - 🏢 Companies
+  summary: Update subscription
+  description: |
+    Update an existing subscription.
+    
+    **Required Permissions:** `write:subscription`
+    
+    **Business Rules:**
+    - Cannot update expired subscriptions
+    - Cannot change payment method for active subscriptions
+    - Only administrators can update subscriptions
+    - All changes are logged for audit purposes
+  operationId: updateSubscription
+  security:
+    - BearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            end_date:
+              type: string
+              format: date
+              description: Updated end date
+              example: "2025-03-01"
+            status:
+              type: string
+              enum: [active, inactive, cancelled]
+              description: Updated subscription status
+              example: "active"
+            auto_renew:
+              type: boolean
+              description: Updated auto-renewal setting
+              example: false
+            billing_cycle:
+              type: string
+              enum: [monthly, quarterly, yearly]
+              description: Updated billing cycle
+              example: "quarterly"
+            notes:
+              type: string
+              description: Updated notes
+              example: "Updated subscription notes"
+        examples:
+          update_status:
+            summary: Update subscription status
+            description: Update the subscription status
+            value:
+              status: "active"
+              auto_renew: false
+          update_billing:
+            summary: Update billing details
+            description: Update billing cycle and end date
+            value:
+              billing_cycle: "quarterly"
+              end_date: "2025-03-01"
+  responses:
+    "200":
+      description: Subscription updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/subscription.yaml"
+          example:
+            id: "clh1234567890abcdef"
+            company_id: "clh1234567890abcdef"
+            plan_id: "clh1234567890abcdeg"
+            start_date: "2024-02-01"
+            end_date: "2025-03-01"
+            status: "active"
+            payment_method: "credit_card"
+            billing_cycle: "quarterly"
+            auto_renew: false
+            notes: "Updated subscription notes"
+            created_at: "2024-01-15T10:30:00Z"
+            updated_at: "2024-01-15T11:30:00Z"
+    "400":
+      $ref: "../../components/responses/ValidationError.yaml"
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "404":
+      description: Subscription not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Subscription Not Found"
+              message:
+                type: string
+                example: "Subscription with the specified ID was not found"
+              code:
+                type: string
+                example: "SUBSCRIPTION_NOT_FOUND"
+    "409":
+      description: Subscription update conflict
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Subscription Update Conflict"
+              message:
+                type: string
+                example: "Cannot update expired subscription"
+              code:
+                type: string
+                example: "SUBSCRIPTION_EXPIRED"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"
+
+# delete subscription
+delete:
+  tags:
+    - 🏢 Companies
+  summary: Cancel subscription
+  description: |
+    Cancel a subscription.
+    
+    **Required Permissions:** `write:subscription`
+    
+    **Business Rules:**
+    - Cannot cancel already cancelled subscriptions
+    - Cancellation takes effect at the end of the current billing period
+    - Only administrators can cancel subscriptions
+    - Soft delete - marks as cancelled but preserves data for audit
+  operationId: cancelSubscription
+  security:
+    - BearerAuth: []
+  responses:
+    "204":
+      description: Subscription cancelled successfully
+    "400":
+      description: Cannot cancel subscription
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Cannot Cancel Subscription"
+              message:
+                type: string
+                example: "Cannot cancel already cancelled subscription"
+              code:
+                type: string
+                example: "SUBSCRIPTION_ALREADY_CANCELLED"
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "404":
+      description: Subscription not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Subscription Not Found"
+              message:
+                type: string
+                example: "Subscription with the specified ID was not found"
+              code:
+                type: string
+                example: "SUBSCRIPTION_NOT_FOUND"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"
