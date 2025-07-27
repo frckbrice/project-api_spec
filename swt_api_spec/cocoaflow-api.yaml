@@ -263,20 +263,22 @@ paths:
     $ref: paths/market/market_{company_id}.yaml
   "/inspection_data": # inspection_data
     $ref: "paths/inspection_data/inspection_data.yaml"
-  "/inspection_data/{project_id}":
-    $ref: "paths/inspection_data/inspection_data_{project_id}.yaml"
+  "/inspection_data/{inspection_id}": # inspection_data
+    $ref: "paths/inspection_data/inspection_data_{inspection_id}.yaml"
 
   "/subscriptions": # subcription
     $ref: "paths/subscription/subscription.yaml"
-  "/subscriptions/{id}":
-    $ref: "paths/subscription/subscription_{id}.yaml"
+  "/subscriptions/{subscription_id}": # subscription
+    $ref: "paths/subscription/subscription_{subscription_id}.yaml"
   "/subscriptions/{company_id}/company":
     $ref: paths/subscription/subscription_{company_id }_company.yaml
   "/trainings": # training
     $ref: paths/training/training.yaml
-  "/trainings/{id}":
-    $ref: paths/training/training_{id}.yaml
+  "/trainings/{training_id}": # training
+    $ref: paths/training/training_{training_id}.yaml
   "/transaction": # transaction
+    $ref: paths/transaction.yaml
+  "/transaction/{transaction_id}": # transaction
     $ref: paths/transaction.yaml
   "/campaign_stocks": #campaign_stock
     $ref: paths/campaign_stock/campaign_stock.yaml
@@ -293,6 +295,8 @@ paths:
   "/collector_agents/{id}":
     $ref: paths/collector_agent/collector_agent_{id}.yaml
   "/training_session": #participants
+    $ref: paths/training_session.yaml
+  "/training_session/{session_id}": #participants
     $ref: paths/training_session.yaml
   "/price_plan_requirements":
     $ref: paths/price_plan_requirement.yaml

@@ -7,33 +7,11 @@ get:
     This endpoint supports pagination and filtering.
   operationId: listTrainingSessions
   parameters:
-    - name: page
-      in: query
-      description: Page number for pagination
-      schema:
-        type: integer
-        minimum: 1
-        default: 1
-    - name: limit
-      in: query
-      description: Number of items per page
-      schema:
-        type: integer
-        minimum: 1
-        maximum: 100
-        default: 20
-    - name: training_id
-      in: query
-      description: Filter by training ID
-      schema:
-        type: string
-        format: cuid
-    - name: status
-      in: query
-      description: Filter by session status
-      schema:
-        type: string
-        enum: ["scheduled", "in-progress", "completed", "cancelled"]
+    - $ref: "../../components/parameters/PaginationLimit.yaml"
+    - $ref: "../../components/parameters/PaginationOffset.yaml"
+    - $ref: "../../components/parameters/CompanyId.yaml"
+    - $ref: "../../components/parameters/DateRangeStart.yaml"
+    - $ref: "../../components/parameters/DateRangeEnd.yaml"
   responses:
     "200":
       description: List of training sessions retrieved successfully
@@ -146,6 +124,15 @@ put:
       application/json:
         schema:
           $ref: "../../components/schemas/training_session.yaml"
+  parameters:
+    - name: session_id
+      in: path
+      required: true
+      description: ID of the training session to update
+      schema:
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
   responses:
     "200":
       description: Training session updated successfully

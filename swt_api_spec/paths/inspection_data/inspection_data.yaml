@@ -131,6 +131,7 @@ get:
   parameters:
     - $ref: "../../components/parameters/PaginationLimit.yaml"
     - $ref: "../../components/parameters/PaginationOffset.yaml"
+    - $ref: "../../components/parameters/CompanyId.yaml"
     - $ref: "../../components/parameters/DateRangeStart.yaml"
     - $ref: "../../components/parameters/DateRangeEnd.yaml"
     - name: project_id

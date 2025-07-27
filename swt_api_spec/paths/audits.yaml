@@ -7,6 +7,12 @@ get:
   summary: Get all audits
   description: Retrieve all audits with filtering options
   operationId: listAudits
+  parameters:
+    - $ref: "../../components/parameters/PaginationLimit.yaml"
+    - $ref: "../../components/parameters/PaginationOffset.yaml"
+    - $ref: "../../components/parameters/CompanyId.yaml"
+    - $ref: "../../components/parameters/DateRangeStart.yaml"
+    - $ref: "../../components/parameters/DateRangeEnd.yaml"
 
 post:
   tags:

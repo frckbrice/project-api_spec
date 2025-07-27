@@ -210,7 +210,7 @@ put:
   security:
     - BearerAuth: []
   parameters:
-    - name: id
+    - name: transaction_id
       in: path
       required: true
       description: ID of the transaction to update
