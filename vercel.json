@@ -1,59 +1,17 @@
 {
     "version": 2,
-    "builds": [
+    "routes": [
         {
-            "src": "docs/**",
-            "use": "@vercel/static"
+            "src": "/api-spec",
+            "dest": "/senwisetool-api.yaml",
+            "headers": {
+                "Content-Type": "application/yaml",
+                "Access-Control-Allow-Origin": "*"
+            }
         },
         {
-            "src": "dist/**",
-            "use": "@vercel/static"
-        }
-    ],
-    "rewrites": [
-        {
-            "source": "/",
-            "destination": "/docs/index.html"
-        },
-        {
-            "source": "/api-spec",
-            "destination": "/dist/senwisetool-api.yaml"
-        },
-        {
-            "source": "/api-spec-deref",
-            "destination": "/dist/senwisetool-api-deref.yaml"
-        },
-        {
-            "source": "/(.*)",
-            "destination": "/docs/$1"
-        }
-    ],
-    "headers": [
-        {
-            "source": "/api-spec",
-            "headers": [
-                {
-                    "key": "Content-Type",
-                    "value": "application/yaml"
-                },
-                {
-                    "key": "Access-Control-Allow-Origin",
-                    "value": "*"
-                }
-            ]
-        },
-        {
-            "source": "/api-spec-deref",
-            "headers": [
-                {
-                    "key": "Content-Type",
-                    "value": "application/yaml"
-                },
-                {
-                    "key": "Access-Control-Allow-Origin",
-                    "value": "*"
-                }
-            ]
+            "src": "/(.*)",
+            "dest": "/index.html"
         }
     ]
 }
