@@ -95,7 +95,6 @@ info:
 
     | Environment | URL | Status |
     |-------------|-----|--------|
-    | **Production** | [https://api.cocoaflow.com](https://api.cocoaflow.com) | 🚧 Coming Soon |
     | **Documentation** | [https://project-apispec.vercel.app](https://project-apispec.vercel.app) | ✅ Live |
     | **Local Development** | `http://localhost:8080` | ✅ Available |
 
@@ -130,16 +129,12 @@ info:
   x-logo:
     url: https://images.unsplash.com/photo-1667900598245-6620cea1c04c?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Y29jb2F8ZW58MHx8MHx8fDA%3D
     altText: CocoaFlow - Cocoa Industry Management
-    backgroundColor: '#FFFFFF'
+    backgroundColor: "#FFFFFF"
 servers:
-  - url: https://api.cocoaflow.com
-    description: 🌐 Production Environment
-  - url: https://staging-api.cocoaflow.com
-    description: 🧪 Staging Environment
-  - url: https://project-apispec.vercel.app
-    description: 📚 Documentation & API Specification
   - url: http://localhost:8080
     description: 💻 Local Development Environment
+  - url: https://project-apispec.vercel.app
+    description: 📚 Documentation & API Specification
 security:
   - BearerAuth: []
 tags:
@@ -363,7 +358,7 @@ paths:
                   password: securePassword123
                   remember_me: true
       responses:
-        '200':
+        "200":
           description: Login successful
           headers:
             Set-Cookie:
@@ -386,7 +381,7 @@ paths:
                     type: object
                     properties:
                       user:
-                        $ref: '#/components/schemas/user'
+                        $ref: "#/components/schemas/user"
                       tokens:
                         type: object
                         properties:
@@ -417,16 +412,16 @@ paths:
                     role: user
                     company_id: clh1234567890abcdef
                     is_active: true
-                    created_at: '2024-01-15T10:30:00Z'
-                    updated_at: '2024-01-15T10:30:00Z'
+                    created_at: "2024-01-15T10:30:00Z"
+                    updated_at: "2024-01-15T10:30:00Z"
                   tokens:
                     access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
                     refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
                     expires_in: 86400
                     token_type: Bearer
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
           description: Invalid credentials
           content:
             application/json:
@@ -445,10 +440,10 @@ paths:
                   code:
                     type: string
                     example: INVALID_CREDENTIALS
-        '429':
-          $ref: '#/components/responses/RateLimitError-2'
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "429":
+          $ref: "#/components/responses/RateLimitError-2"
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     get:
       tags:
         - 🔐 Authentication
@@ -467,7 +462,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        '200':
+        "200":
           description: User profile retrieved successfully
           content:
             application/json:
@@ -478,7 +473,7 @@ paths:
                     type: boolean
                     example: true
                   data:
-                    $ref: '#/components/schemas/user'
+                    $ref: "#/components/schemas/user"
               example:
                 success: true
                 data:
@@ -488,15 +483,15 @@ paths:
                   last_name: Doe
                   role: user
                   company_id: clh1234567890abcdef
-                  phone_number: '+2341234567890'
+                  phone_number: "+2341234567890"
                   is_active: true
-                  last_login: '2024-01-15T10:30:00Z'
-                  created_at: '2024-01-15T10:30:00Z'
-                  updated_at: '2024-01-15T10:30:00Z'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+                  last_login: "2024-01-15T10:30:00Z"
+                  created_at: "2024-01-15T10:30:00Z"
+                  updated_at: "2024-01-15T10:30:00Z"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "500":
+          $ref: "#/components/responses/ServerError-2"
   /auth/refresh:
     post:
       tags:
@@ -536,7 +531,7 @@ paths:
                 value:
                   refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
       responses:
-        '200':
+        "200":
           description: Token refreshed successfully
           content:
             application/json:
@@ -570,9 +565,9 @@ paths:
                   access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
                   expires_in: 86400
                   token_type: Bearer
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
           description: Invalid refresh token
           content:
             application/json:
@@ -591,8 +586,8 @@ paths:
                   code:
                     type: string
                     example: INVALID_REFRESH_TOKEN
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
   /auth/logout:
     post:
       tags:
@@ -637,7 +632,7 @@ paths:
                 value:
                   refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
       responses:
-        '200':
+        "200":
           description: Logout successful
           headers:
             Set-Cookie:
@@ -663,7 +658,7 @@ paths:
                         type: string
                         format: date-time
                         description: Timestamp of logout
-                        example: '2024-01-15T10:30:00Z'
+                        example: "2024-01-15T10:30:00Z"
                       sessions_invalidated:
                         type: integer
                         description: Number of sessions invalidated
@@ -672,12 +667,12 @@ paths:
                 success: true
                 message: Logout successful
                 data:
-                  logout_time: '2024-01-15T10:30:00Z'
+                  logout_time: "2024-01-15T10:30:00Z"
                   sessions_invalidated: 1
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "500":
+          $ref: "#/components/responses/ServerError-2"
   /auth/me:
     get:
       tags:
@@ -697,7 +692,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        '200':
+        "200":
           description: User profile retrieved successfully
           content:
             application/json:
@@ -708,7 +703,7 @@ paths:
                     type: boolean
                     example: true
                   data:
-                    $ref: '#/components/schemas/user'
+                    $ref: "#/components/schemas/user"
               example:
                 success: true
                 data:
@@ -718,15 +713,15 @@ paths:
                   last_name: Doe
                   role: user
                   company_id: clh1234567890abcdef
-                  phone_number: '+2341234567890'
+                  phone_number: "+2341234567890"
                   is_active: true
-                  last_login: '2024-01-15T10:30:00Z'
-                  created_at: '2024-01-15T10:30:00Z'
-                  updated_at: '2024-01-15T10:30:00Z'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+                  last_login: "2024-01-15T10:30:00Z"
+                  created_at: "2024-01-15T10:30:00Z"
+                  updated_at: "2024-01-15T10:30:00Z"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "500":
+          $ref: "#/components/responses/ServerError-2"
   /users:
     post:
       tags:
@@ -744,21 +739,21 @@ paths:
                   discriminator:
                     propertyName: userType
                     mapping:
-                      admin: '#/components/schemas/admin'
-                      basic: '#/components/schemas/member'
+                      admin: "#/components/schemas/admin"
+                      basic: "#/components/schemas/member"
                   anyOf:
-                    - $ref: '#/components/schemas/admin'
-                    - $ref: '#/components/schemas/member'
+                    - $ref: "#/components/schemas/admin"
+                    - $ref: "#/components/schemas/member"
       responses:
-        '201':
+        "201":
           description: User created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/user'
-        '422':
+                $ref: "#/components/schemas/user"
+        "422":
           description: Unprocessable Entity
-        '500':
+        "500":
           description: Internal server error
       security:
         - BearerAuth: []
@@ -803,15 +798,15 @@ paths:
                 - inactive
               default: active
       responses:
-        '200':
+        "200":
           description: User list
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/user'
-        '400':
+                  $ref: "#/components/schemas/user"
+        "400":
           description: Invalid Input
   /users/{id}:
     get:
@@ -831,13 +826,13 @@ paths:
             type: integer
             example: djfdjsbhvbhsv62656FDOF(*)
       responses:
-        '200':
+        "200":
           description: User
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/user'
-        '404':
+                $ref: "#/components/schemas/user"
+        "404":
           description: User not found
     put:
       tags:
@@ -856,7 +851,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/user'
+                $ref: "#/components/schemas/user"
                 properties:
                   id:
                     type: string
@@ -870,15 +865,15 @@ paths:
                   company_id: 1jssbbjsbjsbjs221878dd817dd87sd
                   phone_number: 1234567890
       responses:
-        '200':
+        "200":
           description: User updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/user'
-        '404':
+                $ref: "#/components/schemas/user"
+        "404":
           description: User not found
-        '500':
+        "500":
           description: Internal server error
   /companies:
     post:
@@ -893,17 +888,17 @@ paths:
           multipart/form-data:
             schema:
               type: object
-              $ref: '#/components/schemas/company'
+              $ref: "#/components/schemas/company"
       responses:
-        '201':
+        "201":
           description: Company created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/api-response-success-schema'
-        '400':
+                $ref: "#/components/schemas/api-response-success-schema"
+        "400":
           description: bad request
-        '403':
+        "403":
           description: Authorization failed due to insufficient permissions.
           content:
             schema:
@@ -915,7 +910,7 @@ paths:
                 timestamp:
                   type: string
                   format: date-time
-                  example: '2022-01-01T12:34:56Z'
+                  example: "2022-01-01T12:34:56Z"
                   description: The date and time when the response was generated.
                 path:
                   type: string
@@ -935,7 +930,7 @@ paths:
                     statusCode:
                       type: number
                       example: 404 | 403 | 401 | 403 | 422 | 500
-        '500':
+        "500":
           description: Internal server error
     get:
       tags:
@@ -968,17 +963,17 @@ paths:
             type: string
             example: asc | desc
       responses:
-        '200':
+        "200":
           description: Company list
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/company'
-        '404':
+                  $ref: "#/components/schemas/company"
+        "404":
           description: Companies not found
-        '500':
+        "500":
           description: Internal server error
   /companies/{id}:
     get:
@@ -999,17 +994,17 @@ paths:
               example: 1
           style: simple
       responses:
-        '200':
+        "200":
           description: Company
           content:
-            '*/*':
+            "*/*":
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/company'
-        '401':
+                  $ref: "#/components/schemas/company"
+        "401":
           description: Unauthorized access
-        '404':
+        "404":
           description: Company not found
     delete:
       tags:
@@ -1031,15 +1026,15 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        '200':
+        "200":
           description: Company deleted
-        '400':
+        "400":
           description: Bad request
-        '401':
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '404':
+        "404":
           description: Company not found
   /campaign:
     post:
@@ -1081,12 +1076,12 @@ paths:
                   type: string
                   format: date
                   description: Campaign start date
-                  example: '2024-09-01'
+                  example: "2024-09-01"
                 end_date:
                   type: string
                   format: date
                   description: Campaign end date
-                  example: '2025-03-31'
+                  example: "2025-03-31"
                 company_id:
                   type: string
                   format: cuid
@@ -1098,19 +1093,19 @@ paths:
                 description: Create a campaign with minimal information
                 value:
                   name: 2024-2025 Season
-                  start_date: '2024-09-01'
-                  end_date: '2025-03-31'
+                  start_date: "2024-09-01"
+                  end_date: "2025-03-31"
               detailed_campaign:
                 summary: Detailed campaign
                 description: Create a campaign with full details
                 value:
                   name: 2024-2025 Season
                   description: Main cocoa harvesting campaign for 2024-2025 season
-                  start_date: '2024-09-01'
-                  end_date: '2025-03-31'
+                  start_date: "2024-09-01"
+                  end_date: "2025-03-31"
                   company_id: clh1234567890abcdef
       responses:
-        '201':
+        "201":
           description: Campaign created successfully
           headers:
             Location:
@@ -1121,24 +1116,24 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/campaign'
+                $ref: "#/components/schemas/campaign"
               example:
                 id: clh1234567890abcdef
                 name: 2024-2025 Season
                 description: Main cocoa harvesting campaign for 2024-2025 season
-                start_date: '2024-09-01'
-                end_date: '2025-03-31'
+                start_date: "2024-09-01"
+                end_date: "2025-03-31"
                 company_id: clh1234567890abcdef
                 status: active
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T10:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '409':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "409":
           description: Campaign already exists
           content:
             application/json:
@@ -1154,8 +1149,8 @@ paths:
                   code:
                     type: string
                     example: CAMPAIGN_ALREADY_EXISTS
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     get:
       tags:
         - 📈 Campaigns
@@ -1178,11 +1173,11 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationOffset'
-        - $ref: '#/components/parameters/CompanyId'
-        - $ref: '#/components/parameters/DateRangeStart'
-        - $ref: '#/components/parameters/DateRangeEnd'
+        - $ref: "#/components/parameters/PaginationLimit"
+        - $ref: "#/components/parameters/PaginationOffset"
+        - $ref: "#/components/parameters/CompanyId"
+        - $ref: "#/components/parameters/DateRangeStart"
+        - $ref: "#/components/parameters/DateRangeEnd"
         - name: status
           in: query
           description: Filter by campaign status
@@ -1202,7 +1197,7 @@ paths:
             type: string
             example: 2024-2025
       responses:
-        '200':
+        "200":
           description: Campaign list retrieved successfully
           content:
             application/json:
@@ -1212,7 +1207,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/campaign'
+                      $ref: "#/components/schemas/campaign"
                   pagination:
                     type: object
                     properties:
@@ -1239,21 +1234,21 @@ paths:
                   - id: clh1234567890abcdef
                     name: 2024-2025 Season
                     description: Main cocoa harvesting campaign for 2024-2025 season
-                    start_date: '2024-09-01'
-                    end_date: '2025-03-31'
+                    start_date: "2024-09-01"
+                    end_date: "2025-03-31"
                     company_id: clh1234567890abcdef
                     status: active
-                    created_at: '2024-01-15T10:30:00Z'
-                    updated_at: '2024-01-15T10:30:00Z'
+                    created_at: "2024-01-15T10:30:00Z"
+                    updated_at: "2024-01-15T10:30:00Z"
                   - id: clh1234567890abcdeg
                     name: 2023-2024 Season
                     description: Previous cocoa harvesting campaign
-                    start_date: '2023-09-01'
-                    end_date: '2024-03-31'
+                    start_date: "2023-09-01"
+                    end_date: "2024-03-31"
                     company_id: clh1234567890abcdef
                     status: completed
-                    created_at: '2023-08-15T10:30:00Z'
-                    updated_at: '2024-03-31T23:59:59Z'
+                    created_at: "2023-08-15T10:30:00Z"
+                    updated_at: "2024-03-31T23:59:59Z"
                 pagination:
                   limit: 20
                   offset: 0
@@ -1261,14 +1256,14 @@ paths:
                   page_count: 1
                   has_next: false
                   has_prev: false
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     put:
       tags:
         - 📈 Campaigns
@@ -1304,12 +1299,12 @@ paths:
                   type: string
                   format: date
                   description: Campaign start date
-                  example: '2024-09-01'
+                  example: "2024-09-01"
                 end_date:
                   type: string
                   format: date
                   description: Campaign end date
-                  example: '2025-03-31'
+                  example: "2025-03-31"
                 status:
                   type: string
                   enum:
@@ -1327,29 +1322,29 @@ paths:
                   description: Updated campaign description
                   status: active
       responses:
-        '200':
+        "200":
           description: Campaign updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/campaign'
+                $ref: "#/components/schemas/campaign"
               example:
                 id: clh1234567890abcdef
                 name: 2024-2025 Season Updated
                 description: Updated campaign description
-                start_date: '2024-09-01'
-                end_date: '2025-03-31'
+                start_date: "2024-09-01"
+                end_date: "2025-03-31"
                 company_id: clh1234567890abcdef
                 status: active
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T11:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T11:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Campaign not found
           content:
             application/json:
@@ -1365,7 +1360,7 @@ paths:
                   code:
                     type: string
                     example: CAMPAIGN_NOT_FOUND
-        '409':
+        "409":
           description: Campaign update conflict
           content:
             application/json:
@@ -1381,8 +1376,8 @@ paths:
                   code:
                     type: string
                     example: CAMPAIGN_UPDATE_CONFLICT
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     delete:
       tags:
         - 📈 Campaigns
@@ -1401,9 +1396,9 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        '204':
+        "204":
           description: Campaign deleted successfully
-        '400':
+        "400":
           description: Cannot delete campaign
           content:
             application/json:
@@ -1419,11 +1414,11 @@ paths:
                   code:
                     type: string
                     example: CAMPAIGN_HAS_PROJECTS
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Campaign not found
           content:
             application/json:
@@ -1439,8 +1434,8 @@ paths:
                   code:
                     type: string
                     example: CAMPAIGN_NOT_FOUND
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
   /price_plan:
     post:
       tags:
@@ -1453,15 +1448,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/price_plan'
+              $ref: "#/components/schemas/price_plan"
       responses:
-        '201':
+        "201":
           description: price table created
-        '401':
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '500':
+        "500":
           description: internal server error
     get:
       tags:
@@ -1470,19 +1465,19 @@ paths:
       operationId: getAllPrice
       description: To get all price. Only administrators can use this operation. If you want to get all price, use the **getAllPrice** operation.
       responses:
-        '200':
+        "200":
           description: price
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/price_plan'
-        '401':
+                  $ref: "#/components/schemas/price_plan"
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '500':
+        "500":
           description: internal server error
   /price_plan/{id}:
     patch:
@@ -1505,19 +1500,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/price_plan'
+              $ref: "#/components/schemas/price_plan"
               properties:
                 unit_amount:
                   type: string
                   example: $2000
       responses:
-        '200':
+        "200":
           description: price table updated
-        '401':
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '500':
+        "500":
           description: internal server error
     delete:
       tags:
@@ -1535,13 +1530,13 @@ paths:
             example: gold_price_table
           style: simple
       responses:
-        '200':
+        "200":
           description: price table deleted
-        '401':
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '500':
+        "500":
           description: internal server error
     get:
       tags:
@@ -1559,17 +1554,17 @@ paths:
             example: gold_price_table
           style: simple
       responses:
-        '200':
+        "200":
           description: price table
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/price_plan'
-        '401':
+                $ref: "#/components/schemas/price_plan"
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '500':
+        "500":
           description: internal server error
   /projects:
     post:
@@ -1635,21 +1630,21 @@ paths:
             type: integer
             format: int32
       responses:
-        '200':
+        "200":
           description: Project
           content:
-            '*/*':
+            "*/*":
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/project'
-        '400':
+                  $ref: "#/components/schemas/project"
+        "400":
           description: Bad request
-        '401':
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '404':
+        "404":
           description: Project not found
   /projects/{id}:
     get:
@@ -1672,21 +1667,21 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        '200':
+        "200":
           description: Project
           content:
-            '*/*':
+            "*/*":
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/project'
-        '400':
+                  $ref: "#/components/schemas/project"
+        "400":
           description: Bad request
-        '401':
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '404':
+        "404":
           description: Project not found
     put:
       tags:
@@ -1710,17 +1705,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/project'
+              $ref: "#/components/schemas/project"
       responses:
-        '200':
+        "200":
           description: Project updated
-        '400':
+        "400":
           description: Bad request
-        '401':
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '404':
+        "404":
           description: Project not found
     delete:
       tags:
@@ -1740,15 +1735,15 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        '200':
+        "200":
           description: Project deleted
-        '400':
+        "400":
           description: Bad request
-        '401':
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '404':
+        "404":
           description: Project not found
   /farms:
     post:
@@ -1772,7 +1767,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/farm'
+              $ref: "#/components/schemas/farm"
             examples:
               basic_farm:
                 summary: Basic farm creation
@@ -1798,7 +1793,7 @@ paths:
                   council: Ibadan Council
                   farm_image_url: https://storage.cocoaflow.com/farms/farm_123.jpg
       responses:
-        '201':
+        "201":
           description: Farm created successfully
           headers:
             Location:
@@ -1809,7 +1804,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/farm'
+                $ref: "#/components/schemas/farm"
               example:
                 id: clh1234567890abcdef
                 location:
@@ -1820,15 +1815,15 @@ paths:
                 division: Oyo Division
                 council: Ibadan Council
                 farm_image_url: https://storage.cocoaflow.com/farms/farm_123.jpg
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T10:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '409':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "409":
           description: Farm already exists for this location
           content:
             application/json:
@@ -1847,10 +1842,10 @@ paths:
                   code:
                     type: string
                     example: FARM_ALREADY_EXISTS
-        '429':
-          $ref: '#/components/responses/RateLimitError-2'
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "429":
+          $ref: "#/components/responses/RateLimitError-2"
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     get:
       tags:
         - Farms
@@ -1873,11 +1868,11 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationOffset'
-        - $ref: '#/components/parameters/CompanyId'
-        - $ref: '#/components/parameters/DateRangeStart'
-        - $ref: '#/components/parameters/DateRangeEnd'
+        - $ref: "#/components/parameters/PaginationLimit"
+        - $ref: "#/components/parameters/PaginationOffset"
+        - $ref: "#/components/parameters/CompanyId"
+        - $ref: "#/components/parameters/DateRangeStart"
+        - $ref: "#/components/parameters/DateRangeEnd"
         - name: farmer_id
           in: query
           description: Filter by specific farmer ID
@@ -1940,7 +1935,7 @@ paths:
             default: desc
             example: desc
       responses:
-        '200':
+        "200":
           description: List of farms retrieved successfully
           headers:
             X-Total-Count:
@@ -1963,7 +1958,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/farm'
+                      $ref: "#/components/schemas/farm"
                   pagination:
                     type: object
                     properties:
@@ -2004,8 +1999,8 @@ paths:
                     division: Oyo Division
                     council: Ibadan Council
                     farm_image_url: https://storage.cocoaflow.com/farms/farm_123.jpg
-                    created_at: '2024-01-15T10:30:00Z'
-                    updated_at: '2024-01-15T10:30:00Z'
+                    created_at: "2024-01-15T10:30:00Z"
+                    updated_at: "2024-01-15T10:30:00Z"
                   - id: clh1234567890abcdeg
                     location:
                       lat: 6.5245
@@ -2014,8 +2009,8 @@ paths:
                     village: Lagos Village
                     division: Lagos Division
                     council: Lagos Council
-                    created_at: '2024-01-14T09:15:00Z'
-                    updated_at: '2024-01-14T09:15:00Z'
+                    created_at: "2024-01-14T09:15:00Z"
+                    updated_at: "2024-01-14T09:15:00Z"
                 pagination:
                   limit: 20
                   offset: 0
@@ -2026,16 +2021,16 @@ paths:
                 meta:
                   filters_applied:
                     company_id: clh1234567890abcdef
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '429':
-          $ref: '#/components/responses/RateLimitError-2'
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "429":
+          $ref: "#/components/responses/RateLimitError-2"
+        "500":
+          $ref: "#/components/responses/ServerError-2"
   /farms/{id}:
     get:
       tags:
@@ -2053,17 +2048,17 @@ paths:
             example: AQA9CNo0cXNLt6sZp5Uc5P0
           style: simple
       responses:
-        '200':
+        "200":
           description: farm
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/farm'
-        '401':
+                $ref: "#/components/schemas/farm"
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '404':
+        "404":
           description: farm not found
     delete:
       tags:
@@ -2083,13 +2078,13 @@ paths:
               example: AQA9CNo0cXNLt6sZp5Uc5P0
           style: simple
       responses:
-        '200':
+        "200":
           description: farm deleted
-        '401':
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '404':
+        "404":
           description: farm not found
     patch:
       tags:
@@ -2123,11 +2118,11 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/farm'
+              $ref: "#/components/schemas/farm"
       responses:
-        '200':
+        "200":
           description: farm updated
-        '404':
+        "404":
           description: farm not foun
   /audits:
     post:
@@ -2166,8 +2161,8 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: '#/components/schemas/project_audit'
-                - $ref: '#/components/schemas/market_audit'
+                - $ref: "#/components/schemas/project_audit"
+                - $ref: "#/components/schemas/market_audit"
             examples:
               project_audit:
                 summary: Project audit
@@ -2175,7 +2170,7 @@ paths:
                 value:
                   project_id: clh1234567890abcdef
                   auditor_id: clh1234567890abcdef
-                  audit_date: '2024-01-15'
+                  audit_date: "2024-01-15"
                   progress_score: 75
                   notes: Project progressing well within timeline
                   quality_score: 85
@@ -2193,7 +2188,7 @@ paths:
                 value:
                   market_id: clh1234567890abcdef
                   auditor_id: clh1234567890abcdef
-                  audit_date: '2024-01-15'
+                  audit_date: "2024-01-15"
                   compliance_score: 85
                   notes: Market meets basic compliance requirements
                   quality_score: 90
@@ -2203,7 +2198,7 @@ paths:
                     - Improve storage facilities
                     - Enhance quality control
       responses:
-        '201':
+        "201":
           description: Audit created successfully
           headers:
             Location:
@@ -2215,24 +2210,24 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/project_audit'
-                  - $ref: '#/components/schemas/market_audit'
+                  - $ref: "#/components/schemas/project_audit"
+                  - $ref: "#/components/schemas/market_audit"
               example:
                 id: clh1234567890abcdef
                 project_id: clh1234567890abcdef
                 auditor_id: clh1234567890abcdef
-                audit_date: '2024-01-15'
+                audit_date: "2024-01-15"
                 progress_score: 75
                 notes: Project progressing well within timeline
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T10:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '409':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "409":
           description: Audit already exists for this resource and date
           content:
             application/json:
@@ -2248,8 +2243,8 @@ paths:
                   code:
                     type: string
                     example: AUDIT_ALREADY_EXISTS
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     get:
       tags:
         - 🌿 Audits
@@ -2287,7 +2282,7 @@ paths:
           schema:
             type: string
             format: date
-            example: '2024-01-01'
+            example: "2024-01-01"
         - name: end_date
           in: query
           required: false
@@ -2295,7 +2290,7 @@ paths:
           schema:
             type: string
             format: date
-            example: '2024-12-31'
+            example: "2024-12-31"
         - name: auditor_id
           in: query
           required: false
@@ -2354,10 +2349,10 @@ paths:
               - desc
             default: desc
             example: desc
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationOffset'
+        - $ref: "#/components/parameters/PaginationLimit"
+        - $ref: "#/components/parameters/PaginationOffset"
       responses:
-        '200':
+        "200":
           description: List of audits retrieved successfully
           content:
             application/json:
@@ -2371,8 +2366,8 @@ paths:
                     type: array
                     items:
                       oneOf:
-                        - $ref: '#/components/schemas/project_audit'
-                        - $ref: '#/components/schemas/market_audit'
+                        - $ref: "#/components/schemas/project_audit"
+                        - $ref: "#/components/schemas/market_audit"
                   pagination:
                     type: object
                     properties:
@@ -2394,32 +2389,32 @@ paths:
                   - id: clh1234567890abcdef
                     project_id: clh1234567890abcdef
                     auditor_id: clh1234567890abcdef
-                    audit_date: '2024-01-15'
+                    audit_date: "2024-01-15"
                     progress_score: 75
                     notes: Project progressing well within timeline
-                    created_at: '2024-01-15T10:30:00Z'
-                    updated_at: '2024-01-15T10:30:00Z'
+                    created_at: "2024-01-15T10:30:00Z"
+                    updated_at: "2024-01-15T10:30:00Z"
                   - id: clh1234567890abcdef
                     market_id: clh1234567890abcdef
                     auditor_id: clh1234567890abcdef
-                    audit_date: '2024-01-14'
+                    audit_date: "2024-01-14"
                     compliance_score: 85
                     notes: Market meets basic compliance requirements
-                    created_at: '2024-01-14T14:20:00Z'
-                    updated_at: '2024-01-14T14:20:00Z'
+                    created_at: "2024-01-14T14:20:00Z"
+                    updated_at: "2024-01-14T14:20:00Z"
                 pagination:
                   total: 150
                   limit: 20
                   offset: 0
                   has_more: true
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     put:
       tags:
         - 🌿 Audits
@@ -2544,32 +2539,32 @@ paths:
                     - Improve storage facilities
                     - Enhance quality control
       responses:
-        '200':
+        "200":
           description: Audit updated successfully
           content:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/project_audit'
-                  - $ref: '#/components/schemas/market_audit'
+                  - $ref: "#/components/schemas/project_audit"
+                  - $ref: "#/components/schemas/market_audit"
               example:
                 id: clh1234567890abcdef
                 project_id: clh1234567890abcdef
                 auditor_id: clh1234567890abcdef
-                audit_date: '2024-01-15'
+                audit_date: "2024-01-15"
                 progress_score: 80
                 notes: Updated progress assessment - better than expected
                 quality_score: 88
                 budget_score: 92
                 timeline_score: 85
-                updated_at: '2024-01-15T15:45:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+                updated_at: "2024-01-15T15:45:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Audit not found
           content:
             application/json:
@@ -2585,7 +2580,7 @@ paths:
                   code:
                     type: string
                     example: AUDIT_NOT_FOUND
-        '409':
+        "409":
           description: Audit update conflict
           content:
             application/json:
@@ -2601,8 +2596,8 @@ paths:
                   code:
                     type: string
                     example: AUDIT_UPDATE_CONFLICT
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     delete:
       tags:
         - 🌿 Audits
@@ -2630,9 +2625,9 @@ paths:
             format: cuid
             example: clh1234567890abcdef
       responses:
-        '204':
+        "204":
           description: Audit deleted successfully
-        '400':
+        "400":
           description: Cannot delete audit
           content:
             application/json:
@@ -2648,11 +2643,11 @@ paths:
                   code:
                     type: string
                     example: AUDIT_ALREADY_SUBMITTED
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Audit not found
           content:
             application/json:
@@ -2668,8 +2663,8 @@ paths:
                   code:
                     type: string
                     example: AUDIT_NOT_FOUND
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
   /receipts:
     post:
       tags:
@@ -2682,17 +2677,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/receipt'
+              $ref: "#/components/schemas/receipt"
       responses:
-        '201':
+        "201":
           description: the receipt created
-        '400':
+        "400":
           description: the receipt not created. Bad Input
-        '401':
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '500':
+        "500":
           description: internal server error
       operationId: createReceipt
     get:
@@ -2724,19 +2719,19 @@ paths:
             type: integer
             example: 20
       responses:
-        '200':
+        "200":
           description: receipt
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/receipt'
-        '401':
+                  $ref: "#/components/schemas/receipt"
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '500':
+        "500":
           description: internal server error
   /receipts/{id}:
     get:
@@ -2769,17 +2764,17 @@ paths:
               example: AQA9CNo0cXNLt6sZp5Uc5P0
           style: simple
       responses:
-        '200':
+        "200":
           description: receipt
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/receipt'
-        '401':
+                $ref: "#/components/schemas/receipt"
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '404':
+        "404":
           description: receipt not found
   /farm_coordinates:
     post:
@@ -2806,13 +2801,13 @@ paths:
                 long:
                   type: number
       responses:
-        '201':
+        "201":
           description: farm coordinate updated
-        '401':
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '500':
+        "500":
           description: internal server error
   /farm_coordinate/{farmer_id}:
     get:
@@ -2833,17 +2828,17 @@ paths:
               example: AQA9CNo0cXNLt6sZp5Uc5P0
           style: simple
       responses:
-        '200':
+        "200":
           description: farm coordinate
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/farm_coodinates'
-        '401':
+                $ref: "#/components/schemas/farm_coodinates"
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '500':
+        "500":
           description: internal server error
   /markets:
     post:
@@ -2859,15 +2854,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/market'
+              $ref: "#/components/schemas/market"
       responses:
-        '201':
+        "201":
           description: market created
-        '401':
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '500':
+        "500":
           description: internal server error
     get:
       tags:
@@ -2878,19 +2873,19 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        '200':
+        "200":
           description: markets
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/market'
-        '401':
+                  $ref: "#/components/schemas/market"
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '500':
+        "500":
           description: internal server error
   /markets/{id}:
     get:
@@ -2913,17 +2908,17 @@ paths:
               example: AQA9CNo0cXNLt6sZp5Uc5P0
           style: simple
       responses:
-        '200':
+        "200":
           description: market
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/market'
-        '401':
+                $ref: "#/components/schemas/market"
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '404':
+        "404":
           description: market not found
     put:
       tags:
@@ -2947,16 +2942,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/market'
+              $ref: "#/components/schemas/market"
               properties: {}
       responses:
-        '200':
+        "200":
           description: market updated
-        '401':
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '500':
+        "500":
           description: internal server error
       security:
         - BearerAuth: []
@@ -2978,13 +2973,13 @@ paths:
               example: AQA9CNo0cXNLt6sZp5Uc5P0
           style: simple
       responses:
-        '200':
+        "200":
           description: market deleted
-        '401':
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '500':
+        "500":
           description: internal server error
       security:
         - BearerAuth: []
@@ -3023,19 +3018,19 @@ paths:
             example: 0
           style: simple
       responses:
-        '200':
+        "200":
           description: market
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/market'
-        '401':
+                  $ref: "#/components/schemas/market"
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '500':
+        "500":
           description: internal server error
       security:
         - BearerAuth: []
@@ -3062,7 +3057,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/inspection_data'
+              $ref: "#/components/schemas/inspection_data"
             examples:
               basic_inspection:
                 summary: Basic inspection data
@@ -3070,7 +3065,7 @@ paths:
                 value:
                   farm_id: clh1234567890abcdef
                   inspector_id: clh1234567890abcdef
-                  inspection_date: '2024-01-15'
+                  inspection_date: "2024-01-15"
                   compliance_score: 85
                   notes: Farm meets basic compliance requirements
               detailed_inspection:
@@ -3079,7 +3074,7 @@ paths:
                 value:
                   farm_id: clh1234567890abcdef
                   inspector_id: clh1234567890abcdef
-                  inspection_date: '2024-01-15'
+                  inspection_date: "2024-01-15"
                   compliance_score: 85
                   notes: Farm meets basic compliance requirements
                   gps_coordinates:
@@ -3091,7 +3086,7 @@ paths:
                   recommendations:
                     - Improve soil management practices
       responses:
-        '201':
+        "201":
           description: Inspection data created successfully
           headers:
             Location:
@@ -3102,23 +3097,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inspection_data'
+                $ref: "#/components/schemas/inspection_data"
               example:
                 id: clh1234567890abcdef
                 farm_id: clh1234567890abcdef
                 inspector_id: clh1234567890abcdef
-                inspection_date: '2024-01-15'
+                inspection_date: "2024-01-15"
                 compliance_score: 85
                 notes: Farm meets basic compliance requirements
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T10:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '409':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "409":
           description: Inspection data already exists for this farm and date
           content:
             application/json:
@@ -3134,8 +3129,8 @@ paths:
                   code:
                     type: string
                     example: INSPECTION_ALREADY_EXISTS
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     get:
       tags:
         - 🔍 Inspection
@@ -3159,11 +3154,11 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationOffset'
-        - $ref: '#/components/parameters/CompanyId'
-        - $ref: '#/components/parameters/DateRangeStart'
-        - $ref: '#/components/parameters/DateRangeEnd'
+        - $ref: "#/components/parameters/PaginationLimit"
+        - $ref: "#/components/parameters/PaginationOffset"
+        - $ref: "#/components/parameters/CompanyId"
+        - $ref: "#/components/parameters/DateRangeStart"
+        - $ref: "#/components/parameters/DateRangeEnd"
         - name: farm_id
           in: query
           description: Filter by farm ID
@@ -3207,7 +3202,7 @@ paths:
             maximum: 100
             example: 100
       responses:
-        '200':
+        "200":
           description: Inspection data retrieved successfully
           content:
             application/json:
@@ -3217,7 +3212,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/inspection_data'
+                      $ref: "#/components/schemas/inspection_data"
                   pagination:
                     type: object
                     properties:
@@ -3256,19 +3251,19 @@ paths:
                   - id: clh1234567890abcdef
                     farm_id: clh1234567890abcdef
                     inspector_id: clh1234567890abcdef
-                    inspection_date: '2024-01-15'
+                    inspection_date: "2024-01-15"
                     compliance_score: 85
                     notes: Farm meets basic compliance requirements
-                    created_at: '2024-01-15T10:30:00Z'
-                    updated_at: '2024-01-15T10:30:00Z'
+                    created_at: "2024-01-15T10:30:00Z"
+                    updated_at: "2024-01-15T10:30:00Z"
                   - id: clh1234567890abcdeg
                     farm_id: clh1234567890abcdeg
                     inspector_id: clh1234567890abcdef
-                    inspection_date: '2024-01-14'
+                    inspection_date: "2024-01-14"
                     compliance_score: 90
                     notes: Excellent compliance standards
-                    created_at: '2024-01-14T09:15:00Z'
-                    updated_at: '2024-01-14T09:15:00Z'
+                    created_at: "2024-01-14T09:15:00Z"
+                    updated_at: "2024-01-14T09:15:00Z"
                 pagination:
                   limit: 20
                   offset: 0
@@ -3280,14 +3275,14 @@ paths:
                   average_score: 87.5
                   total_inspections: 150
                   compliance_rate: 92.3
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     put:
       tags:
         - 🔍 Inspection
@@ -3376,17 +3371,17 @@ paths:
                   recommendations:
                     - Implement soil conservation measures
       responses:
-        '200':
+        "200":
           description: Inspection data updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inspection_data'
+                $ref: "#/components/schemas/inspection_data"
               example:
                 id: clh1234567890abcdef
                 farm_id: clh1234567890abcdef
                 inspector_id: clh1234567890abcdef
-                inspection_date: '2024-01-15'
+                inspection_date: "2024-01-15"
                 compliance_score: 90
                 notes: Updated compliance assessment - improved practices observed
                 gps_coordinates:
@@ -3398,15 +3393,15 @@ paths:
                   - Soil erosion detected
                 recommendations:
                   - Implement soil conservation measures
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T11:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T11:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Inspection data not found
           content:
             application/json:
@@ -3422,7 +3417,7 @@ paths:
                   code:
                     type: string
                     example: INSPECTION_NOT_FOUND
-        '409':
+        "409":
           description: Inspection data update conflict
           content:
             application/json:
@@ -3438,8 +3433,8 @@ paths:
                   code:
                     type: string
                     example: INSPECTION_UPDATE_CONFLICT
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     delete:
       tags:
         - 🔍 Inspection
@@ -3458,9 +3453,9 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        '204':
+        "204":
           description: Inspection data deleted successfully
-        '400':
+        "400":
           description: Cannot delete inspection data
           content:
             application/json:
@@ -3476,11 +3471,11 @@ paths:
                   code:
                     type: string
                     example: INSPECTION_ALREADY_SUBMITTED
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Inspection data not found
           content:
             application/json:
@@ -3496,8 +3491,8 @@ paths:
                   code:
                     type: string
                     example: INSPECTION_NOT_FOUND
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
   /inspection_data/{project_id}:
     get:
       tags:
@@ -3531,19 +3526,19 @@ paths:
           style: simple
       operationId: getProjectInspectionData
       responses:
-        '200':
+        "200":
           description: inspection data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inspection_data'
-        '401':
+                $ref: "#/components/schemas/inspection_data"
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '404':
+        "404":
           description: inspection data not found
-        '500':
+        "500":
           description: internal server error
   /subscriptions:
     post:
@@ -3568,7 +3563,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/subscription'
+              $ref: "#/components/schemas/subscription"
             examples:
               basic_subscription:
                 summary: Basic subscription
@@ -3576,8 +3571,8 @@ paths:
                 value:
                   company_id: clh1234567890abcdef
                   plan_id: clh1234567890abcdeg
-                  start_date: '2024-02-01'
-                  end_date: '2025-02-01'
+                  start_date: "2024-02-01"
+                  end_date: "2025-02-01"
                   payment_method: credit_card
               detailed_subscription:
                 summary: Detailed subscription
@@ -3585,15 +3580,15 @@ paths:
                 value:
                   company_id: clh1234567890abcdef
                   plan_id: clh1234567890abcdeg
-                  start_date: '2024-02-01'
-                  end_date: '2025-02-01'
+                  start_date: "2024-02-01"
+                  end_date: "2025-02-01"
                   payment_method: credit_card
                   billing_cycle: monthly
                   auto_renew: true
                   discount_code: WELCOME10
                   notes: Enterprise subscription with premium support
       responses:
-        '201':
+        "201":
           description: Subscription created successfully
           headers:
             Location:
@@ -3604,26 +3599,26 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/subscription'
+                $ref: "#/components/schemas/subscription"
               example:
                 id: clh1234567890abcdef
                 company_id: clh1234567890abcdef
                 plan_id: clh1234567890abcdeg
-                start_date: '2024-02-01'
-                end_date: '2025-02-01'
+                start_date: "2024-02-01"
+                end_date: "2025-02-01"
                 status: active
                 payment_method: credit_card
                 billing_cycle: monthly
                 auto_renew: true
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T10:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '409':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "409":
           description: Subscription already exists
           content:
             application/json:
@@ -3639,8 +3634,8 @@ paths:
                   code:
                     type: string
                     example: SUBSCRIPTION_ALREADY_EXISTS
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     get:
       tags:
         - 🏢 Companies
@@ -3664,11 +3659,11 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationOffset'
-        - $ref: '#/components/parameters/CompanyId'
-        - $ref: '#/components/parameters/DateRangeStart'
-        - $ref: '#/components/parameters/DateRangeEnd'
+        - $ref: "#/components/parameters/PaginationLimit"
+        - $ref: "#/components/parameters/PaginationOffset"
+        - $ref: "#/components/parameters/CompanyId"
+        - $ref: "#/components/parameters/DateRangeStart"
+        - $ref: "#/components/parameters/DateRangeEnd"
         - name: status
           in: query
           description: Filter by subscription status
@@ -3713,7 +3708,7 @@ paths:
             type: boolean
             example: true
       responses:
-        '200':
+        "200":
           description: Subscriptions retrieved successfully
           content:
             application/json:
@@ -3723,7 +3718,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/subscription'
+                      $ref: "#/components/schemas/subscription"
                   pagination:
                     type: object
                     properties:
@@ -3765,25 +3760,25 @@ paths:
                   - id: clh1234567890abcdef
                     company_id: clh1234567890abcdef
                     plan_id: clh1234567890abcdeg
-                    start_date: '2024-02-01'
-                    end_date: '2025-02-01'
+                    start_date: "2024-02-01"
+                    end_date: "2025-02-01"
                     status: active
                     payment_method: credit_card
                     billing_cycle: monthly
                     auto_renew: true
-                    created_at: '2024-01-15T10:30:00Z'
-                    updated_at: '2024-01-15T10:30:00Z'
+                    created_at: "2024-01-15T10:30:00Z"
+                    updated_at: "2024-01-15T10:30:00Z"
                   - id: clh1234567890abcdeh
                     company_id: clh1234567890abcdei
                     plan_id: clh1234567890abcdeg
-                    start_date: '2024-01-01'
-                    end_date: '2024-12-31'
+                    start_date: "2024-01-01"
+                    end_date: "2024-12-31"
                     status: active
                     payment_method: bank_transfer
                     billing_cycle: yearly
                     auto_renew: false
-                    created_at: '2023-12-15T09:00:00Z'
-                    updated_at: '2023-12-15T09:00:00Z'
+                    created_at: "2023-12-15T09:00:00Z"
+                    updated_at: "2023-12-15T09:00:00Z"
                 pagination:
                   limit: 20
                   offset: 0
@@ -3796,14 +3791,14 @@ paths:
                   active_subscriptions: 12
                   expired_subscriptions: 2
                   cancelled_subscriptions: 1
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     put:
       tags:
         - 🏢 Companies
@@ -3832,7 +3827,7 @@ paths:
                   type: string
                   format: date
                   description: Updated end date
-                  example: '2025-03-01'
+                  example: "2025-03-01"
                 status:
                   type: string
                   enum:
@@ -3869,34 +3864,34 @@ paths:
                 description: Update billing cycle and end date
                 value:
                   billing_cycle: quarterly
-                  end_date: '2025-03-01'
+                  end_date: "2025-03-01"
       responses:
-        '200':
+        "200":
           description: Subscription updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/subscription'
+                $ref: "#/components/schemas/subscription"
               example:
                 id: clh1234567890abcdef
                 company_id: clh1234567890abcdef
                 plan_id: clh1234567890abcdeg
-                start_date: '2024-02-01'
-                end_date: '2025-03-01'
+                start_date: "2024-02-01"
+                end_date: "2025-03-01"
                 status: active
                 payment_method: credit_card
                 billing_cycle: quarterly
                 auto_renew: false
                 notes: Updated subscription notes
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T11:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T11:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Subscription not found
           content:
             application/json:
@@ -3912,7 +3907,7 @@ paths:
                   code:
                     type: string
                     example: SUBSCRIPTION_NOT_FOUND
-        '409':
+        "409":
           description: Subscription update conflict
           content:
             application/json:
@@ -3928,8 +3923,8 @@ paths:
                   code:
                     type: string
                     example: SUBSCRIPTION_EXPIRED
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     delete:
       tags:
         - 🏢 Companies
@@ -3948,9 +3943,9 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        '204':
+        "204":
           description: Subscription cancelled successfully
-        '400':
+        "400":
           description: Cannot cancel subscription
           content:
             application/json:
@@ -3966,11 +3961,11 @@ paths:
                   code:
                     type: string
                     example: SUBSCRIPTION_ALREADY_CANCELLED
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Subscription not found
           content:
             application/json:
@@ -3986,8 +3981,8 @@ paths:
                   code:
                     type: string
                     example: SUBSCRIPTION_NOT_FOUND
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
   /subscriptions/{id}:
     get:
       tags:
@@ -4007,17 +4002,17 @@ paths:
               example: AQA9CNo0cXNLt6sZp5Uc5P0
           style: simple
       responses:
-        '200':
+        "200":
           description: subscription
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/subscription'
-        '401':
+                $ref: "#/components/schemas/subscription"
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '404':
+        "404":
           description: subscription not found
   /subscriptions/{company_id}/company:
     patch:
@@ -4037,13 +4032,13 @@ paths:
             example: AQA9CNo0cXNLt6sZp5Uc5P0
             type: string
       responses:
-        '201':
+        "201":
           description: company subscription cancelled
-        '401':
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '500':
+        "500":
           description: internal server error
   /trainings:
     post:
@@ -4068,7 +4063,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/training'
+              $ref: "#/components/schemas/training"
             examples:
               basic_training:
                 summary: Basic training program
@@ -4076,8 +4071,8 @@ paths:
                 value:
                   title: Cocoa Farming Best Practices
                   description: Learn modern cocoa farming techniques
-                  start_date: '2024-02-01'
-                  end_date: '2024-02-03'
+                  start_date: "2024-02-01"
+                  end_date: "2024-02-03"
                   location: Training Center A
                   max_capacity: 50
               detailed_training:
@@ -4086,8 +4081,8 @@ paths:
                 value:
                   title: Advanced Cocoa Processing Techniques
                   description: Comprehensive training on cocoa processing and quality control
-                  start_date: '2024-02-01'
-                  end_date: '2024-02-05'
+                  start_date: "2024-02-01"
+                  end_date: "2024-02-05"
                   location: Training Center A
                   max_capacity: 30
                   instructor: Dr. John Smith
@@ -4097,7 +4092,7 @@ paths:
                   certification_provided: true
                   cost: 150
       responses:
-        '201':
+        "201":
           description: Training created successfully
           headers:
             Location:
@@ -4108,26 +4103,26 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/training'
+                $ref: "#/components/schemas/training"
               example:
                 id: clh1234567890abcdef
                 title: Cocoa Farming Best Practices
                 description: Learn modern cocoa farming techniques
-                start_date: '2024-02-01'
-                end_date: '2024-02-03'
+                start_date: "2024-02-01"
+                end_date: "2024-02-03"
                 location: Training Center A
                 max_capacity: 50
                 current_enrollment: 0
                 status: upcoming
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T10:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '409':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "409":
           description: Training already exists
           content:
             application/json:
@@ -4143,8 +4138,8 @@ paths:
                   code:
                     type: string
                     example: TRAINING_ALREADY_EXISTS
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     get:
       tags:
         - 🎓 Training
@@ -4168,11 +4163,11 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationOffset'
-        - $ref: '#/components/parameters/CompanyId'
-        - $ref: '#/components/parameters/DateRangeStart'
-        - $ref: '#/components/parameters/DateRangeEnd'
+        - $ref: "#/components/parameters/PaginationLimit"
+        - $ref: "#/components/parameters/PaginationOffset"
+        - $ref: "#/components/parameters/CompanyId"
+        - $ref: "#/components/parameters/DateRangeStart"
+        - $ref: "#/components/parameters/DateRangeEnd"
         - name: status
           in: query
           description: Filter by training status
@@ -4216,7 +4211,7 @@ paths:
             minimum: 0
             example: 100
       responses:
-        '200':
+        "200":
           description: Trainings retrieved successfully
           content:
             application/json:
@@ -4226,7 +4221,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/training'
+                      $ref: "#/components/schemas/training"
                   pagination:
                     type: object
                     properties:
@@ -4268,25 +4263,25 @@ paths:
                   - id: clh1234567890abcdef
                     title: Cocoa Farming Best Practices
                     description: Learn modern cocoa farming techniques
-                    start_date: '2024-02-01'
-                    end_date: '2024-02-03'
+                    start_date: "2024-02-01"
+                    end_date: "2024-02-03"
                     location: Training Center A
                     max_capacity: 50
                     current_enrollment: 25
                     status: upcoming
-                    created_at: '2024-01-15T10:30:00Z'
-                    updated_at: '2024-01-15T10:30:00Z'
+                    created_at: "2024-01-15T10:30:00Z"
+                    updated_at: "2024-01-15T10:30:00Z"
                   - id: clh1234567890abcdeg
                     title: Advanced Cocoa Processing
                     description: Advanced techniques for cocoa processing
-                    start_date: '2024-02-05'
-                    end_date: '2024-02-07'
+                    start_date: "2024-02-05"
+                    end_date: "2024-02-07"
                     location: Training Center B
                     max_capacity: 30
                     current_enrollment: 15
                     status: upcoming
-                    created_at: '2024-01-14T09:15:00Z'
-                    updated_at: '2024-01-14T09:15:00Z'
+                    created_at: "2024-01-14T09:15:00Z"
+                    updated_at: "2024-01-14T09:15:00Z"
                 pagination:
                   limit: 20
                   offset: 0
@@ -4299,14 +4294,14 @@ paths:
                   upcoming_trainings: 10
                   ongoing_trainings: 5
                   completed_trainings: 10
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     put:
       tags:
         - 🎓 Training
@@ -4343,12 +4338,12 @@ paths:
                   type: string
                   format: date
                   description: Updated start date
-                  example: '2024-02-02'
+                  example: "2024-02-02"
                 end_date:
                   type: string
                   format: date
                   description: Updated end date
-                  example: '2024-02-04'
+                  example: "2024-02-04"
                 location:
                   type: string
                   description: Updated training location
@@ -4379,37 +4374,37 @@ paths:
                 summary: Update training schedule
                 description: Update dates and capacity
                 value:
-                  start_date: '2024-02-02'
-                  end_date: '2024-02-04'
+                  start_date: "2024-02-02"
+                  end_date: "2024-02-04"
                   max_capacity: 60
       responses:
-        '200':
+        "200":
           description: Training updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/training'
+                $ref: "#/components/schemas/training"
               example:
                 id: clh1234567890abcdef
                 title: Updated Cocoa Farming Best Practices
                 description: Updated description with new techniques
-                start_date: '2024-02-02'
-                end_date: '2024-02-04'
+                start_date: "2024-02-02"
+                end_date: "2024-02-04"
                 location: Updated Training Center A
                 max_capacity: 60
                 current_enrollment: 25
                 status: upcoming
                 instructor: Dr. Jane Doe
                 cost: 175
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T11:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T11:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Training not found
           content:
             application/json:
@@ -4425,7 +4420,7 @@ paths:
                   code:
                     type: string
                     example: TRAINING_NOT_FOUND
-        '409':
+        "409":
           description: Training update conflict
           content:
             application/json:
@@ -4441,8 +4436,8 @@ paths:
                   code:
                     type: string
                     example: TRAINING_ALREADY_STARTED
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     delete:
       tags:
         - 🎓 Training
@@ -4461,9 +4456,9 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        '204':
+        "204":
           description: Training deleted successfully
-        '400':
+        "400":
           description: Cannot delete training
           content:
             application/json:
@@ -4479,11 +4474,11 @@ paths:
                   code:
                     type: string
                     example: TRAINING_HAS_ENROLLMENTS
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Training not found
           content:
             application/json:
@@ -4499,8 +4494,8 @@ paths:
                   code:
                     type: string
                     example: TRAINING_NOT_FOUND
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
   /trainings/{id}:
     get:
       tags:
@@ -4520,17 +4515,17 @@ paths:
               example: AQA9CNo0cXNLt6sZp5Uc5P0
           style: simple
       responses:
-        '200':
+        "200":
           description: training
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/training'
-        '401':
+                $ref: "#/components/schemas/training"
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '404':
+        "404":
           description: training not found
   /transaction:
     post:
@@ -4555,7 +4550,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/transaction'
+              $ref: "#/components/schemas/transaction"
             examples:
               basic_transaction:
                 summary: Basic transaction
@@ -4579,7 +4574,7 @@ paths:
                   payment_method: cash
                   reference_number: TXN-2024-001
       responses:
-        '201':
+        "201":
           description: Transaction created successfully
           headers:
             Location:
@@ -4590,7 +4585,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/transaction'
+                $ref: "#/components/schemas/transaction"
               example:
                 id: clh1234567890abcdef
                 market_id: clh1234567890abcdef
@@ -4599,15 +4594,15 @@ paths:
                 currency: USD
                 transaction_type: purchase
                 status: pending
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T10:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '409':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "409":
           description: Transaction already exists
           content:
             application/json:
@@ -4623,8 +4618,8 @@ paths:
                   code:
                     type: string
                     example: TRANSACTION_ALREADY_EXISTS
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     get:
       tags:
         - 💰 Transactions
@@ -4649,11 +4644,11 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationOffset'
-        - $ref: '#/components/parameters/CompanyId'
-        - $ref: '#/components/parameters/DateRangeStart'
-        - $ref: '#/components/parameters/DateRangeEnd'
+        - $ref: "#/components/parameters/PaginationLimit"
+        - $ref: "#/components/parameters/PaginationOffset"
+        - $ref: "#/components/parameters/CompanyId"
+        - $ref: "#/components/parameters/DateRangeStart"
+        - $ref: "#/components/parameters/DateRangeEnd"
         - name: market_id
           in: query
           description: Filter by market ID
@@ -4709,7 +4704,7 @@ paths:
             type: number
             example: 1000000
       responses:
-        '200':
+        "200":
           description: Transactions retrieved successfully
           content:
             application/json:
@@ -4719,7 +4714,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/transaction'
+                      $ref: "#/components/schemas/transaction"
                   pagination:
                     type: object
                     properties:
@@ -4762,8 +4757,8 @@ paths:
                     currency: USD
                     transaction_type: purchase
                     status: completed
-                    created_at: '2024-01-15T10:30:00Z'
-                    updated_at: '2024-01-15T10:30:00Z'
+                    created_at: "2024-01-15T10:30:00Z"
+                    updated_at: "2024-01-15T10:30:00Z"
                   - id: clh1234567890abcdeg
                     market_id: clh1234567890abcdef
                     farmer_id: clh1234567890abcdeg
@@ -4771,8 +4766,8 @@ paths:
                     currency: USD
                     transaction_type: purchase
                     status: completed
-                    created_at: '2024-01-15T09:15:00Z'
-                    updated_at: '2024-01-15T09:15:00Z'
+                    created_at: "2024-01-15T09:15:00Z"
+                    updated_at: "2024-01-15T09:15:00Z"
                 pagination:
                   limit: 20
                   offset: 0
@@ -4784,14 +4779,14 @@ paths:
                   total_amount: 15000000
                   total_count: 150
                   average_amount: 100000
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     put:
       tags:
         - 💰 Transactions
@@ -4858,12 +4853,12 @@ paths:
                   reference_number: TXN-2024-001
                   payment_method: bank_transfer
       responses:
-        '200':
+        "200":
           description: Transaction updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/transaction'
+                $ref: "#/components/schemas/transaction"
               example:
                 id: clh1234567890abcdef
                 market_id: clh1234567890abcdef
@@ -4875,15 +4870,15 @@ paths:
                 description: Payment received via bank transfer
                 reference_number: TXN-2024-001
                 payment_method: bank_transfer
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T11:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T11:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Transaction not found
           content:
             application/json:
@@ -4899,7 +4894,7 @@ paths:
                   code:
                     type: string
                     example: TRANSACTION_NOT_FOUND
-        '409':
+        "409":
           description: Transaction update conflict
           content:
             application/json:
@@ -4915,8 +4910,8 @@ paths:
                   code:
                     type: string
                     example: TRANSACTION_UPDATE_CONFLICT
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     delete:
       tags:
         - 💰 Transactions
@@ -4935,9 +4930,9 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        '204':
+        "204":
           description: Transaction deleted successfully
-        '400':
+        "400":
           description: Cannot delete transaction
           content:
             application/json:
@@ -4953,11 +4948,11 @@ paths:
                   code:
                     type: string
                     example: TRANSACTION_ALREADY_COMPLETED
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Transaction not found
           content:
             application/json:
@@ -4973,8 +4968,8 @@ paths:
                   code:
                     type: string
                     example: TRANSACTION_NOT_FOUND
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
   /campaign_stocks:
     post:
       tags:
@@ -4998,7 +4993,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/campaign_stock'
+              $ref: "#/components/schemas/campaign_stock"
             examples:
               basic_stock:
                 summary: Basic campaign stock
@@ -5008,7 +5003,7 @@ paths:
                   product_name: Premium Cocoa Beans
                   quantity: 1000
                   unit: kg
-                  stock_date: '2024-01-15'
+                  stock_date: "2024-01-15"
               detailed_stock:
                 summary: Detailed campaign stock
                 description: Create campaign stock with comprehensive details
@@ -5017,14 +5012,14 @@ paths:
                   product_name: Premium Cocoa Beans
                   quantity: 1000
                   unit: kg
-                  stock_date: '2024-01-15'
+                  stock_date: "2024-01-15"
                   unit_price: 2.5
                   total_value: 2500
                   location: Warehouse A
                   condition: excellent
                   notes: High-quality beans from organic farms
       responses:
-        '201':
+        "201":
           description: Campaign stock created successfully
           headers:
             Location:
@@ -5035,28 +5030,28 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/campaign_stock'
+                $ref: "#/components/schemas/campaign_stock"
               example:
                 id: clh1234567890abcdef
                 campaign_id: clh1234567890abcdef
                 product_name: Premium Cocoa Beans
                 quantity: 1000
                 unit: kg
-                stock_date: '2024-01-15'
+                stock_date: "2024-01-15"
                 unit_price: 2.5
                 total_value: 2500
                 location: Warehouse A
                 condition: excellent
                 notes: High-quality beans from organic farms
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T10:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '409':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "409":
           description: Campaign stock already exists
           content:
             application/json:
@@ -5072,8 +5067,8 @@ paths:
                   code:
                     type: string
                     example: CAMPAIGN_STOCK_ALREADY_EXISTS
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     get:
       tags:
         - 📈 Campaigns
@@ -5097,11 +5092,11 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationOffset'
-        - $ref: '#/components/parameters/CompanyId'
-        - $ref: '#/components/parameters/DateRangeStart'
-        - $ref: '#/components/parameters/DateRangeEnd'
+        - $ref: "#/components/parameters/PaginationLimit"
+        - $ref: "#/components/parameters/PaginationOffset"
+        - $ref: "#/components/parameters/CompanyId"
+        - $ref: "#/components/parameters/DateRangeStart"
+        - $ref: "#/components/parameters/DateRangeEnd"
         - name: campaign_id
           in: query
           description: Filter by campaign ID
@@ -5146,7 +5141,7 @@ paths:
             minimum: 0
             example: 5000
       responses:
-        '200':
+        "200":
           description: Campaign stocks retrieved successfully
           content:
             application/json:
@@ -5156,7 +5151,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/campaign_stock'
+                      $ref: "#/components/schemas/campaign_stock"
                   pagination:
                     type: object
                     properties:
@@ -5200,27 +5195,27 @@ paths:
                     product_name: Premium Cocoa Beans
                     quantity: 1000
                     unit: kg
-                    stock_date: '2024-01-15'
+                    stock_date: "2024-01-15"
                     unit_price: 2.5
                     total_value: 2500
                     location: Warehouse A
                     condition: excellent
                     notes: High-quality beans from organic farms
-                    created_at: '2024-01-15T10:30:00Z'
-                    updated_at: '2024-01-15T10:30:00Z'
+                    created_at: "2024-01-15T10:30:00Z"
+                    updated_at: "2024-01-15T10:30:00Z"
                   - id: clh1234567890abcdeg
                     campaign_id: clh1234567890abcdef
                     product_name: Standard Cocoa Beans
                     quantity: 1500
                     unit: kg
-                    stock_date: '2024-01-14'
+                    stock_date: "2024-01-14"
                     unit_price: 2
                     total_value: 3000
                     location: Warehouse B
                     condition: good
                     notes: Standard quality beans
-                    created_at: '2024-01-14T09:15:00Z'
-                    updated_at: '2024-01-14T09:15:00Z'
+                    created_at: "2024-01-14T09:15:00Z"
+                    updated_at: "2024-01-14T09:15:00Z"
                 pagination:
                   limit: 20
                   offset: 0
@@ -5233,14 +5228,14 @@ paths:
                   total_quantity: 25000
                   total_value: 62500
                   average_unit_price: 2.5
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     put:
       tags:
         - 📈 Campaigns
@@ -5309,33 +5304,33 @@ paths:
                   condition: excellent
                   notes: Updated stock notes
       responses:
-        '200':
+        "200":
           description: Campaign stock updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/campaign_stock'
+                $ref: "#/components/schemas/campaign_stock"
               example:
                 id: clh1234567890abcdef
                 campaign_id: clh1234567890abcdef
                 product_name: Premium Cocoa Beans
                 quantity: 1200
                 unit: kg
-                stock_date: '2024-01-15'
+                stock_date: "2024-01-15"
                 unit_price: 2.75
                 total_value: 3300
                 location: Updated Warehouse A
                 condition: excellent
                 notes: Updated stock notes
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T11:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T11:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Campaign stock not found
           content:
             application/json:
@@ -5351,7 +5346,7 @@ paths:
                   code:
                     type: string
                     example: CAMPAIGN_STOCK_NOT_FOUND
-        '409':
+        "409":
           description: Campaign stock update conflict
           content:
             application/json:
@@ -5367,8 +5362,8 @@ paths:
                   code:
                     type: string
                     example: CAMPAIGN_STOCK_UPDATE_CONFLICT
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     delete:
       tags:
         - 📈 Campaigns
@@ -5387,9 +5382,9 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        '204':
+        "204":
           description: Campaign stock deleted successfully
-        '400':
+        "400":
           description: Cannot delete campaign stock
           content:
             application/json:
@@ -5405,11 +5400,11 @@ paths:
                   code:
                     type: string
                     example: CAMPAIGN_STOCK_HAS_ALLOCATIONS
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Campaign stock not found
           content:
             application/json:
@@ -5425,8 +5420,8 @@ paths:
                   code:
                     type: string
                     example: CAMPAIGN_STOCK_NOT_FOUND
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
   /campaign_stocks/{campaign_id}:
     get:
       tags:
@@ -5465,15 +5460,15 @@ paths:
             example: 0
           required: false
       responses:
-        '200':
+        "200":
           description: campaign stock
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/campaign_stock'
-        '401':
+                $ref: "#/components/schemas/campaign_stock"
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
   /requirements:
     post:
@@ -5499,7 +5494,7 @@ paths:
           application/json:
             schema:
               type: object
-              $ref: '#/components/schemas/requirement'
+              $ref: "#/components/schemas/requirement"
             examples:
               basic_requirement:
                 summary: Basic requirement
@@ -5524,7 +5519,7 @@ paths:
                   max_score: 100
                   unit: percentage
       responses:
-        '201':
+        "201":
           description: Requirement created successfully
           headers:
             Location:
@@ -5535,7 +5530,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/requirement'
+                $ref: "#/components/schemas/requirement"
               example:
                 id: clh1234567890abcdef
                 name: Organic Certification
@@ -5548,15 +5543,15 @@ paths:
                 min_score: 80
                 max_score: 100
                 unit: percentage
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T10:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '409':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "409":
           description: Requirement already exists
           content:
             application/json:
@@ -5572,8 +5567,8 @@ paths:
                   code:
                     type: string
                     example: REQUIREMENT_ALREADY_EXISTS
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     get:
       tags:
         - 💰 Transactions
@@ -5596,9 +5591,9 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationOffset'
-        - $ref: '#/components/parameters/CompanyId'
+        - $ref: "#/components/parameters/PaginationLimit"
+        - $ref: "#/components/parameters/PaginationOffset"
+        - $ref: "#/components/parameters/CompanyId"
         - name: category
           in: query
           description: Filter by requirement category
@@ -5629,7 +5624,7 @@ paths:
             type: string
             example: Organic
       responses:
-        '200':
+        "200":
           description: Requirements retrieved successfully
           content:
             application/json:
@@ -5639,7 +5634,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/requirement'
+                      $ref: "#/components/schemas/requirement"
                   pagination:
                     type: object
                     properties:
@@ -5686,8 +5681,8 @@ paths:
                     min_score: 80
                     max_score: 100
                     unit: percentage
-                    created_at: '2024-01-15T10:30:00Z'
-                    updated_at: '2024-01-15T10:30:00Z'
+                    created_at: "2024-01-15T10:30:00Z"
+                    updated_at: "2024-01-15T10:30:00Z"
                   - id: clh1234567890abcdeg
                     name: Quality Standards
                     category: quality
@@ -5696,8 +5691,8 @@ paths:
                     min_score: 85
                     max_score: 100
                     unit: percentage
-                    created_at: '2024-01-15T09:15:00Z'
-                    updated_at: '2024-01-15T09:15:00Z'
+                    created_at: "2024-01-15T09:15:00Z"
+                    updated_at: "2024-01-15T09:15:00Z"
                 pagination:
                   limit: 20
                   offset: 0
@@ -5709,14 +5704,14 @@ paths:
                   total_requirements: 35
                   mandatory_requirements: 25
                   optional_requirements: 10
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     put:
       tags:
         - 💰 Transactions
@@ -5796,12 +5791,12 @@ paths:
                   max_score: 100
                   unit: percentage
       responses:
-        '200':
+        "200":
           description: Requirement updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/requirement'
+                $ref: "#/components/schemas/requirement"
               example:
                 id: clh1234567890abcdef
                 name: Updated Organic Certification
@@ -5815,15 +5810,15 @@ paths:
                 min_score: 85
                 max_score: 100
                 unit: percentage
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T11:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T11:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Requirement not found
           content:
             application/json:
@@ -5839,7 +5834,7 @@ paths:
                   code:
                     type: string
                     example: REQUIREMENT_NOT_FOUND
-        '409':
+        "409":
           description: Requirement update conflict
           content:
             application/json:
@@ -5855,8 +5850,8 @@ paths:
                   code:
                     type: string
                     example: REQUIREMENT_UPDATE_CONFLICT
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     delete:
       tags:
         - 💰 Transactions
@@ -5875,9 +5870,9 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        '204':
+        "204":
           description: Requirement deleted successfully
-        '400':
+        "400":
           description: Cannot delete requirement
           content:
             application/json:
@@ -5893,11 +5888,11 @@ paths:
                   code:
                     type: string
                     example: REQUIREMENT_IN_USE
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Requirement not found
           content:
             application/json:
@@ -5913,8 +5908,8 @@ paths:
                   code:
                     type: string
                     example: REQUIREMENT_NOT_FOUND
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
   /requirement/{id}:
     patch:
       tags:
@@ -5936,16 +5931,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/requirement'
+              $ref: "#/components/schemas/requirement"
               properties: {}
       responses:
-        '200':
+        "200":
           description: requirement updated
-        '401':
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '500':
+        "500":
           description: internal server error
     get:
       tags:
@@ -5963,17 +5958,17 @@ paths:
             example: AQA9CNo0cXNLt6sZp5Uc5P0
           style: simple
       responses:
-        '200':
+        "200":
           description: requirement
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/requirement'
-        '401':
+                $ref: "#/components/schemas/requirement"
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '404':
+        "404":
           description: requirement not found
     delete:
       tags:
@@ -5991,15 +5986,15 @@ paths:
             example: AQA9CNo0cXNLt6sZp5Uc5P0
           style: simple
       responses:
-        '200':
+        "200":
           description: Requirement deleted
-        '401':
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '404':
+        "404":
           description: No such Requirement
-        '500':
+        "500":
           description: internal server error
   /requirement/price_plan/{plan_id}:
     get:
@@ -6018,17 +6013,17 @@ paths:
             example: AQA9CNo0cXNLt6sZp5Uc5P0
           style: simple
       responses:
-        '200':
+        "200":
           description: requirement
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/requirement'
-        '401':
+                $ref: "#/components/schemas/requirement"
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '404':
+        "404":
           description: requirement not found
   /collector_agents:
     post:
@@ -6053,7 +6048,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/collector_agent'
+              $ref: "#/components/schemas/collector_agent"
             examples:
               basic_agent:
                 summary: Basic collector agent
@@ -6061,7 +6056,7 @@ paths:
                 value:
                   name: John Doe
                   email: john.doe@cocoaflow.com
-                  phone: '+2348012345678'
+                  phone: "+2348012345678"
                   company_id: clh1234567890abcdef
                   status: active
               detailed_agent:
@@ -6070,7 +6065,7 @@ paths:
                 value:
                   name: John Doe
                   email: john.doe@cocoaflow.com
-                  phone: '+2348012345678'
+                  phone: "+2348012345678"
                   company_id: clh1234567890abcdef
                   status: active
                   region: Southwest Nigeria
@@ -6080,7 +6075,7 @@ paths:
                     - Quality Assessment
                     - Data Collection
       responses:
-        '201':
+        "201":
           description: Collector agent created successfully
           headers:
             Location:
@@ -6091,12 +6086,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/collector_agent'
+                $ref: "#/components/schemas/collector_agent"
               example:
                 id: clh1234567890abcdef
                 name: John Doe
                 email: john.doe@cocoaflow.com
-                phone: '+2348012345678'
+                phone: "+2348012345678"
                 company_id: clh1234567890abcdef
                 status: active
                 region: Southwest Nigeria
@@ -6105,15 +6100,15 @@ paths:
                 specializations:
                   - Quality Assessment
                   - Data Collection
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T10:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '409':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "409":
           description: Collector agent already exists
           content:
             application/json:
@@ -6129,7 +6124,7 @@ paths:
                   code:
                     type: string
                     example: COLLECTOR_AGENT_ALREADY_EXISTS
-        '422':
+        "422":
           description: Unprocessable Entity
           content:
             application/json:
@@ -6145,8 +6140,8 @@ paths:
                   code:
                     type: string
                     example: VALIDATION_ERROR
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     get:
       tags:
         - 👥 Users
@@ -6170,9 +6165,9 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationOffset'
-        - $ref: '#/components/parameters/CompanyId'
+        - $ref: "#/components/parameters/PaginationLimit"
+        - $ref: "#/components/parameters/PaginationOffset"
+        - $ref: "#/components/parameters/CompanyId"
         - name: status
           in: query
           description: Filter by agent status
@@ -6206,7 +6201,7 @@ paths:
             type: string
             example: john.doe
       responses:
-        '200':
+        "200":
           description: Collector agents retrieved successfully
           content:
             application/json:
@@ -6216,7 +6211,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/collector_agent'
+                      $ref: "#/components/schemas/collector_agent"
                   pagination:
                     type: object
                     properties:
@@ -6255,7 +6250,7 @@ paths:
                   - id: clh1234567890abcdef
                     name: John Doe
                     email: john.doe@cocoaflow.com
-                    phone: '+2348012345678'
+                    phone: "+2348012345678"
                     company_id: clh1234567890abcdef
                     status: active
                     region: Southwest Nigeria
@@ -6264,12 +6259,12 @@ paths:
                     specializations:
                       - Quality Assessment
                       - Data Collection
-                    created_at: '2024-01-15T10:30:00Z'
-                    updated_at: '2024-01-15T10:30:00Z'
+                    created_at: "2024-01-15T10:30:00Z"
+                    updated_at: "2024-01-15T10:30:00Z"
                   - id: clh1234567890abcdeg
                     name: Jane Smith
                     email: jane.smith@cocoaflow.com
-                    phone: '+2348012345679'
+                    phone: "+2348012345679"
                     company_id: clh1234567890abcdef
                     status: active
                     region: Southeast Nigeria
@@ -6278,8 +6273,8 @@ paths:
                     specializations:
                       - Data Collection
                       - Training
-                    created_at: '2024-01-14T09:15:00Z'
-                    updated_at: '2024-01-14T09:15:00Z'
+                    created_at: "2024-01-14T09:15:00Z"
+                    updated_at: "2024-01-14T09:15:00Z"
                 pagination:
                   limit: 20
                   offset: 0
@@ -6291,14 +6286,14 @@ paths:
                   total_agents: 45
                   active_agents: 38
                   total_farms_covered: 1250
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     put:
       tags:
         - 👥 Users
@@ -6335,7 +6330,7 @@ paths:
                 phone:
                   type: string
                   description: Updated agent phone number
-                  example: '+2348012345680'
+                  example: "+2348012345680"
                 status:
                   type: string
                   enum:
@@ -6369,14 +6364,14 @@ paths:
                 value:
                   name: Updated John Doe
                   email: updated.john.doe@cocoaflow.com
-                  phone: '+2348012345680'
+                  phone: "+2348012345680"
               update_detailed:
                 summary: Update detailed agent details
                 description: Update comprehensive agent details
                 value:
                   name: Updated John Doe
                   email: updated.john.doe@cocoaflow.com
-                  phone: '+2348012345680'
+                  phone: "+2348012345680"
                   status: active
                   region: Updated Southwest Nigeria
                   experience_years: 4
@@ -6385,17 +6380,17 @@ paths:
                     - Data Collection
                     - Training
       responses:
-        '200':
+        "200":
           description: Collector agent updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/collector_agent'
+                $ref: "#/components/schemas/collector_agent"
               example:
                 id: clh1234567890abcdef
                 name: Updated John Doe
                 email: updated.john.doe@cocoaflow.com
-                phone: '+2348012345680'
+                phone: "+2348012345680"
                 company_id: clh1234567890abcdef
                 status: active
                 region: Updated Southwest Nigeria
@@ -6405,15 +6400,15 @@ paths:
                   - Quality Assessment
                   - Data Collection
                   - Training
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T11:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T11:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Collector agent not found
           content:
             application/json:
@@ -6429,7 +6424,7 @@ paths:
                   code:
                     type: string
                     example: COLLECTOR_AGENT_NOT_FOUND
-        '409':
+        "409":
           description: Collector agent update conflict
           content:
             application/json:
@@ -6445,7 +6440,7 @@ paths:
                   code:
                     type: string
                     example: COLLECTOR_AGENT_UPDATE_CONFLICT
-        '422':
+        "422":
           description: Unprocessable Entity
           content:
             application/json:
@@ -6461,8 +6456,8 @@ paths:
                   code:
                     type: string
                     example: VALIDATION_ERROR
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     delete:
       tags:
         - 👥 Users
@@ -6481,9 +6476,9 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        '204':
+        "204":
           description: Collector agent deleted successfully
-        '400':
+        "400":
           description: Cannot delete collector agent
           content:
             application/json:
@@ -6499,11 +6494,11 @@ paths:
                   code:
                     type: string
                     example: COLLECTOR_AGENT_HAS_ASSIGNMENTS
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Collector agent not found
           content:
             application/json:
@@ -6519,8 +6514,8 @@ paths:
                   code:
                     type: string
                     example: COLLECTOR_AGENT_NOT_FOUND
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
   /collector_agents/{id}:
     delete:
       tags:
@@ -6538,13 +6533,13 @@ paths:
             example: AQA9CNo0cXNLt6sZp5Uc5P0
           style: simple
       responses:
-        '200':
+        "200":
           description: collector agent deleted
-        '401':
+        "401":
           description: Unauthorized access
-        '403':
+        "403":
           description: Forbidden access
-        '500':
+        "500":
           description: internal server error
   /training_session:
     post:
@@ -6569,14 +6564,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/training_session'
+              $ref: "#/components/schemas/training_session"
             examples:
               basic_session:
                 summary: Basic training session
                 description: Create a training session with minimal information
                 value:
                   training_id: clh1234567890abcdef
-                  session_date: '2024-01-15'
+                  session_date: "2024-01-15"
                   location: Community Center
                   trainer_id: clh1234567890abcdef
                   max_participants: 30
@@ -6585,9 +6580,9 @@ paths:
                 description: Create a training session with comprehensive details
                 value:
                   training_id: clh1234567890abcdef
-                  session_date: '2024-01-15'
-                  start_time: '09:00'
-                  end_time: '17:00'
+                  session_date: "2024-01-15"
+                  start_time: "09:00"
+                  end_time: "17:00"
                   location: Community Center
                   trainer_id: clh1234567890abcdef
                   max_participants: 30
@@ -6597,7 +6592,7 @@ paths:
                     - Pen
                     - Safety equipment
       responses:
-        '201':
+        "201":
           description: Training session created successfully
           headers:
             Location:
@@ -6608,27 +6603,27 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/training_session'
+                $ref: "#/components/schemas/training_session"
               example:
                 id: clh1234567890abcdef
                 training_id: clh1234567890abcdef
-                session_date: '2024-01-15'
-                start_time: '09:00'
-                end_time: '17:00'
+                session_date: "2024-01-15"
+                start_time: "09:00"
+                end_time: "17:00"
                 location: Community Center
                 trainer_id: clh1234567890abcdef
                 max_participants: 30
                 current_participants: 0
                 status: scheduled
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T10:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '409':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "409":
           description: Training session already exists for this date and location
           content:
             application/json:
@@ -6644,8 +6639,8 @@ paths:
                   code:
                     type: string
                     example: TRAINING_SESSION_ALREADY_EXISTS
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     get:
       tags:
         - 🎓 Training
@@ -6669,11 +6664,11 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationOffset'
-        - $ref: '#/components/parameters/CompanyId'
-        - $ref: '#/components/parameters/DateRangeStart'
-        - $ref: '#/components/parameters/DateRangeEnd'
+        - $ref: "#/components/parameters/PaginationLimit"
+        - $ref: "#/components/parameters/PaginationOffset"
+        - $ref: "#/components/parameters/CompanyId"
+        - $ref: "#/components/parameters/DateRangeStart"
+        - $ref: "#/components/parameters/DateRangeEnd"
         - name: training_id
           in: query
           description: Filter by training ID
@@ -6710,7 +6705,7 @@ paths:
             type: string
             example: Community Center
       responses:
-        '200':
+        "200":
           description: Training sessions retrieved successfully
           content:
             application/json:
@@ -6720,7 +6715,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/training_session'
+                      $ref: "#/components/schemas/training_session"
                   pagination:
                     type: object
                     properties:
@@ -6758,28 +6753,28 @@ paths:
                 data:
                   - id: clh1234567890abcdef
                     training_id: clh1234567890abcdef
-                    session_date: '2024-01-15'
-                    start_time: '09:00'
-                    end_time: '17:00'
+                    session_date: "2024-01-15"
+                    start_time: "09:00"
+                    end_time: "17:00"
                     location: Community Center
                     trainer_id: clh1234567890abcdef
                     max_participants: 30
                     current_participants: 25
                     status: scheduled
-                    created_at: '2024-01-15T10:30:00Z'
-                    updated_at: '2024-01-15T10:30:00Z'
+                    created_at: "2024-01-15T10:30:00Z"
+                    updated_at: "2024-01-15T10:30:00Z"
                   - id: clh1234567890abcdeg
                     training_id: clh1234567890abcdef
-                    session_date: '2024-01-16'
-                    start_time: '09:00'
-                    end_time: '17:00'
+                    session_date: "2024-01-16"
+                    start_time: "09:00"
+                    end_time: "17:00"
                     location: Village Hall
                     trainer_id: clh1234567890abcdeg
                     max_participants: 25
                     current_participants: 20
                     status: scheduled
-                    created_at: '2024-01-14T09:15:00Z'
-                    updated_at: '2024-01-14T09:15:00Z'
+                    created_at: "2024-01-14T09:15:00Z"
+                    updated_at: "2024-01-14T09:15:00Z"
                 pagination:
                   limit: 20
                   offset: 0
@@ -6791,14 +6786,14 @@ paths:
                   total_sessions: 50
                   completed_sessions: 35
                   total_participants: 1200
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     put:
       tags:
         - 🎓 Training
@@ -6827,15 +6822,15 @@ paths:
                   type: string
                   format: date
                   description: Updated session date
-                  example: '2024-01-16'
+                  example: "2024-01-16"
                 start_time:
                   type: string
                   description: Updated start time
-                  example: '10:00'
+                  example: "10:00"
                 end_time:
                   type: string
                   description: Updated end time
-                  example: '18:00'
+                  example: "18:00"
                 location:
                   type: string
                   description: Updated location
@@ -6863,9 +6858,9 @@ paths:
                 summary: Update session schedule
                 description: Update session date and times
                 value:
-                  session_date: '2024-01-16'
-                  start_time: '10:00'
-                  end_time: '18:00'
+                  session_date: "2024-01-16"
+                  start_time: "10:00"
+                  end_time: "18:00"
               update_details:
                 summary: Update session details
                 description: Update comprehensive session details
@@ -6875,32 +6870,32 @@ paths:
                   status: in-progress
                   description: Updated sustainable farming practices workshop
       responses:
-        '200':
+        "200":
           description: Training session updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/training_session'
+                $ref: "#/components/schemas/training_session"
               example:
                 id: clh1234567890abcdef
                 training_id: clh1234567890abcdef
-                session_date: '2024-01-16'
-                start_time: '10:00'
-                end_time: '18:00'
+                session_date: "2024-01-16"
+                start_time: "10:00"
+                end_time: "18:00"
                 location: Updated Community Center
                 trainer_id: clh1234567890abcdef
                 max_participants: 35
                 current_participants: 25
                 status: in-progress
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T11:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T11:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Training session not found
           content:
             application/json:
@@ -6916,7 +6911,7 @@ paths:
                   code:
                     type: string
                     example: TRAINING_SESSION_NOT_FOUND
-        '409':
+        "409":
           description: Training session update conflict
           content:
             application/json:
@@ -6932,8 +6927,8 @@ paths:
                   code:
                     type: string
                     example: TRAINING_SESSION_UPDATE_CONFLICT
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     delete:
       tags:
         - 🎓 Training
@@ -6952,9 +6947,9 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        '204':
+        "204":
           description: Training session deleted successfully
-        '400':
+        "400":
           description: Cannot delete training session
           content:
             application/json:
@@ -6970,11 +6965,11 @@ paths:
                   code:
                     type: string
                     example: TRAINING_SESSION_HAS_PARTICIPANTS
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Training session not found
           content:
             application/json:
@@ -6990,8 +6985,8 @@ paths:
                   code:
                     type: string
                     example: TRAINING_SESSION_NOT_FOUND
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
   /price_plan_requirements:
     post:
       tags:
@@ -7015,7 +7010,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/price_plan_requirement'
+              $ref: "#/components/schemas/price_plan_requirement"
             examples:
               basic_requirement:
                 summary: Basic price plan requirement
@@ -7041,7 +7036,7 @@ paths:
                     - Must be organic certified
                     - No chemical residues
       responses:
-        '201':
+        "201":
           description: Price plan requirement created successfully
           headers:
             Location:
@@ -7052,7 +7047,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/price_plan_requirement'
+                $ref: "#/components/schemas/price_plan_requirement"
               example:
                 id: clh1234567890abcdef
                 price_plan_id: clh1234567890abcdef
@@ -7063,15 +7058,15 @@ paths:
                 min_value: 80
                 max_value: 100
                 unit: percentage
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T10:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '409':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "409":
           description: Price plan requirement already exists
           content:
             application/json:
@@ -7087,8 +7082,8 @@ paths:
                   code:
                     type: string
                     example: PRICE_PLAN_REQUIREMENT_ALREADY_EXISTS
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     get:
       tags:
         - 💰 Transactions
@@ -7111,9 +7106,9 @@ paths:
       security:
         - BearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationOffset'
-        - $ref: '#/components/parameters/CompanyId'
+        - $ref: "#/components/parameters/PaginationLimit"
+        - $ref: "#/components/parameters/PaginationOffset"
+        - $ref: "#/components/parameters/CompanyId"
         - name: price_plan_id
           in: query
           description: Filter by price plan ID
@@ -7143,7 +7138,7 @@ paths:
             type: boolean
             example: true
       responses:
-        '200':
+        "200":
           description: Price plan requirements retrieved successfully
           content:
             application/json:
@@ -7153,7 +7148,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/price_plan_requirement'
+                      $ref: "#/components/schemas/price_plan_requirement"
                   pagination:
                     type: object
                     properties:
@@ -7198,16 +7193,16 @@ paths:
                     min_value: 80
                     max_value: 100
                     unit: percentage
-                    created_at: '2024-01-15T10:30:00Z'
-                    updated_at: '2024-01-15T10:30:00Z'
+                    created_at: "2024-01-15T10:30:00Z"
+                    updated_at: "2024-01-15T10:30:00Z"
                   - id: clh1234567890abcdeg
                     price_plan_id: clh1234567890abcdef
                     requirement_name: Organic Certification
                     requirement_type: certification
                     requirement_description: Must have valid organic certification
                     is_mandatory: true
-                    created_at: '2024-01-15T09:15:00Z'
-                    updated_at: '2024-01-15T09:15:00Z'
+                    created_at: "2024-01-15T09:15:00Z"
+                    updated_at: "2024-01-15T09:15:00Z"
                 pagination:
                   limit: 20
                   offset: 0
@@ -7219,14 +7214,14 @@ paths:
                   total_requirements: 25
                   mandatory_requirements: 15
                   optional_requirements: 10
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     put:
       tags:
         - 💰 Transactions
@@ -7306,12 +7301,12 @@ paths:
                     - No chemical residues
                     - Fair trade certified
       responses:
-        '200':
+        "200":
           description: Price plan requirement updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/price_plan_requirement'
+                $ref: "#/components/schemas/price_plan_requirement"
               example:
                 id: clh1234567890abcdef
                 price_plan_id: clh1234567890abcdef
@@ -7326,15 +7321,15 @@ paths:
                   - Must be organic certified
                   - No chemical residues
                   - Fair trade certified
-                created_at: '2024-01-15T10:30:00Z'
-                updated_at: '2024-01-15T11:30:00Z'
-        '400':
-          $ref: '#/components/responses/ValidationError-2'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T11:30:00Z"
+        "400":
+          $ref: "#/components/responses/ValidationError-2"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Price plan requirement not found
           content:
             application/json:
@@ -7350,7 +7345,7 @@ paths:
                   code:
                     type: string
                     example: PRICE_PLAN_REQUIREMENT_NOT_FOUND
-        '409':
+        "409":
           description: Price plan requirement update conflict
           content:
             application/json:
@@ -7366,8 +7361,8 @@ paths:
                   code:
                     type: string
                     example: PRICE_PLAN_REQUIREMENT_UPDATE_CONFLICT
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
     delete:
       tags:
         - 💰 Transactions
@@ -7386,9 +7381,9 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        '204':
+        "204":
           description: Price plan requirement deleted successfully
-        '400':
+        "400":
           description: Cannot delete price plan requirement
           content:
             application/json:
@@ -7404,11 +7399,11 @@ paths:
                   code:
                     type: string
                     example: PRICE_PLAN_REQUIREMENT_IN_USE
-        '401':
-          $ref: '#/components/responses/UnauthorizedError-2'
-        '403':
-          $ref: '#/components/responses/ForbiddenError-2'
-        '404':
+        "401":
+          $ref: "#/components/responses/UnauthorizedError-2"
+        "403":
+          $ref: "#/components/responses/ForbiddenError-2"
+        "404":
           description: Price plan requirement not found
           content:
             application/json:
@@ -7424,8 +7419,8 @@ paths:
                   code:
                     type: string
                     example: PRICE_PLAN_REQUIREMENT_NOT_FOUND
-        '500':
-          $ref: '#/components/responses/ServerError-2'
+        "500":
+          $ref: "#/components/responses/ServerError-2"
 webhooks:
   userInfo:
     post:
@@ -7438,20 +7433,20 @@ webhooks:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/subscription'
+              $ref: "#/components/schemas/subscription"
       responses:
-        '200':
+        "200":
           description: Successfully retrieved information about a new subscription.
       security:
         - BearerAuth: []
 components:
   schemas:
     AuthResponse:
-      $ref: '#/components/schemas/auth_response'
+      $ref: "#/components/schemas/auth_response"
     Tokens:
-      $ref: '#/components/schemas/tokens'
+      $ref: "#/components/schemas/tokens"
     Session:
-      $ref: '#/components/schemas/session'
+      $ref: "#/components/schemas/session"
     user:
       type: object
       properties:
@@ -7536,7 +7531,7 @@ components:
     admin:
       description: To specify user profile with admin permissions. This type of user is also referred to as an **administrator**.
       allOf:
-        - $ref: '#/components/schemas/user'
+        - $ref: "#/components/schemas/user"
         - type: object
           properties:
             userType:
@@ -7548,7 +7543,7 @@ components:
     member:
       description: To specify a user with basic (restricted) permissions. In total, there are 5 permission levels, but basic users can only use the first three.
       allOf:
-        - $ref: '#/components/schemas/user'
+        - $ref: "#/components/schemas/user"
         - type: object
           properties:
             userType:
@@ -7672,12 +7667,12 @@ components:
         created_at:
           type: string
           format: date-time
-          example: '2020-01-01T00:00:00Z'
+          example: "2020-01-01T00:00:00Z"
           description: the date and time when the campaign was created
         updated_at:
           type: string
           format: date-time
-          example: '2020-01-01T00:00:00Z'
+          example: "2020-01-01T00:00:00Z"
           description: the date and time when the campaign was updated
     price_plan:
       type: object
@@ -7693,14 +7688,14 @@ components:
         price:
           type: string
           example: $2000
-          description: ' To indicate the amount of the price plan'
+          description: " To indicate the amount of the price plan"
         status:
           type: string
-          example: 'off'
+          example: "off"
           format: object
           enum:
-            - 'on'
-            - 'off'
+            - "on"
+            - "off"
           description: To indicate the status of the corresponding price plan if it's set to be functional
         currency:
           type: string
@@ -7744,12 +7739,12 @@ components:
         created_at:
           type: string
           format: date-time
-          example: '2020-01-01T00:00:00Z'
+          example: "2020-01-01T00:00:00Z"
           description: the date and time when the price plan was created
         updated_at:
           type: string
           format: date-time
-          example: '2020-01-01T00:00:00Z'
+          example: "2020-01-01T00:00:00Z"
           description: the date and time when the price plan was updated
     project:
       type: object
@@ -7821,12 +7816,12 @@ components:
           description: The start date of the project
           type: string
           format: date-time
-          example: '2022-10-10T00:00:00.000Z'
+          example: "2022-10-10T00:00:00.000Z"
         end_date:
           description: The end date of the project
           type: string
           format: date-time
-          example: '2022-10-10T00:00:00.000Z'
+          example: "2022-10-10T00:00:00.000Z"
         project_structure:
           description: The former structure of the project
           type: string
@@ -7842,12 +7837,12 @@ components:
           type: string
           format: date-time
           description: The date and time when the project was created.
-          example: '2022-10-10T00:00:00.000Z'
+          example: "2022-10-10T00:00:00.000Z"
         updated_at:
           type: string
           format: date-time
           description: The date and time when the project was updated.
-          example: '2022-10-10T00:00:00.000Z'
+          example: "2022-10-10T00:00:00.000Z"
         deleted_at:
           type: string
           format: date-time
@@ -7859,15 +7854,15 @@ components:
         archived_at:
           type: string
           format: date-time
-          example: '2022-10-10T00:00:00.000Z'
+          example: "2022-10-10T00:00:00.000Z"
         draft_at:
           type: string
           format: date-time
-          example: '2022-10-10T00:00:00.000Z'
+          example: "2022-10-10T00:00:00.000Z"
         deployed_at:
           type: string
           format: date-time
-          example: '2022-10-10T00:00:00.000Z'
+          example: "2022-10-10T00:00:00.000Z"
     farm:
       type: object
       properties:
@@ -7910,12 +7905,12 @@ components:
         created_at:
           type: string
           format: date-time
-          example: '2020-01-01T00:00:00Z'
+          example: "2020-01-01T00:00:00Z"
           description: the date and time when the farm was created
         updated_at:
           type: string
           format: date-time
-          example: '2020-01-01T00:00:00Z'
+          example: "2020-01-01T00:00:00Z"
           description: the date and time when the farm was updated
     project_audit:
       type: object
@@ -7942,12 +7937,12 @@ components:
         created_at:
           type: string
           format: date-time
-          example: '2020-01-01T00:00:00Z'
+          example: "2020-01-01T00:00:00Z"
           description: the date and time when the project_audit was created
         updated_at:
           type: string
           format: date-time
-          example: '2020-01-01T00:00:00Z'
+          example: "2020-01-01T00:00:00Z"
           description: the date and time when the project_audit was updated
     market_audit:
       type: object
@@ -7971,7 +7966,7 @@ components:
           type: string
           format: date-time
           description: the date of the market took place
-          example: '2020-01-01T00:00:00Z'
+          example: "2020-01-01T00:00:00Z"
     receipt:
       type: object
       properties:
@@ -7998,7 +7993,7 @@ components:
         date:
           type: string
           format: date-time
-          example: '2022-10-10T00:00:00.000Z'
+          example: "2022-10-10T00:00:00.000Z"
           description: The date of the receipt.
         net_weight_in_kg:
           type: number
@@ -8071,7 +8066,7 @@ components:
           readOnly: true
         receipt_number:
           type: string
-          example: '12558'
+          example: "12558"
           description: The unique Id of the delivery receipt.
           readOnly: true
     farm_coodinates:
@@ -8203,12 +8198,12 @@ components:
         created_at:
           type: string
           format: date-time
-          example: '2020-01-01T00:00:00Z'
+          example: "2020-01-01T00:00:00Z"
           description: the date and time when the inspection data was created
         updated_at:
           type: string
           format: date-time
-          example: '2020-01-01T00:00:00Z'
+          example: "2020-01-01T00:00:00Z"
           description: the date and time when the inspection data was updated
     subscription:
       type: object
@@ -8233,11 +8228,11 @@ components:
         start_date:
           type: string
           format: date-time
-          example: '2022-10-10T00:00:00.000Z'
+          example: "2022-10-10T00:00:00.000Z"
         end_date:
           type: string
           format: date-time
-          example: '2022-10-10T00:00:00.000Z'
+          example: "2022-10-10T00:00:00.000Z"
         status:
           type: string
           enum:
@@ -8254,8 +8249,8 @@ components:
           enum:
             - Instant balance transfer.
             - Instant bank transfer
-            - 'PayPal '
-            - 'Card '
+            - "PayPal "
+            - "Card "
             - eCheque
         auto_renewal:
           type: boolean
@@ -8268,7 +8263,7 @@ components:
         last_notification_date:
           type: string
           format: date-time
-          example: '2022-10-10T00:00:00.000Z'
+          example: "2022-10-10T00:00:00.000Z"
           description: To specify when the last notification was sent
         grace_period_end:
           type: boolean
@@ -8277,11 +8272,11 @@ components:
         created_at:
           type: string
           format: date-time
-          example: '2022-10-10T00:00:00.000Z'
+          example: "2022-10-10T00:00:00.000Z"
         updated_at:
           type: string
           format: date-time
-          example: '2022-10-10T00:00:00.000Z'
+          example: "2022-10-10T00:00:00.000Z"
     training:
       type: object
       properties:
@@ -8326,12 +8321,12 @@ components:
         created_at:
           type: string
           format: date-time
-          example: '2022-10-10T00:00:00.000Z'
+          example: "2022-10-10T00:00:00.000Z"
           description: The date and time at which the transaction was created.
         updated_at:
           type: string
           format: date-time
-          example: '2022-10-10T00:00:00.000Z'
+          example: "2022-10-10T00:00:00.000Z"
           description: The date and time at which the transaction was updated.
     transaction:
       type: object
@@ -8350,7 +8345,7 @@ components:
         date:
           type: string
           format: date-time
-          example: '2022-10-10T00:00:00.000Z'
+          example: "2022-10-10T00:00:00.000Z"
           description: The date of the transaction.
         level_of_traceability:
           type: string
@@ -8404,12 +8399,12 @@ components:
         created_at:
           type: string
           format: date-time
-          example: '2022-10-10T00:00:00.000Z'
+          example: "2022-10-10T00:00:00.000Z"
           description: The date and time at which the transaction was created.
         updated_at:
           type: string
           format: date-time
-          example: '2022-10-10T00:00:00.000Z'
+          example: "2022-10-10T00:00:00.000Z"
           description: The date and time at which the transaction was updated.
     campaign_stock:
       type: object
@@ -8464,7 +8459,7 @@ components:
           example: chapter 1 | chapter 2 | chapter 3 ...
         numero:
           type: string
-          description: 'The number representing the entry in the title. '
+          description: "The number representing the entry in the title. "
         content:
           type: array
           format: json
@@ -8516,12 +8511,12 @@ components:
           description: the date and time when the collector agent was created
           type: string
           format: date-time
-          example: '2020-01-01T00:00:00Z'
+          example: "2020-01-01T00:00:00Z"
         updated_at:
           description: the date and time when the collector agent was updated
           type: string
           format: date-time
-          example: '2020-01-01T00:00:00Z'
+          example: "2020-01-01T00:00:00Z"
     training_session:
       type: object
       properties:
@@ -8571,12 +8566,12 @@ components:
         created_at:
           type: string
           format: date-time
-          example: '2020-01-01T00:00:00Z'
+          example: "2020-01-01T00:00:00Z"
           description: the date and time when the participant was created
         updated_at:
           type: string
           format: date-time
-          example: '2020-01-01T00:00:00Z'
+          example: "2020-01-01T00:00:00Z"
           description: the date and time when the participant was updated
     price_plan_requirement:
       type: object
@@ -8597,12 +8592,12 @@ components:
         created_at:
           type: string
           format: date-time
-          example: '2020-01-01T00:00:00Z'
+          example: "2020-01-01T00:00:00Z"
           description: To specify  the date and time when the price plan requirement was created
         updated_at:
           type: string
           format: date-time
-          example: '2020-01-01T00:00:00Z'
+          example: "2020-01-01T00:00:00Z"
           description: To specify the date and time when the price plan requirement was updated
     tokens:
       type: object
@@ -8650,17 +8645,17 @@ components:
           type: string
           format: date-time
           description: Session creation timestamp
-          example: '2024-01-15T10:30:00Z'
+          example: "2024-01-15T10:30:00Z"
         expires_at:
           type: string
           format: date-time
           description: Session expiration timestamp
-          example: '2024-01-16T10:30:00Z'
+          example: "2024-01-16T10:30:00Z"
         last_activity:
           type: string
           format: date-time
           description: Last activity timestamp
-          example: '2024-01-15T10:30:00Z'
+          example: "2024-01-15T10:30:00Z"
         ip_address:
           type: string
           description: IP address of the session
@@ -8694,11 +8689,11 @@ components:
           type: object
           properties:
             user:
-              $ref: '#/components/schemas/user'
+              $ref: "#/components/schemas/user"
             tokens:
-              $ref: '#/components/schemas/tokens'
+              $ref: "#/components/schemas/tokens"
             session:
-              $ref: '#/components/schemas/session'
+              $ref: "#/components/schemas/session"
           required:
             - user
             - tokens
@@ -8800,7 +8795,7 @@ components:
       schema:
         type: string
         format: date
-        example: '2024-01-01'
+        example: "2024-01-01"
     DateRangeEnd:
       name: end_date
       in: query
@@ -8809,7 +8804,7 @@ components:
       schema:
         type: string
         format: date
-        example: '2024-12-31'
+        example: "2024-12-31"
   responses:
     UnauthorizedError:
       description: Authentication credentials were missing or invalid
@@ -8940,7 +8935,7 @@ components:
               timestamp:
                 type: string
                 format: date-time
-                example: '2024-01-15T10:30:00Z'
+                example: "2024-01-15T10:30:00Z"
               request_id:
                 type: string
                 example: req_1234567890abcdef
@@ -8966,7 +8961,7 @@ components:
               timestamp:
                 type: string
                 format: date-time
-                example: '2024-01-15T10:30:00Z'
+                example: "2024-01-15T10:30:00Z"
               support_reference:
                 type: string
                 example: SR-2024-001-123456
@@ -9003,7 +8998,7 @@ components:
               timestamp:
                 type: string
                 format: date-time
-                example: '2024-01-15T10:30:00Z'
+                example: "2024-01-15T10:30:00Z"
               request_id:
                 type: string
                 example: req_1234567890abcdef
@@ -9042,7 +9037,7 @@ components:
               timestamp:
                 type: string
                 format: date-time
-                example: '2024-01-15T10:30:00Z'
+                example: "2024-01-15T10:30:00Z"
               request_id:
                 type: string
                 example: req_1234567890abcdef
@@ -9072,7 +9067,7 @@ components:
               timestamp:
                 type: string
                 format: date-time
-                example: '2024-01-15T10:30:00Z'
+                example: "2024-01-15T10:30:00Z"
               request_id:
                 type: string
                 example: req_1234567890abcdef

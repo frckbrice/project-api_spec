@@ -1,7 +1,8 @@
 # CocoaFlow API Specification
 
-![display image](docs/api_spec_image_1.png)
+<img src="https://images.unsplash.com/photo-1667900598245-6620cea1c04c?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Y29jb2F8ZW58MHx8MHx8fDA%3D" alt="CocoaFlow - Cocoa Industry Management" width="100%" style="max-height: 300px; object-fit: cover;">
 
+![display image](docs/api_spec_image_1.png)
 
 [![OpenAPI 3.1.0](https://img.shields.io/badge/OpenAPI-3.1.0-green.svg)](https://spec.openapis.org/oas/v3.1.0)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -37,7 +38,7 @@ CocoaFlow is a comprehensive **API specification** designed for managing cocoa i
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm 8+
 
 ### Installation
@@ -74,11 +75,11 @@ npm run generate:client # Generate TypeScript client
 
 ### API Reference
 
-| Environment | URL | Status |
-|-------------|-----|--------|
-| Documentation (Vercel) | [https://project-apispec.vercel.app](https://project-apispec.vercel.app) | ✅ Live |
-| Documentation (GitHub Pages) | [https://frckbrice.github.io/project-api_spec](https://frckbrice.github.io/project-api_spec) | ✅ Live |
-| Local Development | `http://localhost:8080` | ✅ Available |
+| Environment                  | URL                                                                                          | Status       |
+| ---------------------------- | -------------------------------------------------------------------------------------------- | ------------ |
+| Documentation (Vercel)       | [https://project-apispec.vercel.app](https://project-apispec.vercel.app)                     | ✅ Live      |
+| Documentation (GitHub Pages) | [https://frckbrice.github.io/project-api_spec](https://frckbrice.github.io/project-api_spec) | ✅ Live      |
+| Local Development            | `http://localhost:8080`                                                                      | ✅ Available |
 
 ### Project Structure
 
@@ -176,6 +177,7 @@ get:
 ## 👨‍💻 Developer
 
 ### Portfolio & Links
+
 - **Portfolio**: [https://maebrieporfolio.vercel.app/](https://maebrieporfolio.vercel.app/)
 - **GitHub**: [https://github.com/frckbrice](https://github.com/frckbrice)
 - **LinkedIn**: [https://linkedin.com/in/avombrice](https://linkedin.com/in/avombrice)
@@ -184,6 +186,7 @@ get:
 
 - **API Documentation**: [https://project-apispec.vercel.app](https://project-apispec.vercel.app)
 - **GitHub Repository**: [https://github.com/frckbrice/project-api_spec](https://github.com/frckbrice/project-api_spec)
+- **OpenAPI Specification**: [https://project-apispec.vercel.app/cocoaflow-api.yaml](https://project-apispec.vercel.app/cocoaflow-api.yaml)
 - **GitHub Issues**: [https://github.com/frckbrice/project-api_spec/issues](https://github.com/frckbrice/project-api_spec/issues)
 - **Developer Contact**: [bricefrkc@gmail.com](mailto:bricefrkc@gmail.com)
 

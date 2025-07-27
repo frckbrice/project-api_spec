@@ -95,7 +95,6 @@ info:
 
     | Environment | URL | Status |
     |-------------|-----|--------|
-    | **Production** | [https://api.cocoaflow.com](https://api.cocoaflow.com) | 🚧 Coming Soon |
     | **Documentation** | [https://project-apispec.vercel.app](https://project-apispec.vercel.app) | ✅ Live |
     | **Local Development** | `http://localhost:8080` | ✅ Available |
 
