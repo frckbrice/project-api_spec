@@ -1,0 +1,84 @@
+post:
+  tags:
+    - 🔐 Authentication
+  summary: User Logout
+  description: |
+    Logout the current user and invalidate their tokens.
+    
+    **Logout Process:**
+    1. Invalidate current access token
+    2. Invalidate refresh token
+    3. Clear session data
+    4. Log logout event for audit
+    
+    **Security Features:**
+    - Token blacklisting
+    - Session cleanup
+    - Audit logging
+    - Cookie clearing
+  operationId: logout
+  security:
+    - BearerAuth: []
+  requestBody:
+    required: false
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            refresh_token:
+              type: string
+              description: Refresh token to invalidate (optional)
+              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        examples:
+          logout_all:
+            summary: Logout all sessions
+            description: Logout without specifying refresh token (invalidates all sessions)
+            value: {}
+          logout_specific:
+            summary: Logout specific session
+            description: Logout with specific refresh token
+            value:
+              refresh_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+  responses:
+    "200":
+      description: Logout successful
+      headers:
+        Set-Cookie:
+          description: Clear refresh token cookie
+          schema:
+            type: string
+            example: "refresh_token=; HttpOnly; Secure; SameSite=Strict; Max-Age=0"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: "Logout successful"
+              data:
+                type: object
+                properties:
+                  logout_time:
+                    type: string
+                    format: date-time
+                    description: Timestamp of logout
+                    example: "2024-01-15T10:30:00Z"
+                  sessions_invalidated:
+                    type: integer
+                    description: Number of sessions invalidated
+                    example: 1
+          example:
+            success: true
+            message: "Logout successful"
+            data:
+              logout_time: "2024-01-15T10:30:00Z"
+              sessions_invalidated: 1
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml" 

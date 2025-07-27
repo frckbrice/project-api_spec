@@ -1,0 +1,26 @@
+type: object
+properties:
+  success:
+    type: boolean
+    description: Whether the authentication operation was successful
+    example: true
+  message:
+    type: string
+    description: Human-readable message about the operation result
+    example: "Login successful"
+  data:
+    type: object
+    properties:
+      user:
+        $ref: "./user.yaml"
+      tokens:
+        $ref: "./tokens.yaml"
+      session:
+        $ref: "./session.yaml"
+    required:
+      - user
+      - tokens
+required:
+  - success
+  - message
+  - data 

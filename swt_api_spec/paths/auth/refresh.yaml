@@ -1,0 +1,95 @@
+post:
+  tags:
+    - 🔐 Authentication
+  summary: Refresh Access Token
+  description: |
+    Refresh an expired access token using a valid refresh token.
+    
+    **Token Refresh Flow:**
+    1. Client sends refresh token
+    2. System validates refresh token
+    3. Returns new access token
+    4. Refresh token remains valid (30 days)
+    
+    **Security Features:**
+    - Refresh token rotation (optional)
+    - Token blacklisting for security
+    - Audit logging for token refresh events
+  operationId: refreshToken
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - refresh_token
+          properties:
+            refresh_token:
+              type: string
+              description: Valid refresh token
+              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        examples:
+          refresh_token:
+            summary: Refresh token request
+            description: Standard token refresh
+            value:
+              refresh_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+  responses:
+    "200":
+      description: Token refreshed successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: "Token refreshed successfully"
+              data:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    description: New JWT access token
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                  expires_in:
+                    type: integer
+                    description: Token expiration time in seconds
+                    example: 86400
+                  token_type:
+                    type: string
+                    example: "Bearer"
+          example:
+            success: true
+            message: "Token refreshed successfully"
+            data:
+              access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+              expires_in: 86400
+              token_type: "Bearer"
+    "400":
+      $ref: "../../components/responses/ValidationError.yaml"
+    "401":
+      description: Invalid refresh token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Invalid Refresh Token"
+              message:
+                type: string
+                example: "Refresh token is invalid or expired"
+              code:
+                type: string
+                example: "INVALID_REFRESH_TOKEN"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml" 

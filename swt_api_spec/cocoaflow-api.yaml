@@ -325,6 +325,15 @@ servers:
     description: 💻 Local Development Environment
 
 paths:
+  "/auth/login": # authentication
+    $ref: paths/auth/auth.yaml
+  "/auth/refresh":
+    $ref: paths/auth/refresh.yaml
+  "/auth/logout":
+    $ref: paths/auth/logout.yaml
+  "/auth/me":
+    get:
+      $ref: paths/auth/auth.yaml#/get
   "/users": # user
     $ref: paths/user/user.yaml
   "/users/{id}":
@@ -401,6 +410,13 @@ paths:
   "/price_plan_requirements":
     $ref: paths/price_plan_requirement.yaml
 components:
+  schemas:
+    AuthResponse:
+      $ref: components/schemas/auth_response.yaml
+    Tokens:
+      $ref: components/schemas/tokens.yaml
+    Session:
+      $ref: components/schemas/session.yaml
   securitySchemes:
     BearerAuth:
       type: http

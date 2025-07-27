@@ -1,0 +1,47 @@
+type: object
+properties:
+  session_id:
+    type: string
+    description: Unique session identifier
+    example: "sess_1234567890abcdef"
+  user_id:
+    type: string
+    description: User ID associated with the session
+    example: "clh1234567890abcdef"
+  company_id:
+    type: string
+    description: Company ID associated with the session
+    example: "clh1234567890abcdef"
+  created_at:
+    type: string
+    format: date-time
+    description: Session creation timestamp
+    example: "2024-01-15T10:30:00Z"
+  expires_at:
+    type: string
+    format: date-time
+    description: Session expiration timestamp
+    example: "2024-01-16T10:30:00Z"
+  last_activity:
+    type: string
+    format: date-time
+    description: Last activity timestamp
+    example: "2024-01-15T10:30:00Z"
+  ip_address:
+    type: string
+    description: IP address of the session
+    example: "192.168.1.100"
+  user_agent:
+    type: string
+    description: User agent string
+    example: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+  is_active:
+    type: boolean
+    description: Whether the session is currently active
+    example: true
+required:
+  - session_id
+  - user_id
+  - created_at
+  - expires_at
+  - is_active 

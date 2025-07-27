@@ -299,6 +299,432 @@ externalDocs:
   description: 📚 GitHub Repository & Documentation
   url: https://github.com/frckbrice/project-api_spec
 paths:
+  /auth/login:
+    post:
+      tags:
+        - 🔐 Authentication
+      summary: User Login
+      description: |
+        Authenticate a user with email and password to obtain JWT tokens.
+
+        **Authentication Flow:**
+        1. User provides email and password
+        2. System validates credentials
+        3. Returns JWT access token and refresh token
+        4. Access token expires in 24 hours
+        5. Refresh token expires in 30 days
+
+        **Security Features:**
+        - Password hashing with bcrypt
+        - Rate limiting (5 attempts per 15 minutes)
+        - Account lockout after failed attempts
+        - Audit logging for security events
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: User's email address
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  description: User's password (min 8 characters)
+                  minLength: 8
+                  example: securePassword123
+                remember_me:
+                  type: boolean
+                  description: Whether to extend token expiration
+                  default: false
+                  example: true
+            examples:
+              basic_login:
+                summary: Basic login
+                description: Standard login with email and password
+                value:
+                  email: user@example.com
+                  password: securePassword123
+              extended_session:
+                summary: Extended session
+                description: Login with extended token expiration
+                value:
+                  email: user@example.com
+                  password: securePassword123
+                  remember_me: true
+      responses:
+        '200':
+          description: Login successful
+          headers:
+            Set-Cookie:
+              description: Refresh token cookie (HttpOnly, Secure)
+              schema:
+                type: string
+                example: refresh_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; HttpOnly; Secure; SameSite=Strict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Login successful
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/user'
+                      tokens:
+                        type: object
+                        properties:
+                          access_token:
+                            type: string
+                            description: JWT access token
+                            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                          refresh_token:
+                            type: string
+                            description: JWT refresh token
+                            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                          expires_in:
+                            type: integer
+                            description: Token expiration time in seconds
+                            example: 86400
+                          token_type:
+                            type: string
+                            example: Bearer
+              example:
+                success: true
+                message: Login successful
+                data:
+                  user:
+                    id: clh1234567890abcdef
+                    email: user@example.com
+                    first_name: John
+                    last_name: Doe
+                    role: user
+                    company_id: clh1234567890abcdef
+                    is_active: true
+                    created_at: '2024-01-15T10:30:00Z'
+                    updated_at: '2024-01-15T10:30:00Z'
+                  tokens:
+                    access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                    refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                    expires_in: 86400
+                    token_type: Bearer
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: Invalid Credentials
+                  message:
+                    type: string
+                    example: Email or password is incorrect
+                  code:
+                    type: string
+                    example: INVALID_CREDENTIALS
+        '429':
+          $ref: '#/components/responses/RateLimitError-2'
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    get:
+      tags:
+        - 🔐 Authentication
+      summary: Get Current User
+      description: |
+        Retrieve the current authenticated user's profile information.
+
+        **Required Permissions:** `read:profile`
+
+        **Features:**
+        - Returns complete user profile
+        - Includes company information
+        - Shows user permissions and roles
+        - Returns last login timestamp
+      operationId: getCurrentUser
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/user'
+              example:
+                success: true
+                data:
+                  id: clh1234567890abcdef
+                  email: user@example.com
+                  first_name: John
+                  last_name: Doe
+                  role: user
+                  company_id: clh1234567890abcdef
+                  phone_number: '+2341234567890'
+                  is_active: true
+                  last_login: '2024-01-15T10:30:00Z'
+                  created_at: '2024-01-15T10:30:00Z'
+                  updated_at: '2024-01-15T10:30:00Z'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+  /auth/refresh:
+    post:
+      tags:
+        - 🔐 Authentication
+      summary: Refresh Access Token
+      description: |
+        Refresh an expired access token using a valid refresh token.
+
+        **Token Refresh Flow:**
+        1. Client sends refresh token
+        2. System validates refresh token
+        3. Returns new access token
+        4. Refresh token remains valid (30 days)
+
+        **Security Features:**
+        - Refresh token rotation (optional)
+        - Token blacklisting for security
+        - Audit logging for token refresh events
+      operationId: refreshToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refresh_token
+              properties:
+                refresh_token:
+                  type: string
+                  description: Valid refresh token
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+            examples:
+              refresh_token:
+                summary: Refresh token request
+                description: Standard token refresh
+                value:
+                  refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Token refreshed successfully
+                  data:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                        description: New JWT access token
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                      expires_in:
+                        type: integer
+                        description: Token expiration time in seconds
+                        example: 86400
+                      token_type:
+                        type: string
+                        example: Bearer
+              example:
+                success: true
+                message: Token refreshed successfully
+                data:
+                  access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                  expires_in: 86400
+                  token_type: Bearer
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          description: Invalid refresh token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: Invalid Refresh Token
+                  message:
+                    type: string
+                    example: Refresh token is invalid or expired
+                  code:
+                    type: string
+                    example: INVALID_REFRESH_TOKEN
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+  /auth/logout:
+    post:
+      tags:
+        - 🔐 Authentication
+      summary: User Logout
+      description: |
+        Logout the current user and invalidate their tokens.
+
+        **Logout Process:**
+        1. Invalidate current access token
+        2. Invalidate refresh token
+        3. Clear session data
+        4. Log logout event for audit
+
+        **Security Features:**
+        - Token blacklisting
+        - Session cleanup
+        - Audit logging
+        - Cookie clearing
+      operationId: logout
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+                  description: Refresh token to invalidate (optional)
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+            examples:
+              logout_all:
+                summary: Logout all sessions
+                description: Logout without specifying refresh token (invalidates all sessions)
+                value: {}
+              logout_specific:
+                summary: Logout specific session
+                description: Logout with specific refresh token
+                value:
+                  refresh_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+      responses:
+        '200':
+          description: Logout successful
+          headers:
+            Set-Cookie:
+              description: Clear refresh token cookie
+              schema:
+                type: string
+                example: refresh_token=; HttpOnly; Secure; SameSite=Strict; Max-Age=0
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Logout successful
+                  data:
+                    type: object
+                    properties:
+                      logout_time:
+                        type: string
+                        format: date-time
+                        description: Timestamp of logout
+                        example: '2024-01-15T10:30:00Z'
+                      sessions_invalidated:
+                        type: integer
+                        description: Number of sessions invalidated
+                        example: 1
+              example:
+                success: true
+                message: Logout successful
+                data:
+                  logout_time: '2024-01-15T10:30:00Z'
+                  sessions_invalidated: 1
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+  /auth/me:
+    get:
+      tags:
+        - 🔐 Authentication
+      summary: Get Current User
+      description: |
+        Retrieve the current authenticated user's profile information.
+
+        **Required Permissions:** `read:profile`
+
+        **Features:**
+        - Returns complete user profile
+        - Includes company information
+        - Shows user permissions and roles
+        - Returns last login timestamp
+      operationId: getCurrentUser
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/user'
+              example:
+                success: true
+                data:
+                  id: clh1234567890abcdef
+                  email: user@example.com
+                  first_name: John
+                  last_name: Doe
+                  role: user
+                  company_id: clh1234567890abcdef
+                  phone_number: '+2341234567890'
+                  is_active: true
+                  last_login: '2024-01-15T10:30:00Z'
+                  created_at: '2024-01-15T10:30:00Z'
+                  updated_at: '2024-01-15T10:30:00Z'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '500':
+          $ref: '#/components/responses/ServerError-2'
   /users:
     post:
       tags:
@@ -2504,371 +2930,13 @@ webhooks:
       security:
         - BearerAuth: []
 components:
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: |
-        JWT Bearer token authentication. Include your JWT token in the Authorization header.
-
-        **Example:**
-        ```
-        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-        ```
-
-        **Token Format:**
-        - Header: `{"alg": "HS256", "typ": "JWT"}`
-        - Payload: `{"sub": "user_id", "company_id": "company_id", "role": "user_role", "exp": 1640995200}`
-        - Signature: HMAC SHA256
-
-        **Token Expiration:** 24 hours
-        **Refresh Token:** Available via `/auth/refresh` endpoint
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: X-API-Key
-      description: |
-        API Key for service-to-service authentication.
-        Used for webhook endpoints and automated integrations.
-
-        **Example:**
-        ```
-        X-API-Key: sk_live_1234567890abcdef
-        ```
-    OAuth2Auth:
-      type: oauth2
-      flows:
-        authorizationCode:
-          authorizationUrl: https://senwisetool.com/oauth/authorize
-          tokenUrl: https://senwisetool.com/oauth/token
-          scopes:
-            read:users: Read user information
-            write:users: Create and update users
-            read:farms: Read farm data
-            write:farms: Create and update farms
-            read:companies: Read company information
-            write:companies: Create and update companies
-            admin: Full administrative access
-      description: |
-        OAuth 2.0 authorization code flow for third-party integrations.
-        Recommended for public integrations and mobile applications.
-  parameters:
-    PaginationLimit:
-      name: limit
-      in: query
-      description: Number of items to return (max 100)
-      required: false
-      schema:
-        type: integer
-        minimum: 1
-        maximum: 100
-        default: 20
-        example: 20
-    PaginationOffset:
-      name: offset
-      in: query
-      description: Number of items to skip for pagination
-      required: false
-      schema:
-        type: integer
-        minimum: 0
-        default: 0
-        example: 0
-    CompanyId:
-      name: company_id
-      in: query
-      description: Filter by company ID
-      required: false
-      schema:
-        type: string
-        format: cuid
-        example: clh1234567890abcdef
-    DateRangeStart:
-      name: start_date
-      in: query
-      description: Start date for filtering (ISO 8601 format)
-      required: false
-      schema:
-        type: string
-        format: date
-        example: '2024-01-01'
-    DateRangeEnd:
-      name: end_date
-      in: query
-      description: End date for filtering (ISO 8601 format)
-      required: false
-      schema:
-        type: string
-        format: date
-        example: '2024-12-31'
-  responses:
-    UnauthorizedError:
-      description: Authentication credentials were missing or invalid
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: Unauthorized
-              message:
-                type: string
-                example: Invalid or missing authentication token
-              code:
-                type: string
-                example: AUTH_REQUIRED
-    ForbiddenError:
-      description: The request was understood but the server is refusing to authorize it
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: Forbidden
-              message:
-                type: string
-                example: Insufficient permissions to access this resource
-              code:
-                type: string
-                example: INSUFFICIENT_PERMISSIONS
-    ValidationError:
-      description: The request was well-formed but contains invalid parameters
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: Validation Error
-              message:
-                type: string
-                example: Request validation failed
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    field:
-                      type: string
-                      example: email
-                    message:
-                      type: string
-                      example: Invalid email format
-              code:
-                type: string
-                example: VALIDATION_ERROR
-    RateLimitError:
-      description: Too many requests, please try again later
-      headers:
-        X-RateLimit-Limit:
-          description: The number of allowed requests in the current period
-          schema:
-            type: integer
-        X-RateLimit-Remaining:
-          description: The number of remaining requests in the current period
-          schema:
-            type: integer
-        X-RateLimit-Reset:
-          description: The number of seconds left in the current period
-          schema:
-            type: integer
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: Rate Limit Exceeded
-              message:
-                type: string
-                example: Too many requests, please try again later
-              retry_after:
-                type: integer
-                example: 3600
-              code:
-                type: string
-                example: RATE_LIMIT_EXCEEDED
-    ServerError:
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: Internal Server Error
-              message:
-                type: string
-                example: An unexpected error occurred
-              request_id:
-                type: string
-                example: req_1234567890abcdef
-              code:
-                type: string
-                example: INTERNAL_ERROR
-    ValidationError-2:
-      description: The request was well-formed but contains invalid parameters
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: Validation Error
-              message:
-                type: string
-                example: Request validation failed
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    field:
-                      type: string
-                      example: email
-                    message:
-                      type: string
-                      example: Invalid email format
-                    value:
-                      type: string
-                      example: invalid-email
-              code:
-                type: string
-                example: VALIDATION_ERROR
-              timestamp:
-                type: string
-                format: date-time
-                example: '2024-01-15T10:30:00Z'
-              request_id:
-                type: string
-                example: req_1234567890abcdef
-    UnauthorizedError-2:
-      description: Authentication credentials were missing or invalid
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: Unauthorized
-              message:
-                type: string
-                example: Invalid or missing authentication token
-              code:
-                type: string
-                example: AUTH_REQUIRED
-              timestamp:
-                type: string
-                format: date-time
-                example: '2024-01-15T10:30:00Z'
-              request_id:
-                type: string
-                example: req_1234567890abcdef
-    ForbiddenError-2:
-      description: The request was understood but the server is refusing to authorize it
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: Forbidden
-              message:
-                type: string
-                example: Insufficient permissions to access this resource
-              code:
-                type: string
-                example: INSUFFICIENT_PERMISSIONS
-              required_permissions:
-                type: array
-                items:
-                  type: string
-                example:
-                  - write:farms
-                  - admin:companies
-              timestamp:
-                type: string
-                format: date-time
-                example: '2024-01-15T10:30:00Z'
-              request_id:
-                type: string
-                example: req_1234567890abcdef
-    RateLimitError-2:
-      description: Too many requests, please try again later
-      headers:
-        X-RateLimit-Limit:
-          description: The number of allowed requests in the current period
-          schema:
-            type: integer
-        X-RateLimit-Remaining:
-          description: The number of remaining requests in the current period
-          schema:
-            type: integer
-        X-RateLimit-Reset:
-          description: The number of seconds left in the current period
-          schema:
-            type: integer
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: Rate Limit Exceeded
-              message:
-                type: string
-                example: Too many requests, please try again later
-              retry_after:
-                type: integer
-                example: 3600
-              code:
-                type: string
-                example: RATE_LIMIT_EXCEEDED
-              timestamp:
-                type: string
-                format: date-time
-                example: '2024-01-15T10:30:00Z'
-              request_id:
-                type: string
-                example: req_1234567890abcdef
-    ServerError-2:
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: Internal Server Error
-              message:
-                type: string
-                example: An unexpected error occurred
-              request_id:
-                type: string
-                example: req_1234567890abcdef
-              code:
-                type: string
-                example: INTERNAL_ERROR
-              timestamp:
-                type: string
-                format: date-time
-                example: '2024-01-15T10:30:00Z'
-              support_reference:
-                type: string
-                example: SR-2024-001-123456
   schemas:
+    AuthResponse:
+      $ref: '#/components/schemas/auth_response'
+    Tokens:
+      $ref: '#/components/schemas/tokens'
+    Session:
+      $ref: '#/components/schemas/session'
     user:
       type: object
       properties:
@@ -4021,6 +4089,472 @@ components:
           format: date-time
           example: '2020-01-01T00:00:00Z'
           description: To specify the date and time when the price plan requirement was updated
+    tokens:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: JWT access token for API authentication
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        refresh_token:
+          type: string
+          description: JWT refresh token for token renewal
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        expires_in:
+          type: integer
+          description: Token expiration time in seconds
+          example: 86400
+        token_type:
+          type: string
+          description: Type of token (always "Bearer")
+          example: Bearer
+        scope:
+          type: string
+          description: Token scope and permissions
+          example: read:profile write:farms read:companies
+      required:
+        - access_token
+        - expires_in
+        - token_type
+    session:
+      type: object
+      properties:
+        session_id:
+          type: string
+          description: Unique session identifier
+          example: sess_1234567890abcdef
+        user_id:
+          type: string
+          description: User ID associated with the session
+          example: clh1234567890abcdef
+        company_id:
+          type: string
+          description: Company ID associated with the session
+          example: clh1234567890abcdef
+        created_at:
+          type: string
+          format: date-time
+          description: Session creation timestamp
+          example: '2024-01-15T10:30:00Z'
+        expires_at:
+          type: string
+          format: date-time
+          description: Session expiration timestamp
+          example: '2024-01-16T10:30:00Z'
+        last_activity:
+          type: string
+          format: date-time
+          description: Last activity timestamp
+          example: '2024-01-15T10:30:00Z'
+        ip_address:
+          type: string
+          description: IP address of the session
+          example: 192.168.1.100
+        user_agent:
+          type: string
+          description: User agent string
+          example: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+        is_active:
+          type: boolean
+          description: Whether the session is currently active
+          example: true
+      required:
+        - session_id
+        - user_id
+        - created_at
+        - expires_at
+        - is_active
+    auth_response:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Whether the authentication operation was successful
+          example: true
+        message:
+          type: string
+          description: Human-readable message about the operation result
+          example: Login successful
+        data:
+          type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/user'
+            tokens:
+              $ref: '#/components/schemas/tokens'
+            session:
+              $ref: '#/components/schemas/session'
+          required:
+            - user
+            - tokens
+      required:
+        - success
+        - message
+        - data
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT Bearer token authentication. Include your JWT token in the Authorization header.
+
+        **Example:**
+        ```
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        ```
+
+        **Token Format:**
+        - Header: `{"alg": "HS256", "typ": "JWT"}`
+        - Payload: `{"sub": "user_id", "company_id": "company_id", "role": "user_role", "exp": 1640995200}`
+        - Signature: HMAC SHA256
+
+        **Token Expiration:** 24 hours
+        **Refresh Token:** Available via `/auth/refresh` endpoint
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: |
+        API Key for service-to-service authentication.
+        Used for webhook endpoints and automated integrations.
+
+        **Example:**
+        ```
+        X-API-Key: sk_live_1234567890abcdef
+        ```
+    OAuth2Auth:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://senwisetool.com/oauth/authorize
+          tokenUrl: https://senwisetool.com/oauth/token
+          scopes:
+            read:users: Read user information
+            write:users: Create and update users
+            read:farms: Read farm data
+            write:farms: Create and update farms
+            read:companies: Read company information
+            write:companies: Create and update companies
+            admin: Full administrative access
+      description: |
+        OAuth 2.0 authorization code flow for third-party integrations.
+        Recommended for public integrations and mobile applications.
+  parameters:
+    PaginationLimit:
+      name: limit
+      in: query
+      description: Number of items to return (max 100)
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+        example: 20
+    PaginationOffset:
+      name: offset
+      in: query
+      description: Number of items to skip for pagination
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+        example: 0
+    CompanyId:
+      name: company_id
+      in: query
+      description: Filter by company ID
+      required: false
+      schema:
+        type: string
+        format: cuid
+        example: clh1234567890abcdef
+    DateRangeStart:
+      name: start_date
+      in: query
+      description: Start date for filtering (ISO 8601 format)
+      required: false
+      schema:
+        type: string
+        format: date
+        example: '2024-01-01'
+    DateRangeEnd:
+      name: end_date
+      in: query
+      description: End date for filtering (ISO 8601 format)
+      required: false
+      schema:
+        type: string
+        format: date
+        example: '2024-12-31'
+  responses:
+    UnauthorizedError:
+      description: Authentication credentials were missing or invalid
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Unauthorized
+              message:
+                type: string
+                example: Invalid or missing authentication token
+              code:
+                type: string
+                example: AUTH_REQUIRED
+    ForbiddenError:
+      description: The request was understood but the server is refusing to authorize it
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Forbidden
+              message:
+                type: string
+                example: Insufficient permissions to access this resource
+              code:
+                type: string
+                example: INSUFFICIENT_PERMISSIONS
+    ValidationError:
+      description: The request was well-formed but contains invalid parameters
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Validation Error
+              message:
+                type: string
+                example: Request validation failed
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                      example: email
+                    message:
+                      type: string
+                      example: Invalid email format
+              code:
+                type: string
+                example: VALIDATION_ERROR
+    RateLimitError:
+      description: Too many requests, please try again later
+      headers:
+        X-RateLimit-Limit:
+          description: The number of allowed requests in the current period
+          schema:
+            type: integer
+        X-RateLimit-Remaining:
+          description: The number of remaining requests in the current period
+          schema:
+            type: integer
+        X-RateLimit-Reset:
+          description: The number of seconds left in the current period
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Rate Limit Exceeded
+              message:
+                type: string
+                example: Too many requests, please try again later
+              retry_after:
+                type: integer
+                example: 3600
+              code:
+                type: string
+                example: RATE_LIMIT_EXCEEDED
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Internal Server Error
+              message:
+                type: string
+                example: An unexpected error occurred
+              request_id:
+                type: string
+                example: req_1234567890abcdef
+              code:
+                type: string
+                example: INTERNAL_ERROR
+    UnauthorizedError-2:
+      description: Authentication credentials were missing or invalid
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Unauthorized
+              message:
+                type: string
+                example: Invalid or missing authentication token
+              code:
+                type: string
+                example: AUTH_REQUIRED
+              timestamp:
+                type: string
+                format: date-time
+                example: '2024-01-15T10:30:00Z'
+              request_id:
+                type: string
+                example: req_1234567890abcdef
+    ServerError-2:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Internal Server Error
+              message:
+                type: string
+                example: An unexpected error occurred
+              request_id:
+                type: string
+                example: req_1234567890abcdef
+              code:
+                type: string
+                example: INTERNAL_ERROR
+              timestamp:
+                type: string
+                format: date-time
+                example: '2024-01-15T10:30:00Z'
+              support_reference:
+                type: string
+                example: SR-2024-001-123456
+    ValidationError-2:
+      description: The request was well-formed but contains invalid parameters
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Validation Error
+              message:
+                type: string
+                example: Request validation failed
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                      example: email
+                    message:
+                      type: string
+                      example: Invalid email format
+                    value:
+                      type: string
+                      example: invalid-email
+              code:
+                type: string
+                example: VALIDATION_ERROR
+              timestamp:
+                type: string
+                format: date-time
+                example: '2024-01-15T10:30:00Z'
+              request_id:
+                type: string
+                example: req_1234567890abcdef
+    RateLimitError-2:
+      description: Too many requests, please try again later
+      headers:
+        X-RateLimit-Limit:
+          description: The number of allowed requests in the current period
+          schema:
+            type: integer
+        X-RateLimit-Remaining:
+          description: The number of remaining requests in the current period
+          schema:
+            type: integer
+        X-RateLimit-Reset:
+          description: The number of seconds left in the current period
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Rate Limit Exceeded
+              message:
+                type: string
+                example: Too many requests, please try again later
+              retry_after:
+                type: integer
+                example: 3600
+              code:
+                type: string
+                example: RATE_LIMIT_EXCEEDED
+              timestamp:
+                type: string
+                format: date-time
+                example: '2024-01-15T10:30:00Z'
+              request_id:
+                type: string
+                example: req_1234567890abcdef
+    ForbiddenError-2:
+      description: The request was understood but the server is refusing to authorize it
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Forbidden
+              message:
+                type: string
+                example: Insufficient permissions to access this resource
+              code:
+                type: string
+                example: INSUFFICIENT_PERMISSIONS
+              required_permissions:
+                type: array
+                items:
+                  type: string
+                example:
+                  - write:farms
+                  - admin:companies
+              timestamp:
+                type: string
+                format: date-time
+                example: '2024-01-15T10:30:00Z'
+              request_id:
+                type: string
+                example: req_1234567890abcdef
 x-tagGroups:
   - name: 🏢 Core Operations
     tags:

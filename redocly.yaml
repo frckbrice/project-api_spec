@@ -24,3 +24,65 @@ rules:
   response-contains-property: warn
   security-defined: warn
   tag-description: warn
+
+theme:
+  openapi:
+    htmlTemplate: ./docs/index.html
+    theme:
+      colors:
+        primary:
+          main: "#2E7D32"
+          light: "#4CAF50"
+          dark: "#1B5E20"
+          contrastText: "#FFFFFF"
+        secondary:
+          main: "#FF8F00"
+          light: "#FFB74D"
+          contrastText: "#000000"
+      typography:
+        fontSize: "14px"
+        lineHeight: "1.5em"
+        fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+        headings:
+          fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+          fontWeight: "600"
+      sidebar:
+        width: "260px"
+        backgroundColor: "#FAFAFA"
+        textColor: "#333333"
+      rightPanel:
+        backgroundColor: "#FAFAFA"
+        width: "40%"
+      codeBlock:
+        backgroundColor: "#F5F5F5"
+    generateCodeSamples:
+      languages:
+        - lang: JavaScript
+          label: "JavaScript"
+        - lang: curl
+          label: "cURL"
+        - lang: Python
+          label: "Python"
+        - lang: Node.js
+          label: "Node.js"
+    hideDownloadButton: false
+    hideHostname: false
+    hideInfoSection: false
+    hideLoading: false
+    hideSchemaPattern: false
+    hideSecuritySection: false
+    hideSingleRequestSampleTab: false
+    hideTryItPanel: false
+    expandDefaultServerVariables: true
+    expandResponses: "200,201"
+    expandSingleSchemaField: false
+    jsonSampleExpandLevel: 2
+    menuToggle: true
+    nativeScrollbars: false
+    noAutoAuth: false
+    pathInMiddlePanel: true
+    requiredPropsFirst: true
+    scrollYOffset: 0
+    showExtensions: true
+    showObjectSchemaExamples: true
+    sortPropsAlphabetically: true
