@@ -1,7 +1,7 @@
 # Redocly CLI Configuration
 apis:
-  senwisetool@v1:
-    root: swt_api_spec/senwisetool.yaml
+  cocoaflow@v1:
+    root: swt_api_spec/cocoaflow.yaml
 
 extends:
   - recommended

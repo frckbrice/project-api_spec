@@ -1,4 +1,4 @@
-# Dockerfile for SenWiseTool API Specification
+# Dockerfile for CocoaFlow API Specification
 FROM node:18-alpine
 
 # Set working directory

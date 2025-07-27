@@ -1,6 +1,6 @@
-# SenWiseTool API Specification
+# CocoaFlow API Specification
 
-![dislay image](docs/swt-project-image.png)
+![display image](docs/swt-project-image.png)
 
 
 [![OpenAPI 3.1.0](https://img.shields.io/badge/OpenAPI-3.1.0-green.svg)](https://spec.openapis.org/oas/v3.1.0)
@@ -8,11 +8,11 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
 [![Redocly](https://img.shields.io/badge/Redocly-Latest-orange.svg)](https://redocly.com/)
 
-> Comprehensive OpenAPI 3.1.0 specification for SenWiseTool - A modern cocoa industry management platform
+> Comprehensive OpenAPI 3.1.0 specification for CocoaFlow - A modern cocoa industry management platform
 
 ## 🌟 Overview
 
-SenWiseTool is a comprehensive **API specification** designed for managing cocoa industry operations, including farmer management, farm tracking, certification compliance, and supply chain optimization. This specification serves as the contract between frontend and backend teams, ensuring consistent development and integration.
+CocoaFlow is a comprehensive **API specification** designed for managing cocoa industry operations, including farmer management, farm tracking, certification compliance, and supply chain optimization. This specification serves as the contract between frontend and backend teams, ensuring consistent development and integration.
 
 > **Note**: This is an API specification project. The actual API implementation is in development. You can use this specification to understand the API design and generate client libraries.
 
@@ -45,8 +45,8 @@ SenWiseTool is a comprehensive **API specification** designed for managing cocoa
 
 ```bash
 # Clone the repository
-git clone https://github.com/frckbrice/senwisetool-api_spec.git
-cd senwisetool-api_spec/project-api_spec
+git clone git@github.com:frckbrice/project-api_spec.git
+cd project-api_spec
 
 # Install dependencies
 npm install
@@ -55,8 +55,8 @@ npm install
 npm run docs:serve
 
 # Or use Docker
-docker build -t senwisetool-api-docs .
-docker run -p 8080:8080 -v $(pwd):/app senwisetool-api-docs
+docker build -t cocoaflow-api-docs .
+docker run -p 8080:8080 -v $(pwd):/app cocoaflow-api-docs
 ```
 
 ### Available Scripts
@@ -86,18 +86,11 @@ npm run prepare          # Prepare for publishing
 
 ## 📚 Documentation
 
-### Interactive Documentation
-
-- **Local Development**: `http://localhost:8080`
-- **Docker**: `http://localhost:8080` (via Docker)
-- **Vercel**: [https://senwisetool-api-docs.vercel.app](https://senwisetool-api-docs.vercel.app) *(Coming Soon)*
-- **GitHub Pages**: [https://frckbrice.github.io/senwisetool-api_spec](https://github.com/frckbrice/project-api_spec) 
-
 ### API Reference
 
 | Environment | URL | Status |
 |-------------|-----|--------|
-| Specification | `./swt_api_spec/senwisetool.yaml` | ✅ Available |
+| Specification | `./swt_api_spec/cocoaflow.yaml` | ✅ Available |
 | Production | [https://project-apispec.vercel.app](https://project-apispec.vercel.app) | ✅ Available |
 | Local Preview | `http://localhost:8080` | ✅ Available |
 
@@ -106,7 +99,7 @@ npm run prepare          # Prepare for publishing
 ```bash
 # JWT Bearer Token (when API is deployed)
 curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-     https://api.senwisetool.com/v1/farms
+     https://api.cocoaflow.com/v1/farms
 
 
 
@@ -124,7 +117,7 @@ project-api_spec/
 │   │   ├── user/            # User management endpoints
 │   │   ├── company/         # Company management endpoints
 │   │   └── ...              # Other domain endpoints
-│   └── senwisetool.yaml     # Main OpenAPI specification
+│   └── cocoaflow.yaml       # Main OpenAPI specification
 ├── docs/                    # Generated documentation
 ├── dist/                    # Bundled specifications
 ├── generated/               # Generated client libraries

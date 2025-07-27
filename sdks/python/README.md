@@ -1,22 +1,22 @@
-# SenWiseTool Python SDK
+# CocoaFlow Python SDK
 
-Official Python SDK for the SenWiseTool API - Cocoa Industry Management Platform.
+Official Python SDK for the CocoaFlow API - Cocoa Industry Management Platform.
 
 ## Installation
 
 ```bash
-pip install senwisetool-sdk
+pip install cocoaflow-sdk
 ```
 
 ## Quick Start
 
 ```python
-from senwisetool import SenWiseToolAPI
+from cocoaflow import CocoaFlowAPI
 
 # Initialize the client
-client = SenWiseToolAPI(
+client = CocoaFlowAPI(
     api_key='your-api-key',
-    base_url='https://api.senwisetool.com'
+    base_url='https://api.cocoaflow.com'
 )
 
 # Authenticate
@@ -76,10 +76,10 @@ farm_details = client.farms.get(farm_id='clh1234567890abcdef')
 ```python
 # Async usage
 import asyncio
-from senwisetool import AsyncSenWiseToolAPI
+from cocoaflow import AsyncCocoaFlowAPI
 
 async def main():
-    client = AsyncSenWiseToolAPI(api_key='your-api-key')
+    client = AsyncCocoaFlowAPI(api_key='your-api-key')
     
     # Create multiple farms
     farms = []

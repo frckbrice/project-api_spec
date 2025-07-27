@@ -1,30 +1,30 @@
-# SenWiseTool JavaScript/TypeScript SDK
+# CocoaFlow JavaScript/TypeScript SDK
 
-**Design Specification** for the SenWiseTool JavaScript/TypeScript SDK - Cocoa Industry Management Platform.
+**Design Specification** for the CocoaFlow JavaScript/TypeScript SDK - Cocoa Industry Management Platform.
 
-> **Note**: This is a **design document** for an SDK that would be implemented when the SenWiseTool API is built. This project contains the API specification and design patterns, not a functional SDK.
+> **Note**: This is a **design document** for an SDK that would be implemented when the CocoaFlow API is built. This project contains the API specification and design patterns, not a functional SDK.
 
 ## Project Scope
 
-This repository contains the **API specification** and **SDK design patterns** for the SenWiseTool platform. The actual backend API and SDK implementations are not yet developed.
+This repository contains the **API specification** and **SDK design patterns** for the CocoaFlow platform. The actual backend API and SDK implementations are not yet developed.
 
 ## SDK Design Specification
 
 ### Proposed Installation
 
 ```bash
-npm install @senwisetool/js-sdk
+npm install @cocoaflow/js-sdk
 ```
 
 ### Proposed Usage Pattern
 
 ```typescript
-import { SenWiseToolAPI } from '@senwisetool/js-sdk';
+import { CocoaFlowAPI } from '@cocoaflow/js-sdk';
 
 // Initialize the client
-const client = new SenWiseToolAPI({
+const client = new CocoaFlowAPI({
   apiKey: 'your-api-key',
-  baseURL: 'https://api.senwisetool.com'
+  baseURL: 'https://api.cocoaflow.com'
 });
 
 // Authenticate

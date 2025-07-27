@@ -1,17 +1,19 @@
 openapi: 3.1.0
 info:
   version: 1.0.0
-  title: SenWiseTool API
+  title: CocoaFlow API
   description: |
-    # SenWiseTool - Cocoa Industry Management API
+    # CocoaFlow - Cocoa Industry Management API
     
     ## Overview
-    SenWiseTool is a comprehensive API for managing cocoa industry operations, including farmer management, farm tracking, certification compliance, and supply chain optimization.
+    CocoaFlow is a comprehensive API for managing cocoa industry operations, including farmer management, farm tracking, certification compliance, and supply chain optimization.
     
     ## Key Features
     - **Farmer Management**: Complete farmer profiles, contracts, and relationship tracking
     - **Farm Operations**: GPS coordinates, inspection data, and compliance monitoring
     - **Certification Support**: Rainforest Alliance compliance tracking and audit trails
+    - **Campaign Management**: Seasonal campaign management and data collection periods
+
     - **Supply Chain**: Market management, transactions, and inventory tracking
     - **Training & Education**: Session management and participant tracking
     
@@ -54,9 +56,6 @@ externalDocs:
 tags:
   - name: Authentication
     description: User authentication and authorization endpoints
-    externalDocs:
-      description: "Authentication Guide"
-      url: "https://docs.senwisetool.com/authentication"
   - name: Companies
     description: Company management operations for cocoa industry organizations
   - name: Users

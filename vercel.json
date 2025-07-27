@@ -1,11 +1,11 @@
 {
     "version": 2,
-    "buildCommand": "npm run bundle && cp dist/senwisetool-api.yaml public/",
+                        "buildCommand": "npm run bundle && cp dist/cocoaflow-api.yaml public/",
     "outputDirectory": "public",
     "routes": [
         {
             "src": "/api-spec",
-            "dest": "/senwisetool-api.yaml",
+                                    "dest": "/cocoaflow-api.yaml",
             "headers": {
                 "Content-Type": "application/yaml",
                 "Access-Control-Allow-Origin": "*"
