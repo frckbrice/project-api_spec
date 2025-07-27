@@ -1,40 +1,47 @@
-# create a project audit object
+# Unified audit management endpoint
+# Supports both project and market audits with query parameters
+
+# Create a new audit
 post:
   tags:
-    - 🌿 Projects
-  summary: Create project audit
+    - 🌿 Audits
+  summary: Create audit
   description: |
-    Create a new project audit to track project progress and compliance.
+    Create a new audit (project or market) based on the audit_type parameter.
     
-    **Required Permissions:** `write:project_audit`
+    **Required Permissions:** `write:audit`
     
     **Business Rules:**
+    - Audit type must be either 'project' or 'market'
     - Project audit must be associated with a valid project
-    - Audit date must be within project timeline
-    - Only authorized auditors can create project audits
+    - Market audit must be associated with a valid market
+    - Audit date must be within valid timeline
+    - Only authorized auditors can create audits
     - Audit scores must be between 0-100
-  operationId: createProjectAudit
+  operationId: createAudit
   security:
     - BearerAuth: []
+  parameters:
+    - name: audit_type
+      in: query
+      required: true
+      description: Type of audit to create
+      schema:
+        type: string
+        enum: [project, market]
+        example: "project"
   requestBody:
     required: true
     content:
       application/json:
         schema:
-          $ref: "../components/schemas/project_audit.yaml"
+          oneOf:
+            - $ref: "../components/schemas/project_audit.yaml"
+            - $ref: "../components/schemas/market_audit.yaml"
         examples:
-          basic_audit:
-            summary: Basic project audit
-            description: Create a project audit with minimal information
-            value:
-              project_id: "clh1234567890abcdef"
-              auditor_id: "clh1234567890abcdef"
-              audit_date: "2024-01-15"
-              progress_score: 75
-              notes: "Project progressing well within timeline"
-          detailed_audit:
-            summary: Detailed project audit
-            description: Create a project audit with comprehensive details
+          project_audit:
+            summary: Project audit
+            description: Create a project audit
             value:
               project_id: "clh1234567890abcdef"
               auditor_id: "clh1234567890abcdef"
@@ -46,19 +53,34 @@ post:
               timeline_score: 80
               risks_identified: ["Weather delays", "Supply chain issues"]
               recommendations: ["Accelerate procurement", "Increase monitoring"]
+          market_audit:
+            summary: Market audit
+            description: Create a market audit
+            value:
+              market_id: "clh1234567890abcdef"
+              auditor_id: "clh1234567890abcdef"
+              audit_date: "2024-01-15"
+              compliance_score: 85
+              notes: "Market meets basic compliance requirements"
+              quality_score: 90
+              safety_score: 88
+              efficiency_score: 82
+              recommendations: ["Improve storage facilities", "Enhance quality control"]
   responses:
     "201":
-      description: Project audit created successfully
+      description: Audit created successfully
       headers:
         Location:
-          description: URL of the created project audit resource
+          description: URL of the created audit resource
           schema:
             type: string
             format: uri
       content:
         application/json:
           schema:
-            $ref: "../components/schemas/project_audit.yaml"
+            oneOf:
+              - $ref: "../components/schemas/project_audit.yaml"
+              - $ref: "../components/schemas/market_audit.yaml"
           example:
             id: "clh1234567890abcdef"
             project_id: "clh1234567890abcdef"
@@ -75,7 +97,7 @@ post:
     "403":
       $ref: "../components/responses/ForbiddenError.yaml"
     "409":
-      description: Project audit already exists for this project and date
+      description: Audit already exists for this resource and date
       content:
         application/json:
           schema:
@@ -83,65 +105,81 @@ post:
             properties:
               error:
                 type: string
-                example: "Project Audit Already Exists"
+                example: "Audit Already Exists"
               message:
                 type: string
-                example: "Project audit already exists for this project on this date"
+                example: "Audit already exists for this resource on this date"
               code:
                 type: string
-                example: "PROJECT_AUDIT_ALREADY_EXISTS"
+                example: "AUDIT_ALREADY_EXISTS"
     "500":
       $ref: "../components/responses/ServerError.yaml"
 
-# retrieve all project audits
+# Retrieve all audits with filtering
 get:
   tags:
-    - 🌿 Projects
-  summary: List all project audits
+    - 🌿 Audits
+  summary: List all audits
   description: |
-    Retrieve a paginated list of project audits with optional filtering capabilities.
+    Retrieve all audits with optional filtering by type, date range, and other criteria.
     
-    **Required Permissions:** `read:project_audit`
+    **Required Permissions:** `read:audit`
     
-    **Filtering Options:**
-    - Filter by project ID
-    - Filter by auditor ID
-    - Filter by audit date range
-    - Filter by progress score range
-    - Filter by company ID
-    
-    **Pagination:**
-    - Default limit: 20 items per page
-    - Maximum limit: 100 items per page
-  operationId: getAllProjectAudits
+    **Features:**
+    - Filter by audit type (project/market)
+    - Filter by date range
+    - Filter by auditor
+    - Filter by resource ID (project_id/market_id)
+    - Pagination support
+    - Sorting options
+  operationId: listAudits
   security:
     - BearerAuth: []
   parameters:
-    - $ref: "../components/parameters/PaginationLimit.yaml"
-    - $ref: "../components/parameters/PaginationOffset.yaml"
-    - $ref: "../components/parameters/CompanyId.yaml"
-    - $ref: "../components/parameters/DateRangeStart.yaml"
-    - $ref: "../components/parameters/DateRangeEnd.yaml"
-    - name: project_id
+    - name: audit_type
       in: query
-      description: Filter by project ID
       required: false
+      description: Filter by audit type
+      schema:
+        type: string
+        enum: [project, market]
+        example: "project"
+    - name: start_date
+      in: query
+      required: false
+      description: Start date for filtering (ISO 8601 format)
+      schema:
+        type: string
+        format: date
+        example: "2024-01-01"
+    - name: end_date
+      in: query
+      required: false
+      description: End date for filtering (ISO 8601 format)
+      schema:
+        type: string
+        format: date
+        example: "2024-12-31"
+    - name: auditor_id
+      in: query
+      required: false
+      description: Filter by auditor ID
       schema:
         type: string
         format: cuid
         example: "clh1234567890abcdef"
-    - name: auditor_id
+    - name: resource_id
       in: query
-      description: Filter by auditor ID
       required: false
+      description: Filter by project_id or market_id
       schema:
         type: string
         format: cuid
         example: "clh1234567890abcdef"
     - name: min_score
       in: query
-      description: Minimum progress score
       required: false
+      description: Minimum score filter
       schema:
         type: integer
         minimum: 0
@@ -149,59 +187,67 @@ get:
         example: 70
     - name: max_score
       in: query
-      description: Maximum progress score
       required: false
+      description: Maximum score filter
       schema:
         type: integer
         minimum: 0
         maximum: 100
-        example: 100
+        example: 90
+    - name: sort_by
+      in: query
+      required: false
+      description: Sort field
+      schema:
+        type: string
+        enum: [audit_date, created_at, progress_score, compliance_score]
+        default: "audit_date"
+        example: "audit_date"
+    - name: sort_order
+      in: query
+      required: false
+      description: Sort order
+      schema:
+        type: string
+        enum: [asc, desc]
+        default: "desc"
+        example: "desc"
+    - $ref: "../components/parameters/PaginationLimit.yaml"
+    - $ref: "../components/parameters/PaginationOffset.yaml"
   responses:
     "200":
-      description: Project audits retrieved successfully
+      description: List of audits retrieved successfully
       content:
         application/json:
           schema:
             type: object
             properties:
+              success:
+                type: boolean
+                example: true
               data:
                 type: array
                 items:
-                  $ref: "../components/schemas/project_audit.yaml"
+                  oneOf:
+                    - $ref: "../components/schemas/project_audit.yaml"
+                    - $ref: "../components/schemas/market_audit.yaml"
               pagination:
                 type: object
                 properties:
+                  total:
+                    type: integer
+                    example: 150
                   limit:
                     type: integer
                     example: 20
                   offset:
                     type: integer
                     example: 0
-                  total:
-                    type: integer
-                    example: 45
-                  page_count:
-                    type: integer
-                    example: 3
-                  has_next:
+                  has_more:
                     type: boolean
                     example: true
-                  has_prev:
-                    type: boolean
-                    example: false
-              summary:
-                type: object
-                properties:
-                  average_score:
-                    type: number
-                    example: 82.5
-                  total_audits:
-                    type: integer
-                    example: 45
-                  on_track_projects:
-                    type: integer
-                    example: 38
           example:
+            success: true
             data:
               - id: "clh1234567890abcdef"
                 project_id: "clh1234567890abcdef"
@@ -211,25 +257,19 @@ get:
                 notes: "Project progressing well within timeline"
                 created_at: "2024-01-15T10:30:00Z"
                 updated_at: "2024-01-15T10:30:00Z"
-              - id: "clh1234567890abcdeg"
-                project_id: "clh1234567890abcdeg"
+              - id: "clh1234567890abcdef"
+                market_id: "clh1234567890abcdef"
                 auditor_id: "clh1234567890abcdef"
                 audit_date: "2024-01-14"
-                progress_score: 85
-                notes: "Excellent project progress"
-                created_at: "2024-01-14T09:15:00Z"
-                updated_at: "2024-01-14T09:15:00Z"
+                compliance_score: 85
+                notes: "Market meets basic compliance requirements"
+                created_at: "2024-01-14T14:20:00Z"
+                updated_at: "2024-01-14T14:20:00Z"
             pagination:
+              total: 150
               limit: 20
               offset: 0
-              total: 45
-              page_count: 3
-              has_next: true
-              has_prev: false
-            summary:
-              average_score: 82.5
-              total_audits: 45
-              on_track_projects: 38
+              has_more: true
     "400":
       $ref: "../components/responses/ValidationError.yaml"
     "401":
@@ -239,24 +279,33 @@ get:
     "500":
       $ref: "../components/responses/ServerError.yaml"
 
-# update project audit
+# Update an audit
 put:
   tags:
-    - 🌿 Projects
-  summary: Update project audit
+    - 🌿 Audits
+  summary: Update audit
   description: |
-    Update an existing project audit.
+    Update an existing audit (project or market).
     
-    **Required Permissions:** `write:project_audit`
+    **Required Permissions:** `write:audit`
     
     **Business Rules:**
     - Cannot update audits older than 30 days
     - Cannot change audit date after submission
     - Only the original auditor or admin can update
     - All changes are logged for audit purposes
-  operationId: updateProjectAudit
+  operationId: updateAudit
   security:
     - BearerAuth: []
+  parameters:
+    - name: audit_id
+      in: path
+      required: true
+      description: ID of the audit to update
+      schema:
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
   requestBody:
     required: true
     content:
@@ -268,12 +317,18 @@ put:
               type: integer
               minimum: 0
               maximum: 100
-              description: Updated progress score
+              description: Updated progress score (for project audits)
               example: 80
+            compliance_score:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description: Updated compliance score (for market audits)
+              example: 88
             notes:
               type: string
               description: Updated audit notes
-              example: "Updated progress assessment"
+              example: "Updated assessment - better than expected"
             quality_score:
               type: integer
               minimum: 0
@@ -284,13 +339,25 @@ put:
               type: integer
               minimum: 0
               maximum: 100
-              description: Updated budget score
+              description: Updated budget score (for project audits)
               example: 92
             timeline_score:
               type: integer
               minimum: 0
               maximum: 100
-              description: Updated timeline score
+              description: Updated timeline score (for project audits)
+              example: 85
+            safety_score:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description: Updated safety score (for market audits)
+              example: 90
+            efficiency_score:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description: Updated efficiency score (for market audits)
               example: 85
             risks_identified:
               type: array
@@ -305,15 +372,9 @@ put:
               description: Updated recommendations
               example: ["Accelerate procurement", "Increase monitoring"]
         examples:
-          update_score:
-            summary: Update progress score
-            description: Update the progress score and notes
-            value:
-              progress_score: 80
-              notes: "Updated progress assessment - better than expected"
-          update_details:
-            summary: Update audit details
-            description: Update comprehensive audit details
+          update_project_audit:
+            summary: Update project audit
+            description: Update a project audit with new scores and notes
             value:
               progress_score: 80
               notes: "Updated progress assessment - better than expected"
@@ -322,13 +383,25 @@ put:
               timeline_score: 85
               risks_identified: ["Weather delays", "Supply chain issues"]
               recommendations: ["Accelerate procurement", "Increase monitoring"]
+          update_market_audit:
+            summary: Update market audit
+            description: Update a market audit with new scores and notes
+            value:
+              compliance_score: 88
+              notes: "Updated compliance assessment - improved standards"
+              quality_score: 90
+              safety_score: 92
+              efficiency_score: 85
+              recommendations: ["Improve storage facilities", "Enhance quality control"]
   responses:
     "200":
-      description: Project audit updated successfully
+      description: Audit updated successfully
       content:
         application/json:
           schema:
-            $ref: "../components/schemas/project_audit.yaml"
+            oneOf:
+              - $ref: "../components/schemas/project_audit.yaml"
+              - $ref: "../components/schemas/market_audit.yaml"
           example:
             id: "clh1234567890abcdef"
             project_id: "clh1234567890abcdef"
@@ -339,10 +412,7 @@ put:
             quality_score: 88
             budget_score: 92
             timeline_score: 85
-            risks_identified: ["Weather delays", "Supply chain issues"]
-            recommendations: ["Accelerate procurement", "Increase monitoring"]
-            created_at: "2024-01-15T10:30:00Z"
-            updated_at: "2024-01-15T11:30:00Z"
+            updated_at: "2024-01-15T15:45:00Z"
     "400":
       $ref: "../components/responses/ValidationError.yaml"
     "401":
@@ -350,7 +420,7 @@ put:
     "403":
       $ref: "../components/responses/ForbiddenError.yaml"
     "404":
-      description: Project audit not found
+      description: Audit not found
       content:
         application/json:
           schema:
@@ -358,15 +428,15 @@ put:
             properties:
               error:
                 type: string
-                example: "Project Audit Not Found"
+                example: "Audit Not Found"
               message:
                 type: string
-                example: "Project audit with the specified ID was not found"
+                example: "Audit with the specified ID was not found"
               code:
                 type: string
-                example: "PROJECT_AUDIT_NOT_FOUND"
+                example: "AUDIT_NOT_FOUND"
     "409":
-      description: Project audit update conflict
+      description: Audit update conflict
       content:
         application/json:
           schema:
@@ -374,39 +444,48 @@ put:
             properties:
               error:
                 type: string
-                example: "Project Audit Update Conflict"
+                example: "Audit Update Conflict"
               message:
                 type: string
-                example: "Cannot update project audit older than 30 days"
+                example: "Cannot update audit older than 30 days"
               code:
                 type: string
-                example: "PROJECT_AUDIT_UPDATE_CONFLICT"
+                example: "AUDIT_UPDATE_CONFLICT"
     "500":
       $ref: "../components/responses/ServerError.yaml"
 
-# delete project audit
+# Delete an audit
 delete:
   tags:
-    - 🌿 Projects
-  summary: Delete project audit
+    - 🌿 Audits
+  summary: Delete audit
   description: |
-    Delete a project audit from the system.
+    Delete an audit from the system.
     
-    **Required Permissions:** `write:project_audit`
+    **Required Permissions:** `write:audit`
     
     **Business Rules:**
     - Cannot delete audits older than 30 days
     - Cannot delete audits that have been submitted for compliance
-    - Only admin users can delete project audits
+    - Only admin users can delete audits
     - Soft delete - marks as deleted but preserves data for audit
-  operationId: deleteProjectAudit
+  operationId: deleteAudit
   security:
     - BearerAuth: []
+  parameters:
+    - name: audit_id
+      in: path
+      required: true
+      description: ID of the audit to delete
+      schema:
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
   responses:
     "204":
-      description: Project audit deleted successfully
+      description: Audit deleted successfully
     "400":
-      description: Cannot delete project audit
+      description: Cannot delete audit
       content:
         application/json:
           schema:
@@ -414,19 +493,19 @@ delete:
             properties:
               error:
                 type: string
-                example: "Cannot Delete Project Audit"
+                example: "Cannot Delete Audit"
               message:
                 type: string
                 example: "Cannot delete audit that has been submitted for compliance"
               code:
                 type: string
-                example: "PROJECT_AUDIT_ALREADY_SUBMITTED"
+                example: "AUDIT_ALREADY_SUBMITTED"
     "401":
       $ref: "../components/responses/UnauthorizedError.yaml"
     "403":
       $ref: "../components/responses/ForbiddenError.yaml"
     "404":
-      description: Project audit not found
+      description: Audit not found
       content:
         application/json:
           schema:
@@ -434,12 +513,12 @@ delete:
             properties:
               error:
                 type: string
-                example: "Project Audit Not Found"
+                example: "Audit Not Found"
               message:
                 type: string
-                example: "Project audit with the specified ID was not found"
+                example: "Audit with the specified ID was not found"
               code:
                 type: string
-                example: "PROJECT_AUDIT_NOT_FOUND"
+                example: "AUDIT_NOT_FOUND"
     "500":
-      $ref: "../components/responses/ServerError.yaml"
+      $ref: "../components/responses/ServerError.yaml" 

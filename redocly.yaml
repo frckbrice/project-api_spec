@@ -27,7 +27,6 @@ rules:
 
 theme:
   openapi:
-    htmlTemplate: ./docs/index.html
     theme:
       colors:
         primary:

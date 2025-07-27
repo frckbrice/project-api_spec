@@ -290,6 +290,17 @@ tags:
       - User Management
       - Monitoring & Alerts
       - Backup & Recovery
+  - name: 🌿 Audits
+    description: |
+      **Audit and compliance verification endpoints**
+      
+      Comprehensive audit management with compliance verification and reporting.
+      
+      **Features:**
+      - Project Audits
+      - Market Audits
+      - Compliance Verification
+      - Audit Reporting
 
 x-tagGroups:
   - name: 🏢 Core Operations
@@ -364,8 +375,8 @@ paths:
     $ref: paths/farm/farm.yaml
   "/farms/{id}":
     $ref: paths/farm/farm_{id}.yaml
-  "/project_audits": # project-audits
-    $ref: paths/project_audit.yaml
+  "/audits": # unified audits endpoint
+    $ref: paths/audits.yaml
   "/receipts": # receipts
     $ref: paths/receipt/receipt.yaml
   "/receipts/{id}":
@@ -380,8 +391,6 @@ paths:
     $ref: paths/market/market_{id}.yaml
   "/markets/{company_id}/company":
     $ref: paths/market/market_{company_id}.yaml
-  "/market_audits": # market_audit
-    $ref: "paths/market_audit.yaml"
   "/inspection_data": # inspection_data
     $ref: "paths/inspection_data/inspection_data.yaml"
   "/inspection_data/{project_id}":
