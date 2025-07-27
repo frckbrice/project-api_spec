@@ -30,34 +30,55 @@ theme:
     theme:
       colors:
         primary:
-          main: "#2E7D32"
-          light: "#4CAF50"
-          dark: "#1B5E20"
+          main: "#2D3748"
+          light: "#4A5568"
+          dark: "#1A202C"
           contrastText: "#FFFFFF"
-        secondary:
-          main: "#FF8F00"
-          light: "#FFB74D"
-          contrastText: "#000000"
+        success:
+          main: "#48BB78"
+          light: "#68D391"
+          dark: "#2F855A"
+          contrastText: "#FFFFFF"
+        warning:
+          main: "#ED8936"
+          light: "#F6AD55"
+          dark: "#C05621"
+          contrastText: "#FFFFFF"
+        error:
+          main: "#E53E3E"
+          light: "#FC8181"
+          dark: "#C53030"
+          contrastText: "#FFFFFF"
+        gray:
+          50: "#F7FAFC"
+          100: "#EDF2F7"
+          200: "#E2E8F0"
+          300: "#CBD5E0"
+          400: "#A0AEC0"
+          500: "#718096"
+          600: "#4A5568"
+          700: "#2D3748"
+          800: "#1A202C"
+          900: "#171923"
       typography:
-        fontSize: "14px"
+        fontSize: "16px"
         lineHeight: "1.5em"
         fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
         headings:
           fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
           fontWeight: "600"
       sidebar:
-        width: "260px"
-        backgroundColor: "#FAFAFA"
-        textColor: "#333333"
+        width: "300px"
+        backgroundColor: "#F7FAFC"
+        textColor: "#2D3748"
       rightPanel:
-        backgroundColor: "#FAFAFA"
+        backgroundColor: "#F7FAFC"
+        textColor: "#2D3748"
         width: "40%"
       codeBlock:
-        backgroundColor: "#F5F5F5"
+        backgroundColor: "#2D3748"
     generateCodeSamples:
       languages:
-        - lang: JavaScript
-          label: "JavaScript"
         - lang: curl
           label: "cURL"
         - lang: Python
@@ -74,14 +95,13 @@ theme:
     hideTryItPanel: false
     expandDefaultServerVariables: true
     expandResponses: "200,201"
-    expandSingleSchemaField: false
-    jsonSampleExpandLevel: 2
+    expandSingleSchemaField: true
+    jsonSampleExpandLevel: 3
     menuToggle: true
-    nativeScrollbars: false
-    noAutoAuth: false
-    pathInMiddlePanel: true
+    nativeScrollbars: true
+    pathInMiddlePanel: false
     requiredPropsFirst: true
     scrollYOffset: 0
-    showExtensions: true
-    showObjectSchemaExamples: true
+    showExtensions: false
     sortPropsAlphabetically: true
+    sortTagsAlphabetically: true

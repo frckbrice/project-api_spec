@@ -49,10 +49,9 @@ info:
     ## 🛠️ Getting Started
     
     ### 1. **Authentication**
-    ```bash
-    # JWT Bearer Token Authentication
-    curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-         https://api.cocoaflow.com/v1/farms
+    The API uses JWT Bearer token authentication. Include your token in the Authorization header:
+    ```
+    Authorization: Bearer <your_token>
     ```
     
     ### 2. **API Requirements**
@@ -60,17 +59,35 @@ info:
     - **Rate Limiting**: 1000 requests per hour per API key
     - **Authentication**: JWT Bearer token required
     
-    ### 3. **Quick Start**
-    ```bash
-    # Install SDK
-    npm install @cocoaflow/js-sdk
+    ### 3. **API Documentation**
+    - Browse the interactive documentation
+    - Test endpoints directly in the browser
+    - View detailed request/response examples
+    - Explore data models and schemas
     
-    # Initialize client
-    const client = new CocoaFlowAPI({
-      apiKey: 'your-api-key',
-      baseURL: 'https://api.cocoaflow.com'
-    });
-    ```
+    ---
+    
+    ## 🏗️ Architecture
+    
+    ### API Design
+    - **RESTful Principles**: Resource-based URLs, standard HTTP methods
+    - **OpenAPI 3.1.0**: Latest specification standard
+    - **Modular Structure**: Reusable components and schemas
+    
+    ### Security
+    - **JWT Authentication**: Secure token-based access
+    - **Rate Limiting**: Request throttling for stability
+    - **Input Validation**: Comprehensive request validation
+    
+    ### Data Models
+    - **Standardized Schemas**: Consistent data structures
+    - **Relationship Mapping**: Clear resource relationships
+    - **Validation Rules**: Built-in data validation
+    
+    ### Documentation
+    - **Interactive UI**: Try endpoints in browser
+    - **Code Examples**: Request/response samples
+    - **Schema Browser**: Explore data models
     
     ---
     
@@ -94,38 +111,15 @@ info:
     
     ---
     
-    ## 🆘 Support & Resources
+    ## 📖 Documentation & Resources
     
-    - **📖 Documentation**: [https://project-apispec.vercel.app](https://project-apispec.vercel.app)
-    - **📧 Support Email**: support@cocoaflow.com
-    - **🐛 Issues**: [GitHub Issues](https://github.com/frckbrice/project-api_spec/issues)
-    - **📚 API Reference**: [OpenAPI Spec](./cocoaflow-api.yaml)
-    
-    ---
-    
-    ## 🏗️ Architecture
-    
-    ### **Security**
-    - JWT Bearer Token Authentication
-    - OAuth 2.0 Support (Coming Soon)
-    - Rate Limiting & Throttling
-    - CORS Configuration
-    
-    ### **Performance**
-    - RESTful API Design
-    - Pagination Support
-    - Caching Headers
-    - Compression
-    
-    ### **Reliability**
-    - Standardized Error Responses
-    - Comprehensive Logging
-    - Health Check Endpoints
-    - Monitoring & Analytics
+    - **API Documentation**: [https://project-apispec.vercel.app](https://project-apispec.vercel.app)
+    - **GitHub Repository**: [https://github.com/frckbrice/project-api_spec](https://github.com/frckbrice/project-api_spec)
+    - **OpenAPI Specification**: [Download YAML](https://project-apispec.vercel.app/cocoaflow-api.yaml)
     
     ---
     
-    *Built with ❤️ for the Cocoa Industry*
+    Built with OpenAPI 3.1.0 and Redocly.
     
   termsOfService: "https://cocoaflow.com/terms"
   contact:
