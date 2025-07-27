@@ -1,20 +1,78 @@
+get:
+  tags:
+    - 👥 Users
+  summary: List all collector agents
+  description: |
+    Retrieve a list of all collector agents.
+    This endpoint supports pagination and filtering.
+  operationId: listCollectorAgents
+  parameters:
+    - name: page
+      in: query
+      description: Page number for pagination
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    - name: limit
+      in: query
+      description: Number of items per page
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    - name: status
+      in: query
+      description: Filter by agent status
+      schema:
+        type: string
+        enum: [active, inactive, suspended]
+    - name: region
+      in: query
+      description: Filter by region
+      schema:
+        type: string
+  responses:
+    "200":
+      description: List of collector agents retrieved successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: "../../components/schemas/collector_agent.yaml"
+              meta:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    example: 100
+                  pages:
+                    type: integer
+                    example: 5
+                  current_page:
+                    type: integer
+                    example: 1
+                  per_page:
+                    type: integer
+                    example: 20
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"
+
 post:
   tags:
     - 👥 Users
-  summary: Create collector agent
-  description: |
-    Create a new collector agent which is in charge of collecting data from farmers.
-    
-    **Required Permissions:** `write:collector_agent`
-    
-    **Business Rules:**
-    - Only administrators can create collector agents
-    - Agent must have valid contact information
-    - Agent must be assigned to a specific region or company
-    - Agent status must be active upon creation
+  summary: Create a new collector agent
+  description: Create a new collector agent in the system
   operationId: createCollectorAgent
-  security:
-    - BearerAuth: []
   requestBody:
     required: true
     content:
@@ -24,7 +82,7 @@ post:
         examples:
           basic_agent:
             summary: Basic collector agent
-            description: Create a collector agent with minimal information
+            description: Create collector agent with minimal information
             value:
               name: "John Doe"
               email: "john.doe@cocoaflow.com"
@@ -33,7 +91,7 @@ post:
               status: "active"
           detailed_agent:
             summary: Detailed collector agent
-            description: Create a collector agent with comprehensive details
+            description: Create collector agent with all available information
             value:
               name: "John Doe"
               email: "john.doe@cocoaflow.com"
@@ -47,29 +105,10 @@ post:
   responses:
     "201":
       description: Collector agent created successfully
-      headers:
-        Location:
-          description: URL of the created collector agent resource
-          schema:
-            type: string
-            format: uri
       content:
         application/json:
           schema:
             $ref: "../../components/schemas/collector_agent.yaml"
-          example:
-            id: "clh1234567890abcdef"
-            name: "John Doe"
-            email: "john.doe@cocoaflow.com"
-            phone: "+2348012345678"
-            company_id: "clh1234567890abcdef"
-            status: "active"
-            region: "Southwest Nigeria"
-            assigned_farms: 25
-            experience_years: 3
-            specializations: ["Quality Assessment", "Data Collection"]
-            created_at: "2024-01-15T10:30:00Z"
-            updated_at: "2024-01-15T10:30:00Z"
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
@@ -85,256 +124,28 @@ post:
             properties:
               error:
                 type: string
-                example: "Collector Agent Already Exists"
+                example: "Conflict"
               message:
                 type: string
-                example: "A collector agent with this email already exists"
+                example: "Collector agent already exists"
               code:
                 type: string
-                example: "COLLECTOR_AGENT_ALREADY_EXISTS"
-    "422":
-      description: Unprocessable Entity
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Validation Error"
-              message:
-                type: string
-                example: "Invalid data provided"
-              code:
-                type: string
-                example: "VALIDATION_ERROR"
+                example: "AGENT_EXISTS"
     "500":
       $ref: "../../components/responses/ServerError.yaml"
 
-#get all collector agents
-get:
-  tags:
-    - 👥 Users
-  summary: List all collector agents
-  description: |
-    Retrieve a paginated list of collector agents with optional filtering capabilities.
-    
-    **Required Permissions:** `read:collector_agent`
-    
-    **Filtering Options:**
-    - Filter by company ID
-    - Filter by status (active, inactive, suspended)
-    - Filter by region
-    - Filter by name (partial match)
-    - Filter by email (partial match)
-    
-    **Pagination:**
-    - Default limit: 20 items per page
-    - Maximum limit: 100 items per page
-  operationId: getAllCollectorAgents
-  security:
-    - BearerAuth: []
-  parameters:
-    - $ref: "../../components/parameters/PaginationLimit.yaml"
-    - $ref: "../../components/parameters/PaginationOffset.yaml"
-    - $ref: "../../components/parameters/CompanyId.yaml"
-    - name: status
-      in: query
-      description: Filter by agent status
-      required: false
-      schema:
-        type: string
-        enum: [active, inactive, suspended]
-        example: "active"
-    - name: region
-      in: query
-      description: Filter by region (partial match)
-      required: false
-      schema:
-        type: string
-        example: "Southwest"
-    - name: name
-      in: query
-      description: Filter by agent name (partial match)
-      required: false
-      schema:
-        type: string
-        example: "John"
-    - name: email
-      in: query
-      description: Filter by agent email (partial match)
-      required: false
-      schema:
-        type: string
-        example: "john.doe"
-  responses:
-    "200":
-      description: Collector agents retrieved successfully
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: "../../components/schemas/collector_agent.yaml"
-              pagination:
-                type: object
-                properties:
-                  limit:
-                    type: integer
-                    example: 20
-                  offset:
-                    type: integer
-                    example: 0
-                  total:
-                    type: integer
-                    example: 45
-                  page_count:
-                    type: integer
-                    example: 3
-                  has_next:
-                    type: boolean
-                    example: true
-                  has_prev:
-                    type: boolean
-                    example: false
-              summary:
-                type: object
-                properties:
-                  total_agents:
-                    type: integer
-                    example: 45
-                  active_agents:
-                    type: integer
-                    example: 38
-                  total_farms_covered:
-                    type: integer
-                    example: 1250
-          example:
-            data:
-              - id: "clh1234567890abcdef"
-                name: "John Doe"
-                email: "john.doe@cocoaflow.com"
-                phone: "+2348012345678"
-                company_id: "clh1234567890abcdef"
-                status: "active"
-                region: "Southwest Nigeria"
-                assigned_farms: 25
-                experience_years: 3
-                specializations: ["Quality Assessment", "Data Collection"]
-                created_at: "2024-01-15T10:30:00Z"
-                updated_at: "2024-01-15T10:30:00Z"
-              - id: "clh1234567890abcdeg"
-                name: "Jane Smith"
-                email: "jane.smith@cocoaflow.com"
-                phone: "+2348012345679"
-                company_id: "clh1234567890abcdef"
-                status: "active"
-                region: "Southeast Nigeria"
-                assigned_farms: 30
-                experience_years: 5
-                specializations: ["Data Collection", "Training"]
-                created_at: "2024-01-14T09:15:00Z"
-                updated_at: "2024-01-14T09:15:00Z"
-            pagination:
-              limit: 20
-              offset: 0
-              total: 45
-              page_count: 3
-              has_next: true
-              has_prev: false
-            summary:
-              total_agents: 45
-              active_agents: 38
-              total_farms_covered: 1250
-    "400":
-      $ref: "../../components/responses/ValidationError.yaml"
-    "401":
-      $ref: "../../components/responses/UnauthorizedError.yaml"
-    "403":
-      $ref: "../../components/responses/ForbiddenError.yaml"
-    "500":
-      $ref: "../../components/responses/ServerError.yaml"
-
-# update collector agent
 put:
   tags:
     - 👥 Users
   summary: Update collector agent
-  description: |
-    Update an existing collector agent.
-    
-    **Required Permissions:** `write:collector_agent`
-    
-    **Business Rules:**
-    - Cannot update agent status if they have active assignments
-    - Cannot change email if it's already in use by another agent
-    - Only administrators can update collector agents
-    - All changes are logged for audit purposes
+  description: Update an existing collector agent
   operationId: updateCollectorAgent
-  security:
-    - BearerAuth: []
   requestBody:
     required: true
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            name:
-              type: string
-              description: Updated agent name
-              example: "Updated John Doe"
-            email:
-              type: string
-              format: email
-              description: Updated agent email
-              example: "updated.john.doe@cocoaflow.com"
-            phone:
-              type: string
-              description: Updated agent phone number
-              example: "+2348012345680"
-            status:
-              type: string
-              enum: [active, inactive, suspended]
-              description: Updated agent status
-              example: "active"
-            region:
-              type: string
-              description: Updated assigned region
-              example: "Updated Southwest Nigeria"
-            experience_years:
-              type: integer
-              minimum: 0
-              description: Updated years of experience
-              example: 4
-            specializations:
-              type: array
-              items:
-                type: string
-              description: Updated specializations
-              example: ["Quality Assessment", "Data Collection", "Training"]
-        examples:
-          update_basic:
-            summary: Update basic agent details
-            description: Update agent name and contact information
-            value:
-              name: "Updated John Doe"
-              email: "updated.john.doe@cocoaflow.com"
-              phone: "+2348012345680"
-          update_detailed:
-            summary: Update detailed agent details
-            description: Update comprehensive agent details
-            value:
-              name: "Updated John Doe"
-              email: "updated.john.doe@cocoaflow.com"
-              phone: "+2348012345680"
-              status: "active"
-              region: "Updated Southwest Nigeria"
-              experience_years: 4
-              specializations: ["Quality Assessment", "Data Collection", "Training"]
+          $ref: "../../components/schemas/collector_agent.yaml"
   responses:
     "200":
       description: Collector agent updated successfully
@@ -342,19 +153,6 @@ put:
         application/json:
           schema:
             $ref: "../../components/schemas/collector_agent.yaml"
-          example:
-            id: "clh1234567890abcdef"
-            name: "Updated John Doe"
-            email: "updated.john.doe@cocoaflow.com"
-            phone: "+2348012345680"
-            company_id: "clh1234567890abcdef"
-            status: "active"
-            region: "Updated Southwest Nigeria"
-            assigned_farms: 25
-            experience_years: 4
-            specializations: ["Quality Assessment", "Data Collection", "Training"]
-            created_at: "2024-01-15T10:30:00Z"
-            updated_at: "2024-01-15T11:30:00Z"
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
@@ -370,104 +168,12 @@ put:
             properties:
               error:
                 type: string
-                example: "Collector Agent Not Found"
+                example: "Not Found"
               message:
                 type: string
-                example: "Collector agent with the specified ID was not found"
+                example: "Collector agent not found"
               code:
                 type: string
-                example: "COLLECTOR_AGENT_NOT_FOUND"
-    "409":
-      description: Collector agent update conflict
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Collector Agent Update Conflict"
-              message:
-                type: string
-                example: "Cannot update agent status while they have active assignments"
-              code:
-                type: string
-                example: "COLLECTOR_AGENT_UPDATE_CONFLICT"
-    "422":
-      description: Unprocessable Entity
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Validation Error"
-              message:
-                type: string
-                example: "Invalid data provided"
-              code:
-                type: string
-                example: "VALIDATION_ERROR"
-    "500":
-      $ref: "../../components/responses/ServerError.yaml"
-
-# delete collector agent
-delete:
-  tags:
-    - 👥 Users
-  summary: Delete collector agent
-  description: |
-    Delete a collector agent from the system.
-    
-    **Required Permissions:** `write:collector_agent`
-    
-    **Business Rules:**
-    - Cannot delete agents with active assignments
-    - Cannot delete agents with pending data collection tasks
-    - Only administrators can delete collector agents
-    - Soft delete - marks as deleted but preserves data for audit
-  operationId: deleteCollectorAgent
-  security:
-    - BearerAuth: []
-  responses:
-    "204":
-      description: Collector agent deleted successfully
-    "400":
-      description: Cannot delete collector agent
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Cannot Delete Collector Agent"
-              message:
-                type: string
-                example: "Cannot delete agent with active assignments"
-              code:
-                type: string
-                example: "COLLECTOR_AGENT_HAS_ASSIGNMENTS"
-    "401":
-      $ref: "../../components/responses/UnauthorizedError.yaml"
-    "403":
-      $ref: "../../components/responses/ForbiddenError.yaml"
-    "404":
-      description: Collector agent not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Collector Agent Not Found"
-              message:
-                type: string
-                example: "Collector agent with the specified ID was not found"
-              code:
-                type: string
-                example: "COLLECTOR_AGENT_NOT_FOUND"
+                example: "AGENT_NOT_FOUND"
     "500":
       $ref: "../../components/responses/ServerError.yaml"

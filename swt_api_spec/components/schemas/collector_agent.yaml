@@ -1,30 +1,70 @@
 #the collector agent data to be store through the api $anchor:
 type: object
+required:
+  - name
+  - email
+  - phone
+  - company_id
+  - status
 properties:
   id:
-    description: the identifier for the collector agent
     type: string
     format: cuid
     readOnly: true
-  code:
-    description: a random code assigned to the collector agent for specific project
-    type: string
-    format: string
+    description: "The unique ID of the collector agent"
+    example: "clh1234567890abcdef"
   name:
-    description: the name of the collector agent
     type: string
+    description: "Full name of the collector agent"
+    example: "John Doe"
+  email:
+    type: string
+    format: email
+    description: "Email address of the collector agent"
+    example: "john.doe@cocoaflow.com"
+  phone:
+    type: string
+    description: "Phone number of the collector agent"
+    example: "+2348012345678"
   company_id:
-    description: the company_id from which the collector agent belongs to and collects data for the project.
     type: string
     format: cuid
-    readOnly: true
+    description: "ID of the company the agent works for"
+    example: "clh1234567890abcdef"
+  status:
+    type: string
+    enum: ["active", "inactive", "suspended"]
+    description: "Current status of the collector agent"
+    example: "active"
+  region:
+    type: string
+    description: "Geographic region the agent operates in"
+    example: "Southwest Nigeria"
+  assigned_farms:
+    type: integer
+    minimum: 0
+    description: "Number of farms assigned to the agent"
+    example: 25
+  experience_years:
+    type: integer
+    minimum: 0
+    description: "Years of experience in the field"
+    example: 3
+  specializations:
+    type: array
+    description: "Areas of expertise"
+    items:
+      type: string
+    example: ["Quality Assessment", "Data Collection"]
   created_at:
-    description: the date and time when the collector agent was created
     type: string
     format: date-time
-    example: "2020-01-01T00:00:00Z"
+    readOnly: true
+    description: "When the agent record was created"
+    example: "2024-01-15T10:30:00Z"
   updated_at:
-    description: the date and time when the collector agent was updated
     type: string
     format: date-time
-    example: "2020-01-01T00:00:00Z"
+    readOnly: true
+    description: "When the agent record was last updated"
+    example: "2024-01-15T10:30:00Z"
