@@ -1,14 +1,22 @@
 # SenWiseTool JavaScript/TypeScript SDK
 
-Official JavaScript/TypeScript SDK for the SenWiseTool API - Cocoa Industry Management Platform.
+**Design Specification** for the SenWiseTool JavaScript/TypeScript SDK - Cocoa Industry Management Platform.
 
-## Installation
+> **Note**: This is a **design document** for an SDK that would be implemented when the SenWiseTool API is built. This project contains the API specification and design patterns, not a functional SDK.
+
+## Project Scope
+
+This repository contains the **API specification** and **SDK design patterns** for the SenWiseTool platform. The actual backend API and SDK implementations are not yet developed.
+
+## SDK Design Specification
+
+### Proposed Installation
 
 ```bash
 npm install @senwisetool/js-sdk
 ```
 
-## Quick Start
+### Proposed Usage Pattern
 
 ```typescript
 import { SenWiseToolAPI } from '@senwisetool/js-sdk';
@@ -45,16 +53,16 @@ const farms = await client.farms.list({
 });
 ```
 
-## Features
+## Planned Features
 
-- **TypeScript Support**: Full type definitions included
+- **TypeScript Support**: Full type definitions based on OpenAPI spec
 - **Authentication**: JWT Bearer token handling
 - **Rate Limiting**: Automatic request throttling
 - **Error Handling**: Comprehensive error types
 - **Pagination**: Built-in pagination helpers
 - **Webhooks**: Webhook signature verification
 
-## API Coverage
+## API Coverage (Based on Specification)
 
 - ✅ Companies Management
 - ✅ User Management  
@@ -67,11 +75,26 @@ const farms = await client.farms.list({
 - ✅ Training Sessions
 - ✅ Inspection Data
 
+## Current Status
+
+- **API Specification**: ✅ Complete (OpenAPI 3.1.0)
+- **Documentation**: ✅ Live at [https://project-apispec.vercel.app](https://project-apispec.vercel.app)
+- **Postman Collection**: ✅ Available
+- **SDK Implementation**: 🚧 Design phase only
+- **Backend API**: 🚧 Not yet implemented
+
 ## Documentation
 
 - [API Reference](https://project-apispec.vercel.app)
 - [Authentication Guide](https://project-apispec.vercel.app/#tag/Authentication)
-- [Examples](https://github.com/frckbrice/project-api_spec/tree/main/sdks/javascript/examples)
+- [OpenAPI Specification](./../../swt_api_spec/senwisetool.yaml)
+
+## Development Roadmap
+
+1. **Phase 1**: API Specification ✅ (Complete)
+2. **Phase 2**: Backend API Development 🚧 (Pending)
+3. **Phase 3**: SDK Implementation 🚧 (Pending)
+4. **Phase 4**: Production Deployment 🚧 (Pending)
 
 ## License
 

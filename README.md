@@ -128,6 +128,10 @@ project-api_spec/
 ├── docs/                    # Generated documentation
 ├── dist/                    # Bundled specifications
 ├── generated/               # Generated client libraries
+├── sdks/                    # SDK design specifications
+│   ├── javascript/          # JS/TS SDK design
+│   └── python/              # Python SDK design
+├── postman/                 # Postman collection
 ├── redocly.yaml            # Redocly configuration
 ├── Dockerfile              # Docker configuration
 ├── vercel.json             # Vercel deployment configuration
@@ -153,19 +157,6 @@ docker run -d -p 8080:8080 -v $(pwd):/app --name api-docs senwisetool-api-docs
 - **Easy Setup**: No need to install Node.js or dependencies locally
 - **Isolation**: Clean environment for development
 - **Portability**: Works the same way everywhere
-
-### Why No Docker Compose?
-
-Since we only have **one service** (documentation server), Docker Compose would be overkill. Direct Docker commands are simpler and more appropriate.
-
-### Why No Database?
-
-This is an **API specification project**, not a live API implementation. We only need:
-- **Documentation server** (Redocly)
-- **Static files** (OpenAPI spec, generated docs)
-- **Development tools** (linting, validation)
-
-Databases (PostgreSQL, Redis) are only needed when implementing the actual API backend.
 
 ## 🔧 Development
 
