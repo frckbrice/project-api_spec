@@ -78,7 +78,7 @@ post:
       content:
         application/json:
           schema:
-            $ref: ../components/schemas/campaign.yaml
+            $ref: "../../components/schemas/campaign.yaml"
           example:
             id: "clh1234567890abcdef"
             name: "Spring 2024 Harvest"
@@ -89,11 +89,11 @@ post:
             created_at: "2024-01-15T10:30:00Z"
             updated_at: "2024-01-15T10:30:00Z"
     "400":
-      $ref: ../components/responses/ValidationError.yaml
+      $ref: "../../components/responses/ValidationError.yaml"
     "401":
-      $ref: ../components/responses/UnauthorizedError.yaml
+      $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
-      $ref: ../components/responses/ForbiddenError.yaml
+      $ref: "../../components/responses/ForbiddenError.yaml"
     "409":
       description: Campaign already exists
       content:
@@ -111,7 +111,7 @@ post:
                 type: string
                 example: "CAMPAIGN_ALREADY_EXISTS"
     "500":
-      $ref: ../components/responses/ServerError.yaml
+      $ref: "../../components/responses/ServerError.yaml"
 
 #read all campaigns
 get:
@@ -136,11 +136,11 @@ get:
   security:
     - BearerAuth: []
   parameters:
-    - $ref: ../components/parameters/PaginationLimit.yaml
-    - $ref: ../components/parameters/PaginationOffset.yaml
-    - $ref: ../components/parameters/CompanyId.yaml
-    - $ref: ../components/parameters/DateRangeStart.yaml
-    - $ref: ../components/parameters/DateRangeEnd.yaml
+    - $ref: "../../components/parameters/PaginationLimit.yaml"
+    - $ref: "../../components/parameters/PaginationOffset.yaml"
+    - $ref: "../../components/parameters/CompanyId.yaml"
+    - $ref: "../../components/parameters/DateRangeStart.yaml"
+    - $ref: "../../components/parameters/DateRangeEnd.yaml"
     - name: status
       in: query
       description: Filter by campaign status
@@ -167,7 +167,7 @@ get:
               data:
                 type: array
                 items:
-                  $ref: ../components/schemas/campaign.yaml
+                  $ref: "../../components/schemas/campaign.yaml"
               pagination:
                 type: object
                 properties:
@@ -215,13 +215,13 @@ get:
               has_next: false
               has_prev: false
     "400":
-      $ref: ../components/responses/ValidationError.yaml
+      $ref: "../../components/responses/ValidationError.yaml"
     "401":
-      $ref: ../components/responses/UnauthorizedError.yaml
+      $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
-      $ref: ../components/responses/ForbiddenError.yaml
+      $ref: "../../components/responses/ForbiddenError.yaml"
     "500":
-      $ref: ../components/responses/ServerError.yaml
+      $ref: "../../components/responses/ServerError.yaml"
 
 #update a campaign
 put:
@@ -284,7 +284,7 @@ put:
       content:
         application/json:
           schema:
-            $ref: ../components/schemas/campaign.yaml
+            $ref: "../../components/schemas/campaign.yaml"
           example:
             id: "clh1234567890abcdef"
             name: "Spring 2024 Harvest"
@@ -295,11 +295,11 @@ put:
             created_at: "2024-01-15T10:30:00Z"
             updated_at: "2024-01-15T11:30:00Z"
     "400":
-      $ref: ../components/responses/ValidationError.yaml
+      $ref: "../../components/responses/ValidationError.yaml"
     "401":
-      $ref: ../components/responses/UnauthorizedError.yaml
+      $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
-      $ref: ../components/responses/ForbiddenError.yaml
+      $ref: "../../components/responses/ForbiddenError.yaml"
     "404":
       description: Campaign not found
       content:
@@ -333,7 +333,7 @@ put:
                 type: string
                 example: "CAMPAIGN_UPDATE_CONFLICT"
     "500":
-      $ref: ../components/responses/ServerError.yaml
+      $ref: "../../components/responses/ServerError.yaml"
 
 #delete a campaign
 delete:
@@ -373,9 +373,9 @@ delete:
                 type: string
                 example: "CAMPAIGN_HAS_PROJECTS"
     "401":
-      $ref: ../components/responses/UnauthorizedError.yaml
+      $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
-      $ref: ../components/responses/ForbiddenError.yaml
+      $ref: "../../components/responses/ForbiddenError.yaml"
     "404":
       description: Campaign not found
       content:
@@ -393,4 +393,4 @@ delete:
                 type: string
                 example: "CAMPAIGN_NOT_FOUND"
     "500":
-      $ref: ../components/responses/ServerError.yaml
+      $ref: "../../components/responses/ServerError.yaml"
