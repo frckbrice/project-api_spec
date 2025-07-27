@@ -49,17 +49,22 @@ theme:
           light: "#FC8181"
           dark: "#C53030"
           contrastText: "#FFFFFF"
-        gray:
-          50: "#F7FAFC"
-          100: "#EDF2F7"
-          200: "#E2E8F0"
-          300: "#CBD5E0"
-          400: "#A0AEC0"
-          500: "#718096"
-          600: "#4A5568"
-          700: "#2D3748"
-          800: "#1A202C"
-          900: "#171923"
+        text:
+          primary: "#F7FAFC"
+          secondary: "#E2E8F0"
+        border:
+          dark: "#4A5568"
+          light: "#2D3748"
+        http:
+          get: "#38B2AC"
+          post: "#48BB78"
+          put: "#ED8936"
+          delete: "#E53E3E"
+          options: "#9F7AEA"
+          patch: "#667EEA"
+          basic: "#718096"
+          link: "#4299E1"
+          head: "#A0AEC0"
       typography:
         fontSize: "16px"
         lineHeight: "1.5em"
@@ -72,11 +77,11 @@ theme:
         backgroundColor: "#F7FAFC"
         textColor: "#2D3748"
       rightPanel:
-        backgroundColor: "#F7FAFC"
-        textColor: "#2D3748"
+        backgroundColor: "#1F2937"
+        textColor: "#F7FAFC"
         width: "40%"
       codeBlock:
-        backgroundColor: "#2D3748"
+        backgroundColor: "#111827"
     generateCodeSamples:
       languages:
         - lang: curl
