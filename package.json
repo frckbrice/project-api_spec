@@ -41,7 +41,7 @@
     "lint:fix": "redocly lint ./swt_api_spec/cocoaflow-api.yaml",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md,yaml,yml}\"",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md,yaml,yml}\"",
-    "validate": "redocly validate ./swt_api_spec/cocoaflow-api.yaml",
+    "validate": "redocly lint ./swt_api_spec/cocoaflow-api.yaml",
     "test": "npm run lint && npm run validate && npm run format:check",
     "docs:serve": "redocly preview-docs ./swt_api_spec/cocoaflow-api.yaml --port 8080",
     "docs:build": "redocly build-docs ./swt_api_spec/cocoaflow-api.yaml -o ./public/index.html",

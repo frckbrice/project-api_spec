@@ -86,3 +86,4 @@ delete:
     - 🌿 Audits
   summary: Delete an audit
   description: Delete an existing audit
+  operationId: deleteAudit

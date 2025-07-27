@@ -2,17 +2,8 @@
 post:
   tags:
     - 🎓 Training
-  summary: Create training
-  description: |
-    Create a new training program for farmers and staff.
-    
-    **Required Permissions:** `write:training`
-    
-    **Business Rules:**
-    - Only administrators can create training programs
-    - Training must have valid start and end dates
-    - Maximum capacity must be positive
-    - Training location must be specified
+  summary: Create a training
+  description: Create a new training program
   operationId: createTraining
   security:
     - BearerAuth: []
@@ -25,37 +16,29 @@ post:
         examples:
           basic_training:
             summary: Basic training program
-            description: Create a training program with minimal information
+            description: Create a training with minimal information
             value:
               title: "Cocoa Farming Best Practices"
-              description: "Learn modern cocoa farming techniques"
-              start_date: "2024-02-01"
-              end_date: "2024-02-03"
               location: "Training Center A"
-              max_capacity: 50
+              start_date: "2024-02-01T00:00:00Z"
+              end_date: "2024-02-03T00:00:00Z"
+              company_id: "clh1234567890abcdef"
+              modules: ["Introduction", "Basic Techniques"]
           detailed_training:
             summary: Detailed training program
-            description: Create a comprehensive training program
+            description: Create a training with all available information
             value:
               title: "Advanced Cocoa Processing Techniques"
-              description: "Comprehensive training on cocoa processing and quality control"
-              start_date: "2024-02-01"
-              end_date: "2024-02-05"
               location: "Training Center A"
-              max_capacity: 30
-              instructor: "Dr. John Smith"
-              materials_required: ["Notebook", "Safety gear"]
-              certification_provided: true
-              cost: 150.00
+              start_date: "2024-02-01T00:00:00Z"
+              end_date: "2024-02-05T00:00:00Z"
+              company_id: "clh1234567890abcdef"
+              modules:
+                ["Introduction", "Advanced Processing", "Quality Control"]
+              training_sessions: ["clh1234567890abcdeg"]
   responses:
     "201":
       description: Training created successfully
-      headers:
-        Location:
-          description: URL of the created training resource
-          schema:
-            type: string
-            format: uri
       content:
         application/json:
           schema:
@@ -63,13 +46,12 @@ post:
           example:
             id: "clh1234567890abcdef"
             title: "Cocoa Farming Best Practices"
-            description: "Learn modern cocoa farming techniques"
-            start_date: "2024-02-01"
-            end_date: "2024-02-03"
             location: "Training Center A"
-            max_capacity: 50
-            current_enrollment: 0
-            status: "upcoming"
+            start_date: "2024-02-01T00:00:00Z"
+            end_date: "2024-02-03T00:00:00Z"
+            company_id: "clh1234567890abcdef"
+            modules: ["Introduction", "Basic Techniques"]
+            training_sessions: []
             created_at: "2024-01-15T10:30:00Z"
             updated_at: "2024-01-15T10:30:00Z"
     "400":
@@ -90,7 +72,7 @@ post:
                 example: "Training Already Exists"
               message:
                 type: string
-                example: "Training with this title and date range already exists"
+                example: "Training with the same title already exists"
               code:
                 type: string
                 example: "TRAINING_ALREADY_EXISTS"
@@ -101,23 +83,9 @@ post:
 get:
   tags:
     - 🎓 Training
-  summary: List all trainings
-  description: |
-    Retrieve a paginated list of training programs with optional filtering capabilities.
-    
-    **Required Permissions:** `read:training`
-    
-    **Filtering Options:**
-    - Filter by company ID
-    - Filter by training status
-    - Filter by date range
-    - Filter by location
-    - Filter by instructor
-    
-    **Pagination:**
-    - Default limit: 20 items per page
-    - Maximum limit: 100 items per page
-  operationId: getAllTraining
+  summary: Get all trainings
+  description: Retrieve all trainings with optional filtering
+  operationId: listTrainings
   security:
     - BearerAuth: []
   parameters:
@@ -126,47 +94,22 @@ get:
     - $ref: "../../components/parameters/CompanyId.yaml"
     - $ref: "../../components/parameters/DateRangeStart.yaml"
     - $ref: "../../components/parameters/DateRangeEnd.yaml"
-    - name: status
-      in: query
-      description: Filter by training status
-      required: false
-      schema:
-        type: string
-        enum: [upcoming, ongoing, completed, cancelled]
-        example: "upcoming"
-    - name: location
-      in: query
-      description: Filter by training location (partial match)
-      required: false
-      schema:
-        type: string
-        example: "Training Center"
-    - name: instructor
-      in: query
-      description: Filter by instructor name (partial match)
-      required: false
-      schema:
-        type: string
-        example: "Dr. Smith"
-    - name: min_capacity
-      in: query
-      description: Minimum capacity filter
-      required: false
-      schema:
-        type: integer
-        minimum: 0
-        example: 20
-    - name: max_capacity
-      in: query
-      description: Maximum capacity filter
-      required: false
-      schema:
-        type: integer
-        minimum: 0
-        example: 100
   responses:
     "200":
-      description: Trainings retrieved successfully
+      description: List of trainings retrieved successfully
+      headers:
+        X-Total-Count:
+          description: Total number of trainings matching the filter criteria
+          schema:
+            type: integer
+        X-Page-Count:
+          description: Total number of pages
+          schema:
+            type: integer
+        Link:
+          description: Pagination links (first, prev, next, last)
+          schema:
+            type: string
       content:
         application/json:
           schema:
@@ -179,81 +122,53 @@ get:
               pagination:
                 type: object
                 properties:
+                  total:
+                    type: integer
+                    example: 150
                   limit:
                     type: integer
                     example: 20
                   offset:
                     type: integer
                     example: 0
-                  total:
-                    type: integer
-                    example: 25
-                  page_count:
-                    type: integer
-                    example: 2
-                  has_next:
+                  has_more:
                     type: boolean
                     example: true
-                  has_prev:
-                    type: boolean
-                    example: false
-              summary:
-                type: object
-                properties:
-                  total_trainings:
-                    type: integer
-                    example: 25
-                  upcoming_trainings:
-                    type: integer
-                    example: 10
-                  ongoing_trainings:
-                    type: integer
-                    example: 5
-                  completed_trainings:
-                    type: integer
-                    example: 10
           example:
             data:
               - id: "clh1234567890abcdef"
                 title: "Cocoa Farming Best Practices"
-                description: "Learn modern cocoa farming techniques"
-                start_date: "2024-02-01"
-                end_date: "2024-02-03"
                 location: "Training Center A"
-                max_capacity: 50
-                current_enrollment: 25
-                status: "upcoming"
+                start_date: "2024-02-01T00:00:00Z"
+                end_date: "2024-02-03T00:00:00Z"
+                company_id: "clh1234567890abcdef"
+                modules: ["Introduction", "Basic Techniques"]
+                training_sessions: []
                 created_at: "2024-01-15T10:30:00Z"
                 updated_at: "2024-01-15T10:30:00Z"
               - id: "clh1234567890abcdeg"
                 title: "Advanced Cocoa Processing"
-                description: "Advanced techniques for cocoa processing"
-                start_date: "2024-02-05"
-                end_date: "2024-02-07"
                 location: "Training Center B"
-                max_capacity: 30
-                current_enrollment: 15
-                status: "upcoming"
+                start_date: "2024-02-05T00:00:00Z"
+                end_date: "2024-02-07T00:00:00Z"
+                company_id: "clh1234567890abcdei"
+                modules: ["Advanced Processing", "Quality Control"]
+                training_sessions: ["clh1234567890abcdeh"]
                 created_at: "2024-01-14T09:15:00Z"
                 updated_at: "2024-01-14T09:15:00Z"
             pagination:
+              total: 150
               limit: 20
               offset: 0
-              total: 25
-              page_count: 2
-              has_next: true
-              has_prev: false
-            summary:
-              total_trainings: 25
-              upcoming_trainings: 10
-              ongoing_trainings: 5
-              completed_trainings: 10
+              has_more: true
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
       $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
       $ref: "../../components/responses/ForbiddenError.yaml"
+    "429":
+      $ref: "../../components/responses/RateLimitError.yaml"
     "500":
       $ref: "../../components/responses/ServerError.yaml"
 
@@ -261,78 +176,26 @@ get:
 put:
   tags:
     - 🎓 Training
-  summary: Update training
-  description: |
-    Update an existing training program.
-    
-    **Required Permissions:** `write:training`
-    
-    **Business Rules:**
-    - Cannot update training that has already started
-    - Cannot reduce capacity below current enrollment
-    - Only administrators can update training programs
-    - All changes are logged for audit purposes
+  summary: Update a training
+  description: Update an existing training program
   operationId: updateTraining
   security:
     - BearerAuth: []
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: ID of the training to update
+      schema:
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
   requestBody:
     required: true
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            title:
-              type: string
-              description: Updated training title
-              example: "Updated Cocoa Farming Best Practices"
-            description:
-              type: string
-              description: Updated training description
-              example: "Updated description with new techniques"
-            start_date:
-              type: string
-              format: date
-              description: Updated start date
-              example: "2024-02-02"
-            end_date:
-              type: string
-              format: date
-              description: Updated end date
-              example: "2024-02-04"
-            location:
-              type: string
-              description: Updated training location
-              example: "Updated Training Center A"
-            max_capacity:
-              type: integer
-              minimum: 1
-              description: Updated maximum capacity
-              example: 60
-            instructor:
-              type: string
-              description: Updated instructor name
-              example: "Dr. Jane Doe"
-            cost:
-              type: number
-              minimum: 0
-              description: Updated training cost
-              example: 175.00
-        examples:
-          update_basic:
-            summary: Update basic training details
-            description: Update title, description, and location
-            value:
-              title: "Updated Cocoa Farming Best Practices"
-              description: "Updated description with new techniques"
-              location: "Updated Training Center A"
-          update_schedule:
-            summary: Update training schedule
-            description: Update dates and capacity
-            value:
-              start_date: "2024-02-02"
-              end_date: "2024-02-04"
-              max_capacity: 60
+          $ref: "../../components/schemas/training.yaml"
   responses:
     "200":
       description: Training updated successfully
@@ -343,15 +206,12 @@ put:
           example:
             id: "clh1234567890abcdef"
             title: "Updated Cocoa Farming Best Practices"
-            description: "Updated description with new techniques"
-            start_date: "2024-02-02"
-            end_date: "2024-02-04"
             location: "Updated Training Center A"
-            max_capacity: 60
-            current_enrollment: 25
-            status: "upcoming"
-            instructor: "Dr. Jane Doe"
-            cost: 175.00
+            start_date: "2024-02-02T00:00:00Z"
+            end_date: "2024-02-04T00:00:00Z"
+            company_id: "clh1234567890abcdef"
+            modules: ["Introduction", "Advanced Techniques"]
+            training_sessions: ["clh1234567890abcdeh"]
             created_at: "2024-01-15T10:30:00Z"
             updated_at: "2024-01-15T11:30:00Z"
     "400":
@@ -377,7 +237,7 @@ put:
                 type: string
                 example: "TRAINING_NOT_FOUND"
     "409":
-      description: Training update conflict
+      description: Update conflict
       content:
         application/json:
           schema:
@@ -385,13 +245,13 @@ put:
             properties:
               error:
                 type: string
-                example: "Training Update Conflict"
+                example: "Update Conflict"
               message:
                 type: string
-                example: "Cannot update training that has already started"
+                example: "Cannot update training in current state"
               code:
                 type: string
-                example: "TRAINING_ALREADY_STARTED"
+                example: "UPDATE_CONFLICT"
     "500":
       $ref: "../../components/responses/ServerError.yaml"
 
@@ -402,9 +262,9 @@ delete:
   summary: Delete training
   description: |
     Delete a training program from the system.
-    
+
     **Required Permissions:** `write:training`
-    
+
     **Business Rules:**
     - Cannot delete training that has already started
     - Cannot delete training with enrolled participants
