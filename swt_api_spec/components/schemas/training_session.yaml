@@ -1,56 +1,70 @@
-#the participant of the training session
 type: object
+required:
+  - training_id
+  - session_date
+  - location
+  - trainer_id
+  - max_participants
 properties:
   id:
     type: string
     format: cuid
     readOnly: true
-    description: "The unique Id of the participant."
-  first_name:
-    type: string
-    description: "first name of the participant"
-  last_name:
-    type: string
-    description: "last name of the participant"
-  email:
-    type: string
-    description: "email of the participant"
-
-  signature:
-    type: string
-    description: "To hold the digital the signature of the participant"
-  role:
-    type: string
-    description: To Specify the role of the participant
-    example: "Farmer, Trainer"
+    description: "The unique ID of the training session"
+    example: "clh1234567890abcdef"
   training_id:
     type: string
     format: cuid
-    description: the company id of the training
-    example: 1jssbbjsbjsbjs221878dd817dd87sd
-  phone:
+    description: "The ID of the training this session belongs to"
+    example: "clh1234567890abcdef"
+  session_date:
     type: string
-    description: To Specify the phone number of the participant
-  training_picture_urls:
+    format: date
+    description: "The date of the training session"
+    example: "2024-01-15"
+  start_time:
     type: string
-    format: array
-    description: the images of the training
-    example: ["https://senima.com/wp-content/uploads/2022/01/gold.png"]
-  report_url:
+    pattern: "^([0-1][0-9]|2[0-3]):[0-5][0-9]$"
+    description: "Start time of the session (24-hour format)"
+    example: "09:00"
+  end_time:
     type: string
-    description: To specify the report of the training
-    example: "https://senima.com/wp-content/uploads/2022/01/report.pdf"
-  trainer_proof_of_competency:
+    pattern: "^([0-1][0-9]|2[0-3]):[0-5][0-9]$"
+    description: "End time of the session (24-hour format)"
+    example: "17:00"
+  location:
     type: string
-    format: array
-    description: the training proof of competency of the trainer.
+    description: "Location where the session will be held"
+    example: "Community Center"
+  trainer_id:
+    type: string
+    format: cuid
+    description: "The ID of the trainer conducting the session"
+    example: "clh1234567890abcdef"
+  max_participants:
+    type: integer
+    minimum: 1
+    description: "Maximum number of participants allowed"
+    example: 30
+  current_participants:
+    type: integer
+    minimum: 0
+    description: "Current number of participants registered"
+    example: 25
+  status:
+    type: string
+    enum: ["scheduled", "in-progress", "completed", "cancelled"]
+    description: "Current status of the session"
+    example: "scheduled"
   created_at:
     type: string
     format: date-time
-    example: "2020-01-01T00:00:00Z"
-    description: "the date and time when the participant was created"
+    readOnly: true
+    description: "When the session was created"
+    example: "2024-01-15T10:30:00Z"
   updated_at:
     type: string
     format: date-time
-    example: "2020-01-01T00:00:00Z"
-    description: "the date and time when the participant was updated"
+    readOnly: true
+    description: "When the session was last updated"
+    example: "2024-01-15T10:30:00Z"
