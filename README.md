@@ -91,7 +91,8 @@ npm run prepare          # Prepare for publishing
 | Environment | URL | Status |
 |-------------|-----|--------|
 | Specification | `./swt_api_spec/cocoaflow-api.yaml` | ✅ Available |
-| Production | [https://project-apispec.vercel.app](https://project-apispec.vercel.app) | ✅ Available |
+| Documentation (Vercel) | [https://project-apispec.vercel.app](https://project-apispec.vercel.app) | ✅ Available |
+| Documentation (GitHub Pages) | [https://frckbrice.github.io/project-api_spec](https://frckbrice.github.io/project-api_spec) | 🚧 Coming Soon |
 | Local Preview | `http://localhost:8080` | ✅ Available |
 
 ### Authentication Examples
@@ -137,11 +138,11 @@ project-api_spec/
 
 ```bash
 # Build and run documentation server
-docker build -t senwisetool-api-docs .
-docker run -p 8080:8080 -v $(pwd):/app senwisetool-api-docs
+docker build -t cocoaflow-api-docs .
+docker run -p 8080:8080 -v $(pwd):/app cocoaflow-api-docs
 
 # Or run in detached mode
-docker run -d -p 8080:8080 -v $(pwd):/app --name api-docs senwisetool-api-docs
+docker run -d -p 8080:8080 -v $(pwd):/app --name api-docs cocoaflow-api-docs
 ```
 
 ### What Docker Provides
@@ -157,7 +158,7 @@ docker run -d -p 8080:8080 -v $(pwd):/app --name api-docs senwisetool-api-docs
 
 1. Create endpoint file in appropriate directory under `paths/`
 2. Define schema in `components/schemas/` if needed
-3. Add path reference to main `senwisetool.yaml`
+3. Add path reference to main `cocoaflow-api.yaml`
 4. Run `npm run lint` to validate
 5. Update documentation with examples
 
@@ -198,7 +199,7 @@ npm run generate:postman
 
 # Generate Python client
 npx @openapitools/openapi-generator-cli generate \
-  -i ./dist/senwisetool-api.yaml \
+  -i ./dist/cocoaflow-api.yaml \
   -g python \
   -o ./generated/python
 ```
@@ -311,8 +312,15 @@ This API specification follows industry best practices:
 
 ## 📞 Support
 
-### Community
-- **GitHub Issues**: [https://github.com/senwisetool/api-specification/issues](https://github.com/senwisetool/api-specification/issues)
+### Documentation & Resources
+- **API Documentation**: [https://project-apispec.vercel.app](https://project-apispec.vercel.app)
+- **GitHub Repository**: [https://github.com/frckbrice/project-api_spec](https://github.com/frckbrice/project-api_spec)
+- **OpenAPI Specification**: [https://project-apispec.vercel.app/cocoaflow-api.yaml](https://project-apispec.vercel.app/cocoaflow-api.yaml)
+
+### Community & Support
+- **GitHub Issues**: [https://github.com/frckbrice/project-api_spec/issues](https://github.com/frckbrice/project-api_spec/issues)
+- **Developer Contact**: [bricefrkc@gmail.com](mailto:bricefrkc@gmail.com)
+- **Portfolio**: [https://maebrieporfolio.vercel.app/](https://maebrieporfolio.vercel.app/)
 
 > **Note**: Since this is an API specification project, the actual API endpoints are not yet deployed. You can use the specification to understand the API design, generate client libraries, and contribute to the development process.
 
