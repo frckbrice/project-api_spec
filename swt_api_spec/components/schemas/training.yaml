@@ -14,9 +14,10 @@ properties:
     description: To specify the title of the training
     example: "Training Title"
   modules:
-    type: string
-    format: array
+    type: array
     description: To specify the modules of the training
+    items:
+      type: string
     example: ["Module 1", "Module 2"]
   end_date:
     type: string
@@ -30,12 +31,14 @@ properties:
     type: string
     format: cuid
     description: the company id of the training
-    example: 1jssbbjsbjsbjs221878dd817dd87sd
+    example: "clh1234567890abcdef"
   training_sessions:
-    type: string
-    format: array
+    type: array
     description: the attendance sheets of the training
-    example: ["1jssbbjsbjsbjs221878dd817dd87sd"]
+    items:
+      type: string
+      format: cuid
+    example: ["clh1234567890abcdef"]
   created_at:
     type: string
     format: date-time

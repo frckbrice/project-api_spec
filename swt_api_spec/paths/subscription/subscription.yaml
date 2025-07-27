@@ -22,7 +22,7 @@ post:
               start_date: "2024-02-01T00:00:00Z"
               end_date: "2025-02-01T00:00:00Z"
               status: "ACTIVE"
-              payment_mode: "Card"
+              payment_mode: "Card "
               auto_renewal: true
               billing_cycle: "monthly"
           detailed_subscription:
@@ -35,7 +35,7 @@ post:
               end_date: "2025-02-01T00:00:00Z"
               status: "ACTIVE"
               description: "Enterprise subscription with premium support"
-              payment_mode: "Card"
+              payment_mode: "Card "
               auto_renewal: true
               billing_cycle: "monthly"
               last_notification_date: "2024-01-15T10:30:00Z"
@@ -55,7 +55,7 @@ post:
             end_date: "2025-02-01T00:00:00Z"
             status: "ACTIVE"
             description: "Enterprise subscription with premium support"
-            payment_mode: "Card"
+            payment_mode: "Card "
             auto_renewal: true
             billing_cycle: "monthly"
             last_notification_date: "2024-01-15T10:30:00Z"
@@ -161,7 +161,7 @@ get:
                 end_date: "2025-02-01T00:00:00Z"
                 status: "ACTIVE"
                 description: "Enterprise subscription with premium support"
-                payment_mode: "Card"
+                payment_mode: "Card "
                 auto_renewal: true
                 billing_cycle: "monthly"
                 last_notification_date: "2024-01-15T10:30:00Z"
@@ -175,7 +175,7 @@ get:
                 end_date: "2024-12-31T00:00:00Z"
                 status: "ACTIVE"
                 description: "Standard subscription"
-                payment_mode: "PayPal"
+                payment_mode: "PayPal "
                 auto_renewal: false
                 billing_cycle: "yearly"
                 last_notification_date: "2023-12-15T09:00:00Z"
@@ -236,7 +236,7 @@ put:
             end_date: "2025-03-01T00:00:00Z"
             status: "ACTIVE"
             description: "Updated subscription details"
-            payment_mode: "Card"
+            payment_mode: "Card "
             auto_renewal: false
             billing_cycle: "quarterly"
             last_notification_date: "2024-01-15T10:30:00Z"

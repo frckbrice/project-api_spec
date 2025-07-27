@@ -1,23 +1,49 @@
+get:
+  tags:
+    - 🔐 Authentication
+  summary: Get current user
+  description: Get the currently authenticated user's information
+  operationId: getCurrentUser
+  security:
+    - BearerAuth: []
+  responses:
+    "200":
+      description: User profile retrieved successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                $ref: "../../components/schemas/user.yaml"
+          example:
+            success: true
+            data:
+              id: "clh1234567890abcdef"
+              email: "user@example.com"
+              first_name: "John"
+              last_name: "Doe"
+              role: "user"
+              company_id: "clh1234567890abcdef"
+              phone_number: "+2341234567890"
+              is_active: true
+              last_login: "2024-01-15T10:30:00Z"
+              created_at: "2024-01-15T10:30:00Z"
+              updated_at: "2024-01-15T10:30:00Z"
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"
+
 post:
   tags:
     - 🔐 Authentication
-  summary: User Login
-  description: |
-    Authenticate a user with email and password to obtain JWT tokens.
-    
-    **Authentication Flow:**
-    1. User provides email and password
-    2. System validates credentials
-    3. Returns JWT access token and refresh token
-    4. Access token expires in 24 hours
-    5. Refresh token expires in 30 days
-    
-    **Security Features:**
-    - Password hashing with bcrypt
-    - Rate limiting (5 attempts per 15 minutes)
-    - Account lockout after failed attempts
-    - Audit logging for security events
-  operationId: login
+  summary: Login user
+  description: Authenticate a user and get access tokens
+  operationId: loginUser
   requestBody:
     required: true
     content:
@@ -145,52 +171,3 @@ post:
       $ref: "../../components/responses/RateLimitError.yaml"
     "500":
       $ref: "../../components/responses/ServerError.yaml"
-
-get:
-  tags:
-    - 🔐 Authentication
-  summary: Get Current User
-  description: |
-    Retrieve the current authenticated user's profile information.
-    
-    **Required Permissions:** `read:profile`
-    
-    **Features:**
-    - Returns complete user profile
-    - Includes company information
-    - Shows user permissions and roles
-    - Returns last login timestamp
-  operationId: getCurrentUser
-  security:
-    - BearerAuth: []
-  responses:
-    "200":
-      description: User profile retrieved successfully
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: true
-              data:
-                $ref: "../../components/schemas/user.yaml"
-          example:
-            success: true
-            data:
-              id: "clh1234567890abcdef"
-              email: "user@example.com"
-              first_name: "John"
-              last_name: "Doe"
-              role: "user"
-              company_id: "clh1234567890abcdef"
-              phone_number: "+2341234567890"
-              is_active: true
-              last_login: "2024-01-15T10:30:00Z"
-              created_at: "2024-01-15T10:30:00Z"
-              updated_at: "2024-01-15T10:30:00Z"
-    "401":
-      $ref: "../../components/responses/UnauthorizedError.yaml"
-    "500":
-      $ref: "../../components/responses/ServerError.yaml" 

@@ -6,12 +6,14 @@ get:
     - 🌿 Audits
   summary: Get all audits
   description: Retrieve all audits with filtering options
+  operationId: listAudits
 
 post:
   tags:
     - 🌿 Audits
   summary: Create a new audit
   description: Create a new project or market audit
+  operationId: createAudit
 
 put:
   tags:
