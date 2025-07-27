@@ -1,9 +1,18 @@
 # create a transaction
 post:
   tags:
-    - Transaction
-  summary: create a transaction
-  description: To create a transaction made between at the end of market that represents the information about this hand on operation.
+    - 💰 Transactions
+  summary: Create a transaction
+  description: |
+    Create a transaction made at the end of market that represents the information about this hand on operation.
+    
+    **Required Permissions:** `write:transactions`
+    
+    **Business Rules:**
+    - Transaction amount must be positive
+    - Transaction must be associated with a valid market session
+    - Transaction status starts as 'pending' and can be updated
+    - Only authorized users can create transactions
   operationId: createTransaction
   security:
     - BearerAuth: []
@@ -13,57 +22,412 @@ post:
       application/json:
         schema:
           $ref: ../components/schemas/transaction.yaml
+        examples:
+          basic_transaction:
+            summary: Basic transaction
+            description: Create a transaction with minimal information
+            value:
+              market_id: "clh1234567890abcdef"
+              farmer_id: "clh1234567890abcdef"
+              amount: 150000
+              currency: "NGN"
+              transaction_type: "purchase"
+          detailed_transaction:
+            summary: Detailed transaction
+            description: Create a transaction with full details
+            value:
+              market_id: "clh1234567890abcdef"
+              farmer_id: "clh1234567890abcdef"
+              amount: 150000
+              currency: "NGN"
+              transaction_type: "purchase"
+              description: "Cocoa beans purchase - 500kg at 300 NGN/kg"
+              payment_method: "cash"
+              reference_number: "TXN-2024-001"
   responses:
     "201":
-      description: transaction created
-    "401":
-      description: Unauthorized access
-    "403":
-      description: Forbidden access
-    "500":
-      description: internal server error
-
-# get all transaction
-get:
-  tags:
-    - Transaction
-  summary: get all transaction
-  description: To list all transactions made by a company.
-  operationId: getAllTransaction
-  security:
-    - BearerAuth: []
-  parameters:
-    - name: market_id
-      in: query
-      description: get the receipt produced during a single market
-      schema:
-        format: cuid
-        type: string
-      required: false
-    - name: page
-      in: query
-      description: page number
-      required: false
-      schema:
-        type: integer
-        example: 1
-    - name: limit
-      in: query
-      description: page size
-      required: false
-      schema:
-        type: integer
-        example: 20
-  responses:
-    "200":
-      description: transaction
+      description: Transaction created successfully
+      headers:
+        Location:
+          description: URL of the created transaction resource
+          schema:
+            type: string
+            format: uri
       content:
         application/json:
           schema:
             $ref: ../components/schemas/transaction.yaml
+          example:
+            id: "clh1234567890abcdef"
+            market_id: "clh1234567890abcdef"
+            farmer_id: "clh1234567890abcdef"
+            amount: 150000
+            currency: "NGN"
+            transaction_type: "purchase"
+            status: "pending"
+            created_at: "2024-01-15T10:30:00Z"
+            updated_at: "2024-01-15T10:30:00Z"
+    "400":
+      $ref: ../components/responses/ValidationError.yaml
     "401":
-      description: Unauthorized access
+      $ref: ../components/responses/UnauthorizedError.yaml
     "403":
-      description: Forbidden access
+      $ref: ../components/responses/ForbiddenError.yaml
+    "409":
+      description: Transaction already exists
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Transaction Already Exists"
+              message:
+                type: string
+                example: "A transaction with this reference already exists"
+              code:
+                type: string
+                example: "TRANSACTION_ALREADY_EXISTS"
     "500":
-      description: internal server error
+      $ref: ../components/responses/ServerError.yaml
+
+# get all transaction
+get:
+  tags:
+    - 💰 Transactions
+  summary: List all transactions
+  description: |
+    Retrieve a paginated list of transactions with optional filtering capabilities.
+    
+    **Required Permissions:** `read:transactions`
+    
+    **Filtering Options:**
+    - Filter by market ID
+    - Filter by farmer ID
+    - Filter by transaction type
+    - Filter by status
+    - Filter by date range
+    - Filter by amount range
+    
+    **Pagination:**
+    - Default limit: 20 items per page
+    - Maximum limit: 100 items per page
+  operationId: getAllTransaction
+  security:
+    - BearerAuth: []
+  parameters:
+    - $ref: ../components/parameters/PaginationLimit.yaml
+    - $ref: ../components/parameters/PaginationOffset.yaml
+    - $ref: ../components/parameters/CompanyId.yaml
+    - $ref: ../components/parameters/DateRangeStart.yaml
+    - $ref: ../components/parameters/DateRangeEnd.yaml
+    - name: market_id
+      in: query
+      description: Filter by market ID
+      required: false
+      schema:
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
+    - name: farmer_id
+      in: query
+      description: Filter by farmer ID
+      required: false
+      schema:
+        type: string
+        format: cuid
+        example: "clh1234567890abcdef"
+    - name: transaction_type
+      in: query
+      description: Filter by transaction type
+      required: false
+      schema:
+        type: string
+        enum: [purchase, payment, refund, adjustment]
+        example: "purchase"
+    - name: status
+      in: query
+      description: Filter by transaction status
+      required: false
+      schema:
+        type: string
+        enum: [pending, completed, failed, cancelled]
+        example: "completed"
+    - name: min_amount
+      in: query
+      description: Minimum transaction amount
+      required: false
+      schema:
+        type: number
+        example: 1000
+    - name: max_amount
+      in: query
+      description: Maximum transaction amount
+      required: false
+      schema:
+        type: number
+        example: 1000000
+  responses:
+    "200":
+      description: Transactions retrieved successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: ../components/schemas/transaction.yaml
+              pagination:
+                type: object
+                properties:
+                  limit:
+                    type: integer
+                    example: 20
+                  offset:
+                    type: integer
+                    example: 0
+                  total:
+                    type: integer
+                    example: 150
+                  page_count:
+                    type: integer
+                    example: 8
+                  has_next:
+                    type: boolean
+                    example: true
+                  has_prev:
+                    type: boolean
+                    example: false
+              summary:
+                type: object
+                properties:
+                  total_amount:
+                    type: number
+                    example: 15000000
+                  total_count:
+                    type: integer
+                    example: 150
+                  average_amount:
+                    type: number
+                    example: 100000
+          example:
+            data:
+              - id: "clh1234567890abcdef"
+                market_id: "clh1234567890abcdef"
+                farmer_id: "clh1234567890abcdef"
+                amount: 150000
+                currency: "NGN"
+                transaction_type: "purchase"
+                status: "completed"
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+              - id: "clh1234567890abcdeg"
+                market_id: "clh1234567890abcdef"
+                farmer_id: "clh1234567890abcdeg"
+                amount: 200000
+                currency: "NGN"
+                transaction_type: "purchase"
+                status: "completed"
+                created_at: "2024-01-15T09:15:00Z"
+                updated_at: "2024-01-15T09:15:00Z"
+            pagination:
+              limit: 20
+              offset: 0
+              total: 150
+              page_count: 8
+              has_next: true
+              has_prev: false
+            summary:
+              total_amount: 15000000
+              total_count: 150
+              average_amount: 100000
+    "400":
+      $ref: ../components/responses/ValidationError.yaml
+    "401":
+      $ref: ../components/responses/UnauthorizedError.yaml
+    "403":
+      $ref: ../components/responses/ForbiddenError.yaml
+    "500":
+      $ref: ../components/responses/ServerError.yaml
+
+# update a transaction
+put:
+  tags:
+    - 💰 Transactions
+  summary: Update a transaction
+  description: |
+    Update an existing transaction's information.
+    
+    **Required Permissions:** `write:transactions`
+    
+    **Business Rules:**
+    - Cannot update completed transactions
+    - Cannot change transaction amount after completion
+    - Only transaction owner or admin can update transaction
+    - Status changes are logged for audit purposes
+  operationId: updateTransaction
+  security:
+    - BearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: string
+              enum: [pending, completed, failed, cancelled]
+              description: Transaction status
+              example: "completed"
+            description:
+              type: string
+              description: Transaction description
+              example: "Updated transaction description"
+            reference_number:
+              type: string
+              description: Reference number for the transaction
+              example: "TXN-2024-001"
+            payment_method:
+              type: string
+              enum: [cash, bank_transfer, mobile_money, check]
+              description: Payment method used
+              example: "bank_transfer"
+        examples:
+          update_status:
+            summary: Update transaction status
+            description: Update transaction status to completed
+            value:
+              status: "completed"
+              description: "Payment received via bank transfer"
+          update_details:
+            summary: Update transaction details
+            description: Update transaction with additional details
+            value:
+              status: "completed"
+              description: "Payment received via bank transfer"
+              reference_number: "TXN-2024-001"
+              payment_method: "bank_transfer"
+  responses:
+    "200":
+      description: Transaction updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/transaction.yaml
+          example:
+            id: "clh1234567890abcdef"
+            market_id: "clh1234567890abcdef"
+            farmer_id: "clh1234567890abcdef"
+            amount: 150000
+            currency: "NGN"
+            transaction_type: "purchase"
+            status: "completed"
+            description: "Payment received via bank transfer"
+            reference_number: "TXN-2024-001"
+            payment_method: "bank_transfer"
+            created_at: "2024-01-15T10:30:00Z"
+            updated_at: "2024-01-15T11:30:00Z"
+    "400":
+      $ref: ../components/responses/ValidationError.yaml
+    "401":
+      $ref: ../components/responses/UnauthorizedError.yaml
+    "403":
+      $ref: ../components/responses/ForbiddenError.yaml
+    "404":
+      description: Transaction not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Transaction Not Found"
+              message:
+                type: string
+                example: "Transaction with the specified ID was not found"
+              code:
+                type: string
+                example: "TRANSACTION_NOT_FOUND"
+    "409":
+      description: Transaction update conflict
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Transaction Update Conflict"
+              message:
+                type: string
+                example: "Cannot update completed transaction"
+              code:
+                type: string
+                example: "TRANSACTION_UPDATE_CONFLICT"
+    "500":
+      $ref: ../components/responses/ServerError.yaml
+
+# delete a transaction
+delete:
+  tags:
+    - 💰 Transactions
+  summary: Delete a transaction
+  description: |
+    Delete a transaction from the system.
+    
+    **Required Permissions:** `write:transactions`
+    
+    **Business Rules:**
+    - Cannot delete completed transactions
+    - Cannot delete transactions older than 30 days
+    - Only transaction owner or admin can delete transaction
+    - Soft delete - marks transaction as deleted but preserves data
+  operationId: deleteTransaction
+  security:
+    - BearerAuth: []
+  responses:
+    "204":
+      description: Transaction deleted successfully
+    "400":
+      description: Cannot delete transaction
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Cannot Delete Transaction"
+              message:
+                type: string
+                example: "Cannot delete completed transaction"
+              code:
+                type: string
+                example: "TRANSACTION_ALREADY_COMPLETED"
+    "401":
+      $ref: ../components/responses/UnauthorizedError.yaml
+    "403":
+      $ref: ../components/responses/ForbiddenError.yaml
+    "404":
+      description: Transaction not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Transaction Not Found"
+              message:
+                type: string
+                example: "Transaction with the specified ID was not found"
+              code:
+                type: string
+                example: "TRANSACTION_NOT_FOUND"
+    "500":
+      $ref: ../components/responses/ServerError.yaml

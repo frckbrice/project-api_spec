@@ -1042,10 +1042,245 @@ paths:
   /campaign:
     post:
       tags:
-        - Campaign
+        - 📈 Campaigns
       summary: Create a new campaign
-      description: Create a new campaign from which all the operations like projects will be performed.
+      description: |
+        Create a new campaign from which all the operations like projects will be performed.
+
+        **Required Permissions:** `write:campaigns`
+
+        **Business Rules:**
+        - Campaign names must be unique within a company
+        - Campaign dates cannot overlap with existing campaigns
+        - Only one active campaign per company at a time
       operationId: createCampaign
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - start_date
+                - end_date
+              properties:
+                name:
+                  type: string
+                  description: Campaign name (e.g., "2024-2025 Season")
+                  example: 2024-2025 Season
+                description:
+                  type: string
+                  description: Campaign description
+                  example: Main cocoa harvesting campaign for 2024-2025 season
+                start_date:
+                  type: string
+                  format: date
+                  description: Campaign start date
+                  example: '2024-09-01'
+                end_date:
+                  type: string
+                  format: date
+                  description: Campaign end date
+                  example: '2025-03-31'
+                company_id:
+                  type: string
+                  format: cuid
+                  description: Company ID for the campaign
+                  example: clh1234567890abcdef
+            examples:
+              basic_campaign:
+                summary: Basic campaign
+                description: Create a campaign with minimal information
+                value:
+                  name: 2024-2025 Season
+                  start_date: '2024-09-01'
+                  end_date: '2025-03-31'
+              detailed_campaign:
+                summary: Detailed campaign
+                description: Create a campaign with full details
+                value:
+                  name: 2024-2025 Season
+                  description: Main cocoa harvesting campaign for 2024-2025 season
+                  start_date: '2024-09-01'
+                  end_date: '2025-03-31'
+                  company_id: clh1234567890abcdef
+      responses:
+        '201':
+          description: Campaign created successfully
+          headers:
+            Location:
+              description: URL of the created campaign resource
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/campaign'
+              example:
+                id: clh1234567890abcdef
+                name: 2024-2025 Season
+                description: Main cocoa harvesting campaign for 2024-2025 season
+                start_date: '2024-09-01'
+                end_date: '2025-03-31'
+                company_id: clh1234567890abcdef
+                status: active
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T10:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '409':
+          description: Campaign already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Campaign Already Exists
+                  message:
+                    type: string
+                    example: A campaign with this name already exists
+                  code:
+                    type: string
+                    example: CAMPAIGN_ALREADY_EXISTS
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    get:
+      tags:
+        - 📈 Campaigns
+      summary: List all campaigns
+      description: |
+        Retrieve a paginated list of campaigns with optional filtering capabilities.
+
+        **Required Permissions:** `read:campaigns`
+
+        **Filtering Options:**
+        - Filter by company ID
+        - Filter by status (active, inactive, completed)
+        - Filter by date range
+        - Filter by campaign name
+
+        **Pagination:**
+        - Default limit: 20 items per page
+        - Maximum limit: 100 items per page
+      operationId: getAllCampaigns
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationOffset'
+        - $ref: '#/components/parameters/CompanyId'
+        - $ref: '#/components/parameters/DateRangeStart'
+        - $ref: '#/components/parameters/DateRangeEnd'
+        - name: status
+          in: query
+          description: Filter by campaign status
+          required: false
+          schema:
+            type: string
+            enum:
+              - active
+              - inactive
+              - completed
+            example: active
+        - name: name
+          in: query
+          description: Filter by campaign name (partial match)
+          required: false
+          schema:
+            type: string
+            example: 2024-2025
+      responses:
+        '200':
+          description: Campaign list retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/campaign'
+                  pagination:
+                    type: object
+                    properties:
+                      limit:
+                        type: integer
+                        example: 20
+                      offset:
+                        type: integer
+                        example: 0
+                      total:
+                        type: integer
+                        example: 5
+                      page_count:
+                        type: integer
+                        example: 1
+                      has_next:
+                        type: boolean
+                        example: false
+                      has_prev:
+                        type: boolean
+                        example: false
+              example:
+                data:
+                  - id: clh1234567890abcdef
+                    name: 2024-2025 Season
+                    description: Main cocoa harvesting campaign for 2024-2025 season
+                    start_date: '2024-09-01'
+                    end_date: '2025-03-31'
+                    company_id: clh1234567890abcdef
+                    status: active
+                    created_at: '2024-01-15T10:30:00Z'
+                    updated_at: '2024-01-15T10:30:00Z'
+                  - id: clh1234567890abcdeg
+                    name: 2023-2024 Season
+                    description: Previous cocoa harvesting campaign
+                    start_date: '2023-09-01'
+                    end_date: '2024-03-31'
+                    company_id: clh1234567890abcdef
+                    status: completed
+                    created_at: '2023-08-15T10:30:00Z'
+                    updated_at: '2024-03-31T23:59:59Z'
+                pagination:
+                  limit: 20
+                  offset: 0
+                  total: 2
+                  page_count: 1
+                  has_next: false
+                  has_prev: false
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    put:
+      tags:
+        - 📈 Campaigns
+      summary: Update a campaign
+      description: |
+        Update an existing campaign's information.
+
+        **Required Permissions:** `write:campaigns`
+
+        **Business Rules:**
+        - Cannot update campaign dates if projects are already associated
+        - Cannot change status to inactive if campaign has active projects
+        - Only campaign owner or admin can update campaign
+      operationId: updateCampaign
       security:
         - BearerAuth: []
       requestBody:
@@ -1057,43 +1292,153 @@ paths:
               properties:
                 name:
                   type: string
-                  example: 2024-2025
+                  description: Campaign name
+                  example: 2024-2025 Season Updated
                 description:
                   type: string
+                  description: Campaign description
+                  example: Updated campaign description
+                start_date:
+                  type: string
+                  format: date
+                  description: Campaign start date
+                  example: '2024-09-01'
+                end_date:
+                  type: string
+                  format: date
+                  description: Campaign end date
+                  example: '2025-03-31'
+                status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                    - completed
+                  description: Campaign status
+                  example: active
+            examples:
+              update_campaign:
+                summary: Update campaign
+                description: Update campaign with new information
+                value:
+                  name: 2024-2025 Season Updated
+                  description: Updated campaign description
+                  status: active
       responses:
-        '201':
-          description: Campaign created successfully
+        '200':
+          description: Campaign updated successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/campaign'
-        '405':
-          description: method not allowed
-        '500':
-          description: Internal server error
-    get:
-      tags:
-        - Campaign
-      summary: List all campaigns
-      description: To list all campaigns in the system. This information is used in the company dashboard to display all the campaigns. Only administrators can use this operation. If you want to get all the campaigns in the system, use the **getAllCampaigns** operation.
-      operationId: getAllCampaigns
-      security:
-        - BearerAuth: []
-      responses:
-        '200':
-          description: Campaign list
+              example:
+                id: clh1234567890abcdef
+                name: 2024-2025 Season Updated
+                description: Updated campaign description
+                start_date: '2024-09-01'
+                end_date: '2025-03-31'
+                company_id: clh1234567890abcdef
+                status: active
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T11:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Campaign not found
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/campaign'
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Campaign Not Found
+                  message:
+                    type: string
+                    example: Campaign with the specified ID was not found
+                  code:
+                    type: string
+                    example: CAMPAIGN_NOT_FOUND
+        '409':
+          description: Campaign update conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Campaign Update Conflict
+                  message:
+                    type: string
+                    example: Cannot update campaign due to existing projects
+                  code:
+                    type: string
+                    example: CAMPAIGN_UPDATE_CONFLICT
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    delete:
+      tags:
+        - 📈 Campaigns
+      summary: Delete a campaign
+      description: |
+        Delete a campaign from the system.
+
+        **Required Permissions:** `write:campaigns`
+
+        **Business Rules:**
+        - Cannot delete campaigns with associated projects
+        - Cannot delete active campaigns
+        - Only campaign owner or admin can delete campaign
+        - Soft delete - marks campaign as deleted but preserves data
+      operationId: deleteCampaign
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Campaign deleted successfully
         '400':
-          description: bad request
+          description: Cannot delete campaign
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Cannot Delete Campaign
+                  message:
+                    type: string
+                    example: Campaign has associated projects and cannot be deleted
+                  code:
+                    type: string
+                    example: CAMPAIGN_HAS_PROJECTS
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
         '404':
           description: Campaign not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Campaign Not Found
+                  message:
+                    type: string
+                    example: Campaign with the specified ID was not found
+                  code:
+                    type: string
+                    example: CAMPAIGN_NOT_FOUND
         '500':
-          description: Internal server error
+          $ref: '#/components/responses/ServerError-2'
   /price_plan:
     post:
       tags:
@@ -1449,7 +1794,7 @@ paths:
                   village: Ibadan Village
                   division: Oyo Division
                   council: Ibadan Council
-                  farm_image_url: https://storage.senwisetool.com/farms/farm_123.jpg
+                  farm_image_url: https://storage.cocoaflow.com/farms/farm_123.jpg
       responses:
         '201':
           description: Farm created successfully
@@ -1472,7 +1817,7 @@ paths:
                 village: Ibadan Village
                 division: Oyo Division
                 council: Ibadan Council
-                farm_image_url: https://storage.senwisetool.com/farms/farm_123.jpg
+                farm_image_url: https://storage.cocoaflow.com/farms/farm_123.jpg
                 created_at: '2024-01-15T10:30:00Z'
                 updated_at: '2024-01-15T10:30:00Z'
         '400':
@@ -1656,7 +2001,7 @@ paths:
                     village: Ibadan Village
                     division: Oyo Division
                     council: Ibadan Council
-                    farm_image_url: https://storage.senwisetool.com/farms/farm_123.jpg
+                    farm_image_url: https://storage.cocoaflow.com/farms/farm_123.jpg
                     created_at: '2024-01-15T10:30:00Z'
                     updated_at: '2024-01-15T10:30:00Z'
                   - id: clh1234567890abcdeg
@@ -2444,9 +2789,18 @@ paths:
   /transaction:
     post:
       tags:
-        - Transaction
-      summary: create a transaction
-      description: To create a transaction made between at the end of market that represents the information about this hand on operation.
+        - 💰 Transactions
+      summary: Create a transaction
+      description: |
+        Create a transaction made at the end of market that represents the information about this hand on operation.
+
+        **Required Permissions:** `write:transactions`
+
+        **Business Rules:**
+        - Transaction amount must be positive
+        - Transaction must be associated with a valid market session
+        - Transaction status starts as 'pending' and can be updated
+        - Only authorized users can create transactions
       operationId: createTransaction
       security:
         - BearerAuth: []
@@ -2456,58 +2810,425 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/transaction'
+            examples:
+              basic_transaction:
+                summary: Basic transaction
+                description: Create a transaction with minimal information
+                value:
+                  market_id: clh1234567890abcdef
+                  farmer_id: clh1234567890abcdef
+                  amount: 150000
+                  currency: NGN
+                  transaction_type: purchase
+              detailed_transaction:
+                summary: Detailed transaction
+                description: Create a transaction with full details
+                value:
+                  market_id: clh1234567890abcdef
+                  farmer_id: clh1234567890abcdef
+                  amount: 150000
+                  currency: NGN
+                  transaction_type: purchase
+                  description: Cocoa beans purchase - 500kg at 300 NGN/kg
+                  payment_method: cash
+                  reference_number: TXN-2024-001
       responses:
         '201':
-          description: transaction created
-        '401':
-          description: Unauthorized access
-        '403':
-          description: Forbidden access
-        '500':
-          description: internal server error
-    get:
-      tags:
-        - Transaction
-      summary: get all transaction
-      description: To list all transactions made by a company.
-      operationId: getAllTransaction
-      security:
-        - BearerAuth: []
-      parameters:
-        - name: market_id
-          in: query
-          description: get the receipt produced during a single market
-          schema:
-            format: cuid
-            type: string
-          required: false
-        - name: page
-          in: query
-          description: page number
-          required: false
-          schema:
-            type: integer
-            example: 1
-        - name: limit
-          in: query
-          description: page size
-          required: false
-          schema:
-            type: integer
-            example: 20
-      responses:
-        '200':
-          description: transaction
+          description: Transaction created successfully
+          headers:
+            Location:
+              description: URL of the created transaction resource
+              schema:
+                type: string
+                format: uri
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/transaction'
+              example:
+                id: clh1234567890abcdef
+                market_id: clh1234567890abcdef
+                farmer_id: clh1234567890abcdef
+                amount: 150000
+                currency: NGN
+                transaction_type: purchase
+                status: pending
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T10:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
         '401':
-          description: Unauthorized access
+          $ref: '#/components/responses/UnauthorizedError-2'
         '403':
-          description: Forbidden access
+          $ref: '#/components/responses/ForbiddenError-2'
+        '409':
+          description: Transaction already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Transaction Already Exists
+                  message:
+                    type: string
+                    example: A transaction with this reference already exists
+                  code:
+                    type: string
+                    example: TRANSACTION_ALREADY_EXISTS
         '500':
-          description: internal server error
+          $ref: '#/components/responses/ServerError-2'
+    get:
+      tags:
+        - 💰 Transactions
+      summary: List all transactions
+      description: |
+        Retrieve a paginated list of transactions with optional filtering capabilities.
+
+        **Required Permissions:** `read:transactions`
+
+        **Filtering Options:**
+        - Filter by market ID
+        - Filter by farmer ID
+        - Filter by transaction type
+        - Filter by status
+        - Filter by date range
+        - Filter by amount range
+
+        **Pagination:**
+        - Default limit: 20 items per page
+        - Maximum limit: 100 items per page
+      operationId: getAllTransaction
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationOffset'
+        - $ref: '#/components/parameters/CompanyId'
+        - $ref: '#/components/parameters/DateRangeStart'
+        - $ref: '#/components/parameters/DateRangeEnd'
+        - name: market_id
+          in: query
+          description: Filter by market ID
+          required: false
+          schema:
+            type: string
+            format: cuid
+            example: clh1234567890abcdef
+        - name: farmer_id
+          in: query
+          description: Filter by farmer ID
+          required: false
+          schema:
+            type: string
+            format: cuid
+            example: clh1234567890abcdef
+        - name: transaction_type
+          in: query
+          description: Filter by transaction type
+          required: false
+          schema:
+            type: string
+            enum:
+              - purchase
+              - payment
+              - refund
+              - adjustment
+            example: purchase
+        - name: status
+          in: query
+          description: Filter by transaction status
+          required: false
+          schema:
+            type: string
+            enum:
+              - pending
+              - completed
+              - failed
+              - cancelled
+            example: completed
+        - name: min_amount
+          in: query
+          description: Minimum transaction amount
+          required: false
+          schema:
+            type: number
+            example: 1000
+        - name: max_amount
+          in: query
+          description: Maximum transaction amount
+          required: false
+          schema:
+            type: number
+            example: 1000000
+      responses:
+        '200':
+          description: Transactions retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/transaction'
+                  pagination:
+                    type: object
+                    properties:
+                      limit:
+                        type: integer
+                        example: 20
+                      offset:
+                        type: integer
+                        example: 0
+                      total:
+                        type: integer
+                        example: 150
+                      page_count:
+                        type: integer
+                        example: 8
+                      has_next:
+                        type: boolean
+                        example: true
+                      has_prev:
+                        type: boolean
+                        example: false
+                  summary:
+                    type: object
+                    properties:
+                      total_amount:
+                        type: number
+                        example: 15000000
+                      total_count:
+                        type: integer
+                        example: 150
+                      average_amount:
+                        type: number
+                        example: 100000
+              example:
+                data:
+                  - id: clh1234567890abcdef
+                    market_id: clh1234567890abcdef
+                    farmer_id: clh1234567890abcdef
+                    amount: 150000
+                    currency: NGN
+                    transaction_type: purchase
+                    status: completed
+                    created_at: '2024-01-15T10:30:00Z'
+                    updated_at: '2024-01-15T10:30:00Z'
+                  - id: clh1234567890abcdeg
+                    market_id: clh1234567890abcdef
+                    farmer_id: clh1234567890abcdeg
+                    amount: 200000
+                    currency: NGN
+                    transaction_type: purchase
+                    status: completed
+                    created_at: '2024-01-15T09:15:00Z'
+                    updated_at: '2024-01-15T09:15:00Z'
+                pagination:
+                  limit: 20
+                  offset: 0
+                  total: 150
+                  page_count: 8
+                  has_next: true
+                  has_prev: false
+                summary:
+                  total_amount: 15000000
+                  total_count: 150
+                  average_amount: 100000
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    put:
+      tags:
+        - 💰 Transactions
+      summary: Update a transaction
+      description: |
+        Update an existing transaction's information.
+
+        **Required Permissions:** `write:transactions`
+
+        **Business Rules:**
+        - Cannot update completed transactions
+        - Cannot change transaction amount after completion
+        - Only transaction owner or admin can update transaction
+        - Status changes are logged for audit purposes
+      operationId: updateTransaction
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - pending
+                    - completed
+                    - failed
+                    - cancelled
+                  description: Transaction status
+                  example: completed
+                description:
+                  type: string
+                  description: Transaction description
+                  example: Updated transaction description
+                reference_number:
+                  type: string
+                  description: Reference number for the transaction
+                  example: TXN-2024-001
+                payment_method:
+                  type: string
+                  enum:
+                    - cash
+                    - bank_transfer
+                    - mobile_money
+                    - check
+                  description: Payment method used
+                  example: bank_transfer
+            examples:
+              update_status:
+                summary: Update transaction status
+                description: Update transaction status to completed
+                value:
+                  status: completed
+                  description: Payment received via bank transfer
+              update_details:
+                summary: Update transaction details
+                description: Update transaction with additional details
+                value:
+                  status: completed
+                  description: Payment received via bank transfer
+                  reference_number: TXN-2024-001
+                  payment_method: bank_transfer
+      responses:
+        '200':
+          description: Transaction updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/transaction'
+              example:
+                id: clh1234567890abcdef
+                market_id: clh1234567890abcdef
+                farmer_id: clh1234567890abcdef
+                amount: 150000
+                currency: NGN
+                transaction_type: purchase
+                status: completed
+                description: Payment received via bank transfer
+                reference_number: TXN-2024-001
+                payment_method: bank_transfer
+                created_at: '2024-01-15T10:30:00Z'
+                updated_at: '2024-01-15T11:30:00Z'
+        '400':
+          $ref: '#/components/responses/ValidationError-2'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Transaction not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Transaction Not Found
+                  message:
+                    type: string
+                    example: Transaction with the specified ID was not found
+                  code:
+                    type: string
+                    example: TRANSACTION_NOT_FOUND
+        '409':
+          description: Transaction update conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Transaction Update Conflict
+                  message:
+                    type: string
+                    example: Cannot update completed transaction
+                  code:
+                    type: string
+                    example: TRANSACTION_UPDATE_CONFLICT
+        '500':
+          $ref: '#/components/responses/ServerError-2'
+    delete:
+      tags:
+        - 💰 Transactions
+      summary: Delete a transaction
+      description: |
+        Delete a transaction from the system.
+
+        **Required Permissions:** `write:transactions`
+
+        **Business Rules:**
+        - Cannot delete completed transactions
+        - Cannot delete transactions older than 30 days
+        - Only transaction owner or admin can delete transaction
+        - Soft delete - marks transaction as deleted but preserves data
+      operationId: deleteTransaction
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Transaction deleted successfully
+        '400':
+          description: Cannot delete transaction
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Cannot Delete Transaction
+                  message:
+                    type: string
+                    example: Cannot delete completed transaction
+                  code:
+                    type: string
+                    example: TRANSACTION_ALREADY_COMPLETED
+        '401':
+          $ref: '#/components/responses/UnauthorizedError-2'
+        '403':
+          $ref: '#/components/responses/ForbiddenError-2'
+        '404':
+          description: Transaction not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Transaction Not Found
+                  message:
+                    type: string
+                    example: Transaction with the specified ID was not found
+                  code:
+                    type: string
+                    example: TRANSACTION_NOT_FOUND
+        '500':
+          $ref: '#/components/responses/ServerError-2'
   /campaign_stocks:
     post:
       tags:
@@ -4227,8 +4948,8 @@ components:
       type: oauth2
       flows:
         authorizationCode:
-          authorizationUrl: https://senwisetool.com/oauth/authorize
-          tokenUrl: https://senwisetool.com/oauth/token
+          authorizationUrl: https://cocoaflow.com/oauth/authorize
+          tokenUrl: https://cocoaflow.com/oauth/token
           scopes:
             read:users: Read user information
             write:users: Create and update users

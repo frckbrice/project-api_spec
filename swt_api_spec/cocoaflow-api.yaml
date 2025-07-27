@@ -453,8 +453,8 @@ components:
       type: oauth2
       flows:
         authorizationCode:
-          authorizationUrl: https://senwisetool.com/oauth/authorize
-          tokenUrl: https://senwisetool.com/oauth/token
+          authorizationUrl: https://cocoaflow.com/oauth/authorize
+          tokenUrl: https://cocoaflow.com/oauth/token
           scopes:
             read:users: Read user information
             write:users: Create and update users

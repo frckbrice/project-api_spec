@@ -43,7 +43,7 @@ post:
               village: "Ibadan Village"
               division: "Oyo Division"
               council: "Ibadan Council"
-              farm_image_url: "https://storage.senwisetool.com/farms/farm_123.jpg"
+              farm_image_url: "https://storage.cocoaflow.com/farms/farm_123.jpg"
   responses:
     "201":
       description: Farm created successfully
@@ -66,7 +66,7 @@ post:
             village: "Ibadan Village"
             division: "Oyo Division"
             council: "Ibadan Council"
-            farm_image_url: "https://storage.senwisetool.com/farms/farm_123.jpg"
+            farm_image_url: "https://storage.cocoaflow.com/farms/farm_123.jpg"
             created_at: "2024-01-15T10:30:00Z"
             updated_at: "2024-01-15T10:30:00Z"
     "400":
@@ -245,7 +245,7 @@ get:
                 village: "Ibadan Village"
                 division: "Oyo Division"
                 council: "Ibadan Council"
-                farm_image_url: "https://storage.senwisetool.com/farms/farm_123.jpg"
+                farm_image_url: "https://storage.cocoaflow.com/farms/farm_123.jpg"
                 created_at: "2024-01-15T10:30:00Z"
                 updated_at: "2024-01-15T10:30:00Z"
               - id: "clh1234567890abcdeg"
