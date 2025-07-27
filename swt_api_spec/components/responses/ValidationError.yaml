@@ -1,4 +1,4 @@
-description: The request was well-formed but contains invalid parameters
+description: Invalid request parameters
 content:
   application/json:
     schema:
@@ -9,7 +9,10 @@ content:
           example: "Validation Error"
         message:
           type: string
-          example: "Request validation failed"
+          example: "Invalid request parameters"
+        code:
+          type: string
+          example: "VALIDATION_ERROR"
         details:
           type: array
           items:
@@ -21,16 +24,3 @@ content:
               message:
                 type: string
                 example: "Invalid email format"
-              value:
-                type: string
-                example: "invalid-email"
-        code:
-          type: string
-          example: "VALIDATION_ERROR"
-        timestamp:
-          type: string
-          format: date-time
-          example: "2024-01-15T10:30:00Z"
-        request_id:
-          type: string
-          example: "req_1234567890abcdef" 

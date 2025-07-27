@@ -10,16 +10,6 @@ content:
         message:
           type: string
           example: "An unexpected error occurred"
-        request_id:
-          type: string
-          example: "req_1234567890abcdef"
         code:
           type: string
-          example: "INTERNAL_ERROR"
-        timestamp:
-          type: string
-          format: date-time
-          example: "2024-01-15T10:30:00Z"
-        support_reference:
-          type: string
-          example: "SR-2024-001-123456" 
+          example: "SERVER_ERROR"

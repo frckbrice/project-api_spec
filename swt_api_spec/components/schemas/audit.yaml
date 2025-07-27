@@ -55,13 +55,13 @@ properties:
         type: integer
         minimum: 0
         maximum: 100
-        description: "Budget adherence score (project audits)"
+        description: "Project budget adherence score (project audits)"
         example: 90
       timeline:
         type: integer
         minimum: 0
         maximum: 100
-        description: "Timeline adherence score (project audits)"
+        description: "Project timeline adherence score (project audits)"
         example: 80
       compliance:
         type: integer
