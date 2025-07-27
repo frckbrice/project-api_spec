@@ -128,8 +128,8 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   x-logo:
-    url: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNDAgODAiPjxkZWZzPjxzdHlsZT4uY2xzLTF7ZmlsbDojMkQzNzQ4O308L3N0eWxlPjwvZGVmcz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik0yMCwyMGg0MHY0MEgyMFYyMFptNjAsMGg0MHY0MEg4MFYyMFptNjAsMGg0MHY0MEgxNDBWMjBaIi8+PHRleHQgeD0iMjAiIHk9IjcwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IiMyRDM3NDgiPkNvY29hRmxvdzwvdGV4dD48L3N2Zz4=
-    altText: CocoaFlow Logo
+    url: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABWUlEQVR42u2ZQU7DMBBFZwNHgBNwBE7AEbgBnIAjcAQ2rOAIbFhxBDasOAJH4AZI/EhRpSiN3TiOPbH9pVlEVjLz/O3xeNI0QRAEQRAEQRBEhei6bgtgD+AE4EopfQNwBnAAsGXvmgQAE6XUl1Lqz8YVwCdmvQHsms4cwNnS+K3xM4CNZ/NfHoxr8w8AE0/mJ0qpR0/Gt7g3P3U0/+RxzDcAYyfjWuvMg/FBmLcxPwg5G2OD8QGZbxXmB2neZL5cjPeN+SLMZzafm3kX86WYz8V8qeazMZ+7+SzMl2LeZn5wO7DWvO38L9Z8r8zHmO+l+T6bjzHfS/N9Nx9jvtfmQ8z33nyI+UGYDzE/GPO+5gdjvnTzgzPva34Q5lOZH6T5VPMkSZIkSZIkSZIkSZIkSZIk2f8kyaFtJxqttRNCXBBCrBFCrAkh5oQQU0KICSHEmBDCvLwB8A3gBuAC4APAHsA2SZL/xR+1Xq6QhF7yXAAAAABJRU5ErkJggg==
+    altText: CocoaFlow
     backgroundColor: '#FFFFFF'
 servers:
   - url: https://api.cocoaflow.com
