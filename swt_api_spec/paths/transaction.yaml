@@ -97,8 +97,10 @@ post:
 get:
   tags:
     - 💰 Transactions
-  summary: Get all transactions
-  description: Retrieve all transactions with optional filtering
+  summary: List all transactions
+  description: |
+    Retrieve a list of all transactions.
+    This endpoint supports pagination and filtering.
   operationId: listTransactions
   security:
     - BearerAuth: []
@@ -111,19 +113,6 @@ get:
   responses:
     "200":
       description: List of transactions retrieved successfully
-      headers:
-        X-Total-Count:
-          description: Total number of transactions matching the filter criteria
-          schema:
-            type: integer
-        X-Page-Count:
-          description: Total number of pages
-          schema:
-            type: integer
-        Link:
-          description: Pagination links (first, prev, next, last)
-          schema:
-            type: string
       content:
         application/json:
           schema:
@@ -133,62 +122,21 @@ get:
                 type: array
                 items:
                   $ref: "../../components/schemas/transaction.yaml"
-              pagination:
+              meta:
                 type: object
                 properties:
                   total:
                     type: integer
-                    example: 150
+                    example: 100
+                  page:
+                    type: integer
+                    example: 1
                   limit:
                     type: integer
                     example: 20
-                  offset:
-                    type: integer
-                    example: 0
                   has_more:
                     type: boolean
                     example: true
-          example:
-            data:
-              - id: "clh1234567890abcdef"
-                market_id: "clh1234567890abcdef"
-                date: "2024-01-15T10:30:00Z"
-                level_of_traceability: "identite preservee"
-                driver_name: "John Smith"
-                quantity: 500
-                net_weight_declared_in_Ton: 0.5
-                humidity_level_of_product: 7.5
-                total_quantity_in_bags: 10
-                receiver_name: "Jane Doe"
-                min_com_verif_agent_name_and_sig: "Agent Smith - Verified"
-                sender_signature: "Sender123"
-                driver_signature: "Driver456"
-                product_quality: "Grade A"
-                vehicule_immatriculation_number: "ABC123XY"
-                created_at: "2024-01-15T10:30:00Z"
-                updated_at: "2024-01-15T10:30:00Z"
-              - id: "clh1234567890abcdeg"
-                market_id: "clh1234567890abcdef"
-                date: "2024-01-15T09:15:00Z"
-                level_of_traceability: "identite preservee"
-                driver_name: "Bob Johnson"
-                quantity: 750
-                net_weight_declared_in_Ton: 0.75
-                humidity_level_of_product: 8.0
-                total_quantity_in_bags: 15
-                receiver_name: "Alice Brown"
-                min_com_verif_agent_name_and_sig: "Agent Jones - Verified"
-                sender_signature: "Sender789"
-                driver_signature: "Driver012"
-                product_quality: "Grade B"
-                vehicule_immatriculation_number: "XYZ789AB"
-                created_at: "2024-01-15T09:15:00Z"
-                updated_at: "2024-01-15T09:15:00Z"
-            pagination:
-              total: 150
-              limit: 20
-              offset: 0
-              has_more: true
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
@@ -205,7 +153,7 @@ put:
   tags:
     - 💰 Transactions
   summary: Update a transaction
-  description: Update an existing transaction record
+  description: Update an existing transaction
   operationId: updateTransaction
   security:
     - BearerAuth: []
@@ -217,7 +165,6 @@ put:
       schema:
         type: string
         format: cuid
-        example: "clh1234567890abcdef"
   requestBody:
     required: true
     content:
@@ -295,38 +242,21 @@ delete:
   tags:
     - 💰 Transactions
   summary: Delete a transaction
-  description: |
-    Delete a transaction from the system.
-
-    **Required Permissions:** `write:transactions`
-
-    **Business Rules:**
-    - Cannot delete completed transactions
-    - Cannot delete transactions older than 30 days
-    - Only transaction owner or admin can delete transaction
-    - Soft delete - marks transaction as deleted but preserves data
+  description: Delete an existing transaction
   operationId: deleteTransaction
   security:
     - BearerAuth: []
+  parameters:
+    - name: transaction_id
+      in: path
+      required: true
+      description: ID of the transaction to delete
+      schema:
+        type: string
+        format: cuid
   responses:
     "204":
       description: Transaction deleted successfully
-    "400":
-      description: Cannot delete transaction
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Cannot Delete Transaction"
-              message:
-                type: string
-                example: "Cannot delete completed transaction"
-              code:
-                type: string
-                example: "TRANSACTION_ALREADY_COMPLETED"
     "401":
       $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":

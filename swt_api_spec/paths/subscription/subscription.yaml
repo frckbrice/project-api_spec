@@ -1,8 +1,8 @@
 post:
   tags:
     - 🏢 Companies
-  summary: Create a subscription
-  description: Create a new subscription for a company
+  summary: Create a new subscription
+  description: Create a new subscription record
   operationId: createSubscription
   security:
     - BearerAuth: []
@@ -12,34 +12,6 @@ post:
       application/json:
         schema:
           $ref: "../../components/schemas/subscription.yaml"
-        examples:
-          basic_subscription:
-            summary: Basic subscription
-            description: Create a subscription with minimal information
-            value:
-              company_id: "clh1234567890abcdef"
-              price_id: "clh1234567890abcdeg"
-              start_date: "2024-02-01T00:00:00Z"
-              end_date: "2025-02-01T00:00:00Z"
-              status: "ACTIVE"
-              payment_mode: "Card "
-              auto_renewal: true
-              billing_cycle: "monthly"
-          detailed_subscription:
-            summary: Detailed subscription
-            description: Create a subscription with all available information
-            value:
-              company_id: "clh1234567890abcdef"
-              price_id: "clh1234567890abcdeg"
-              start_date: "2024-02-01T00:00:00Z"
-              end_date: "2025-02-01T00:00:00Z"
-              status: "ACTIVE"
-              description: "Enterprise subscription with premium support"
-              payment_mode: "Card "
-              auto_renewal: true
-              billing_cycle: "monthly"
-              last_notification_date: "2024-01-15T10:30:00Z"
-              grace_period_end: false
   responses:
     "201":
       description: Subscription created successfully
@@ -47,21 +19,6 @@ post:
         application/json:
           schema:
             $ref: "../../components/schemas/subscription.yaml"
-          example:
-            id: "clh1234567890abcdef"
-            company_id: "clh1234567890abcdef"
-            price_id: "clh1234567890abcdeg"
-            start_date: "2024-02-01T00:00:00Z"
-            end_date: "2025-02-01T00:00:00Z"
-            status: "ACTIVE"
-            description: "Enterprise subscription with premium support"
-            payment_mode: "Card "
-            auto_renewal: true
-            billing_cycle: "monthly"
-            last_notification_date: "2024-01-15T10:30:00Z"
-            grace_period_end: false
-            created_at: "2024-01-15T10:30:00Z"
-            updated_at: "2024-01-15T10:30:00Z"
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
@@ -80,7 +37,7 @@ post:
                 example: "Subscription Already Exists"
               message:
                 type: string
-                example: "A subscription already exists for this company and plan"
+                example: "A subscription with these parameters already exists"
               code:
                 type: string
                 example: "SUBSCRIPTION_ALREADY_EXISTS"
@@ -90,8 +47,10 @@ post:
 get:
   tags:
     - 🏢 Companies
-  summary: Get all subscriptions
-  description: Retrieve all subscriptions with optional filtering
+  summary: List all subscriptions
+  description: |
+    Retrieve a list of all subscriptions.
+    This endpoint supports pagination and filtering.
   operationId: listSubscriptions
   security:
     - BearerAuth: []
@@ -101,33 +60,9 @@ get:
     - $ref: "../../components/parameters/CompanyId.yaml"
     - $ref: "../../components/parameters/DateRangeStart.yaml"
     - $ref: "../../components/parameters/DateRangeEnd.yaml"
-    - name: status
-      in: query
-      required: false
-      description: Filter by subscription status
-      schema:
-        type: string
-        enum:
-          - "ACTIVE"
-          - "INACTIVE"
-          - "CANCELLED"
-          - "SUSPENDED"
   responses:
     "200":
       description: List of subscriptions retrieved successfully
-      headers:
-        X-Total-Count:
-          description: Total number of subscriptions matching the filter criteria
-          schema:
-            type: integer
-        X-Page-Count:
-          description: Total number of pages
-          schema:
-            type: integer
-        Link:
-          description: Pagination links (first, prev, next, last)
-          schema:
-            type: string
       content:
         application/json:
           schema:
@@ -137,56 +72,21 @@ get:
                 type: array
                 items:
                   $ref: "../../components/schemas/subscription.yaml"
-              pagination:
+              meta:
                 type: object
                 properties:
                   total:
                     type: integer
-                    example: 150
+                    example: 100
+                  page:
+                    type: integer
+                    example: 1
                   limit:
                     type: integer
                     example: 20
-                  offset:
-                    type: integer
-                    example: 0
                   has_more:
                     type: boolean
                     example: true
-          example:
-            data:
-              - id: "clh1234567890abcdef"
-                company_id: "clh1234567890abcdef"
-                price_id: "clh1234567890abcdeg"
-                start_date: "2024-02-01T00:00:00Z"
-                end_date: "2025-02-01T00:00:00Z"
-                status: "ACTIVE"
-                description: "Enterprise subscription with premium support"
-                payment_mode: "Card "
-                auto_renewal: true
-                billing_cycle: "monthly"
-                last_notification_date: "2024-01-15T10:30:00Z"
-                grace_period_end: false
-                created_at: "2024-01-15T10:30:00Z"
-                updated_at: "2024-01-15T10:30:00Z"
-              - id: "clh1234567890abcdeh"
-                company_id: "clh1234567890abcdei"
-                price_id: "clh1234567890abcdeg"
-                start_date: "2024-01-01T00:00:00Z"
-                end_date: "2024-12-31T00:00:00Z"
-                status: "ACTIVE"
-                description: "Standard subscription"
-                payment_mode: "PayPal "
-                auto_renewal: false
-                billing_cycle: "yearly"
-                last_notification_date: "2023-12-15T09:00:00Z"
-                grace_period_end: false
-                created_at: "2023-12-15T09:00:00Z"
-                updated_at: "2023-12-15T09:00:00Z"
-            pagination:
-              total: 150
-              limit: 20
-              offset: 0
-              has_more: true
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
@@ -214,7 +114,6 @@ put:
       schema:
         type: string
         format: cuid
-        example: "clh1234567890abcdef"
   requestBody:
     required: true
     content:
@@ -228,21 +127,6 @@ put:
         application/json:
           schema:
             $ref: "../../components/schemas/subscription.yaml"
-          example:
-            id: "clh1234567890abcdef"
-            company_id: "clh1234567890abcdef"
-            price_id: "clh1234567890abcdeg"
-            start_date: "2024-02-01T00:00:00Z"
-            end_date: "2025-03-01T00:00:00Z"
-            status: "ACTIVE"
-            description: "Updated subscription details"
-            payment_mode: "Card "
-            auto_renewal: false
-            billing_cycle: "quarterly"
-            last_notification_date: "2024-01-15T10:30:00Z"
-            grace_period_end: false
-            created_at: "2024-01-15T10:30:00Z"
-            updated_at: "2024-01-15T11:30:00Z"
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
@@ -281,5 +165,47 @@ put:
               code:
                 type: string
                 example: "UPDATE_CONFLICT"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"
+
+delete:
+  tags:
+    - 🏢 Companies
+  summary: Delete a subscription
+  description: Delete an existing subscription
+  operationId: deleteSubscription
+  security:
+    - BearerAuth: []
+  parameters:
+    - name: subscription_id
+      in: path
+      required: true
+      description: ID of the subscription to delete
+      schema:
+        type: string
+        format: cuid
+  responses:
+    "204":
+      description: Subscription deleted successfully
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "404":
+      description: Subscription not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Subscription Not Found"
+              message:
+                type: string
+                example: "Subscription with the specified ID was not found"
+              code:
+                type: string
+                example: "SUBSCRIPTION_NOT_FOUND"
     "500":
       $ref: "../../components/responses/ServerError.yaml"

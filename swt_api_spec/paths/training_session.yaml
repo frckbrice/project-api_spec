@@ -6,6 +6,8 @@ get:
     Retrieve a list of all training sessions.
     This endpoint supports pagination and filtering.
   operationId: listTrainingSessions
+  security:
+    - BearerAuth: []
   parameters:
     - $ref: "../../components/parameters/PaginationLimit.yaml"
     - $ref: "../../components/parameters/PaginationOffset.yaml"
@@ -30,19 +32,23 @@ get:
                   total:
                     type: integer
                     example: 100
-                  pages:
-                    type: integer
-                    example: 5
-                  current_page:
+                  page:
                     type: integer
                     example: 1
-                  per_page:
+                  limit:
                     type: integer
                     example: 20
+                  has_more:
+                    type: boolean
+                    example: true
+    "400":
+      $ref: "../../components/responses/ValidationError.yaml"
     "401":
       $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
       $ref: "../../components/responses/ForbiddenError.yaml"
+    "429":
+      $ref: "../../components/responses/RateLimitError.yaml"
     "500":
       $ref: "../../components/responses/ServerError.yaml"
 
@@ -50,36 +56,16 @@ post:
   tags:
     - 🎓 Training
   summary: Create a new training session
-  description: Create a new training session for a training
+  description: Create a new training session record
   operationId: createTrainingSession
+  security:
+    - BearerAuth: []
   requestBody:
     required: true
     content:
       application/json:
         schema:
           $ref: "../../components/schemas/training_session.yaml"
-        examples:
-          basic_session:
-            summary: Basic training session
-            description: Create training session with minimal information
-            value:
-              training_id: "clh1234567890abcdef"
-              session_date: "2024-01-15"
-              location: "Community Center"
-              trainer_id: "clh1234567890abcdef"
-              max_participants: 30
-          detailed_session:
-            summary: Detailed training session
-            description: Create training session with all available information
-            value:
-              training_id: "clh1234567890abcdef"
-              session_date: "2024-01-15"
-              start_time: "09:00"
-              end_time: "17:00"
-              location: "Community Center"
-              trainer_id: "clh1234567890abcdef"
-              max_participants: 30
-              status: "scheduled"
   responses:
     "201":
       description: Training session created successfully
@@ -102,28 +88,24 @@ post:
             properties:
               error:
                 type: string
-                example: "Conflict"
+                example: "Training Session Already Exists"
               message:
                 type: string
-                example: "Training session already exists"
+                example: "A training session with these parameters already exists"
               code:
                 type: string
-                example: "SESSION_EXISTS"
+                example: "TRAINING_SESSION_ALREADY_EXISTS"
     "500":
       $ref: "../../components/responses/ServerError.yaml"
 
 put:
   tags:
     - 🎓 Training
-  summary: Update training session
+  summary: Update a training session
   description: Update an existing training session
   operationId: updateTrainingSession
-  requestBody:
-    required: true
-    content:
-      application/json:
-        schema:
-          $ref: "../../components/schemas/training_session.yaml"
+  security:
+    - BearerAuth: []
   parameters:
     - name: session_id
       in: path
@@ -132,7 +114,12 @@ put:
       schema:
         type: string
         format: cuid
-        example: "clh1234567890abcdef"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/training_session.yaml"
   responses:
     "200":
       description: Training session updated successfully
@@ -155,12 +142,70 @@ put:
             properties:
               error:
                 type: string
-                example: "Not Found"
+                example: "Training Session Not Found"
               message:
                 type: string
-                example: "Training session not found"
+                example: "Training session with the specified ID was not found"
               code:
                 type: string
-                example: "SESSION_NOT_FOUND"
+                example: "TRAINING_SESSION_NOT_FOUND"
+    "409":
+      description: Update conflict
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Update Conflict"
+              message:
+                type: string
+                example: "Cannot update training session in current state"
+              code:
+                type: string
+                example: "UPDATE_CONFLICT"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"
+
+delete:
+  tags:
+    - 🎓 Training
+  summary: Delete a training session
+  description: Delete an existing training session
+  operationId: deleteTrainingSession
+  security:
+    - BearerAuth: []
+  parameters:
+    - name: session_id
+      in: path
+      required: true
+      description: ID of the training session to delete
+      schema:
+        type: string
+        format: cuid
+  responses:
+    "204":
+      description: Training session deleted successfully
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "404":
+      description: Training session not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Training Session Not Found"
+              message:
+                type: string
+                example: "Training session with the specified ID was not found"
+              code:
+                type: string
+                example: "TRAINING_SESSION_NOT_FOUND"
     "500":
       $ref: "../../components/responses/ServerError.yaml"

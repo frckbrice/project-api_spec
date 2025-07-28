@@ -246,7 +246,7 @@ paths:
   "/audits": # unified audits endpoint
     $ref: paths/audits.yaml
   "/audits/{audit_id}": # unified audits endpoint
-    $ref: paths/audits.yaml
+    $ref: "paths/audits.yaml"
   "/receipts": # receipts
     $ref: paths/receipt/receipt.yaml
   "/receipts/{id}":
@@ -275,11 +275,11 @@ paths:
   "/trainings": # training
     $ref: paths/training/training.yaml
   "/trainings/{training_id}": # training
-    $ref: paths/training/training_{training_id}.yaml
+    $ref: "paths/training/training.yaml"
   "/transaction": # transaction
     $ref: paths/transaction.yaml
   "/transaction/{transaction_id}": # transaction
-    $ref: paths/transaction.yaml
+    $ref: "paths/transaction.yaml"
   "/campaign_stocks": #campaign_stock
     $ref: paths/campaign_stock/campaign_stock.yaml
   "/campaign_stocks/{campaign_id}":

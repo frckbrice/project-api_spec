@@ -2,8 +2,8 @@
 post:
   tags:
     - 🎓 Training
-  summary: Create a training
-  description: Create a new training program
+  summary: Create a new training
+  description: Create a new training record
   operationId: createTraining
   security:
     - BearerAuth: []
@@ -13,29 +13,6 @@ post:
       application/json:
         schema:
           $ref: "../../components/schemas/training.yaml"
-        examples:
-          basic_training:
-            summary: Basic training program
-            description: Create a training with minimal information
-            value:
-              title: "Cocoa Farming Best Practices"
-              location: "Training Center A"
-              start_date: "2024-02-01T00:00:00Z"
-              end_date: "2024-02-03T00:00:00Z"
-              company_id: "clh1234567890abcdef"
-              modules: ["Introduction", "Basic Techniques"]
-          detailed_training:
-            summary: Detailed training program
-            description: Create a training with all available information
-            value:
-              title: "Advanced Cocoa Processing Techniques"
-              location: "Training Center A"
-              start_date: "2024-02-01T00:00:00Z"
-              end_date: "2024-02-05T00:00:00Z"
-              company_id: "clh1234567890abcdef"
-              modules:
-                ["Introduction", "Advanced Processing", "Quality Control"]
-              training_sessions: ["clh1234567890abcdeg"]
   responses:
     "201":
       description: Training created successfully
@@ -43,17 +20,6 @@ post:
         application/json:
           schema:
             $ref: "../../components/schemas/training.yaml"
-          example:
-            id: "clh1234567890abcdef"
-            title: "Cocoa Farming Best Practices"
-            location: "Training Center A"
-            start_date: "2024-02-01T00:00:00Z"
-            end_date: "2024-02-03T00:00:00Z"
-            company_id: "clh1234567890abcdef"
-            modules: ["Introduction", "Basic Techniques"]
-            training_sessions: []
-            created_at: "2024-01-15T10:30:00Z"
-            updated_at: "2024-01-15T10:30:00Z"
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
@@ -72,7 +38,7 @@ post:
                 example: "Training Already Exists"
               message:
                 type: string
-                example: "Training with the same title already exists"
+                example: "A training with these parameters already exists"
               code:
                 type: string
                 example: "TRAINING_ALREADY_EXISTS"
@@ -83,8 +49,10 @@ post:
 get:
   tags:
     - 🎓 Training
-  summary: Get all trainings
-  description: Retrieve all trainings with optional filtering
+  summary: List all trainings
+  description: |
+    Retrieve a list of all trainings.
+    This endpoint supports pagination and filtering.
   operationId: listTrainings
   security:
     - BearerAuth: []
@@ -97,19 +65,6 @@ get:
   responses:
     "200":
       description: List of trainings retrieved successfully
-      headers:
-        X-Total-Count:
-          description: Total number of trainings matching the filter criteria
-          schema:
-            type: integer
-        X-Page-Count:
-          description: Total number of pages
-          schema:
-            type: integer
-        Link:
-          description: Pagination links (first, prev, next, last)
-          schema:
-            type: string
       content:
         application/json:
           schema:
@@ -119,48 +74,21 @@ get:
                 type: array
                 items:
                   $ref: "../../components/schemas/training.yaml"
-              pagination:
+              meta:
                 type: object
                 properties:
                   total:
                     type: integer
-                    example: 150
+                    example: 100
+                  page:
+                    type: integer
+                    example: 1
                   limit:
                     type: integer
                     example: 20
-                  offset:
-                    type: integer
-                    example: 0
                   has_more:
                     type: boolean
                     example: true
-          example:
-            data:
-              - id: "clh1234567890abcdef"
-                title: "Cocoa Farming Best Practices"
-                location: "Training Center A"
-                start_date: "2024-02-01T00:00:00Z"
-                end_date: "2024-02-03T00:00:00Z"
-                company_id: "clh1234567890abcdef"
-                modules: ["Introduction", "Basic Techniques"]
-                training_sessions: []
-                created_at: "2024-01-15T10:30:00Z"
-                updated_at: "2024-01-15T10:30:00Z"
-              - id: "clh1234567890abcdeg"
-                title: "Advanced Cocoa Processing"
-                location: "Training Center B"
-                start_date: "2024-02-05T00:00:00Z"
-                end_date: "2024-02-07T00:00:00Z"
-                company_id: "clh1234567890abcdei"
-                modules: ["Advanced Processing", "Quality Control"]
-                training_sessions: ["clh1234567890abcdeh"]
-                created_at: "2024-01-14T09:15:00Z"
-                updated_at: "2024-01-14T09:15:00Z"
-            pagination:
-              total: 150
-              limit: 20
-              offset: 0
-              has_more: true
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
@@ -177,7 +105,7 @@ put:
   tags:
     - 🎓 Training
   summary: Update a training
-  description: Update an existing training program
+  description: Update an existing training
   operationId: updateTraining
   security:
     - BearerAuth: []
@@ -189,7 +117,6 @@ put:
       schema:
         type: string
         format: cuid
-        example: "clh1234567890abcdef"
   requestBody:
     required: true
     content:
@@ -203,17 +130,6 @@ put:
         application/json:
           schema:
             $ref: "../../components/schemas/training.yaml"
-          example:
-            id: "clh1234567890abcdef"
-            title: "Updated Cocoa Farming Best Practices"
-            location: "Updated Training Center A"
-            start_date: "2024-02-02T00:00:00Z"
-            end_date: "2024-02-04T00:00:00Z"
-            company_id: "clh1234567890abcdef"
-            modules: ["Introduction", "Advanced Techniques"]
-            training_sessions: ["clh1234567890abcdeh"]
-            created_at: "2024-01-15T10:30:00Z"
-            updated_at: "2024-01-15T11:30:00Z"
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
@@ -259,39 +175,22 @@ put:
 delete:
   tags:
     - 🎓 Training
-  summary: Delete training
-  description: |
-    Delete a training program from the system.
-
-    **Required Permissions:** `write:training`
-
-    **Business Rules:**
-    - Cannot delete training that has already started
-    - Cannot delete training with enrolled participants
-    - Only administrators can delete training programs
-    - Soft delete - marks as deleted but preserves data for audit
+  summary: Delete a training
+  description: Delete an existing training
   operationId: deleteTraining
   security:
     - BearerAuth: []
+  parameters:
+    - name: training_id
+      in: path
+      required: true
+      description: ID of the training to delete
+      schema:
+        type: string
+        format: cuid
   responses:
     "204":
       description: Training deleted successfully
-    "400":
-      description: Cannot delete training
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Cannot Delete Training"
-              message:
-                type: string
-                example: "Cannot delete training that has already started or has enrolled participants"
-              code:
-                type: string
-                example: "TRAINING_HAS_ENROLLMENTS"
     "401":
       $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":

@@ -4,22 +4,140 @@
 get:
   tags:
     - 🌿 Audits
-  summary: Get all audits
-  description: Retrieve all audits with filtering options
+  summary: List all audits
+  description: |
+    Retrieve a list of all audits.
+    This endpoint supports pagination and filtering.
   operationId: listAudits
+  security:
+    - BearerAuth: []
   parameters:
-    - $ref: "../../components/parameters/PaginationLimit.yaml"
-    - $ref: "../../components/parameters/PaginationOffset.yaml"
-    - $ref: "../../components/parameters/CompanyId.yaml"
-    - $ref: "../../components/parameters/DateRangeStart.yaml"
-    - $ref: "../../components/parameters/DateRangeEnd.yaml"
+    - $ref: "../components/parameters/PaginationLimit.yaml"
+    - $ref: "../components/parameters/PaginationOffset.yaml"
+    - $ref: "../components/parameters/CompanyId.yaml"
+    - $ref: "../components/parameters/DateRangeStart.yaml"
+    - $ref: "../components/parameters/DateRangeEnd.yaml"
+  responses:
+    "200":
+      description: List of audits retrieved successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: "../components/schemas/audit.yaml"
+              meta:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    example: 100
+                  page:
+                    type: integer
+                    example: 1
+                  limit:
+                    type: integer
+                    example: 20
+                  has_more:
+                    type: boolean
+                    example: true
+    "400":
+      $ref: "../components/responses/ValidationError.yaml"
+    "401":
+      $ref: "../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../components/responses/ForbiddenError.yaml"
+    "429":
+      $ref: "../components/responses/RateLimitError.yaml"
+    "500":
+      $ref: "../components/responses/ServerError.yaml"
 
 post:
   tags:
     - 🌿 Audits
   summary: Create a new audit
-  description: Create a new project or market audit
+  description: Create a new audit record
   operationId: createAudit
+  security:
+    - BearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../components/schemas/audit.yaml"
+        examples:
+          project_audit:
+            value:
+              audit_type: project
+              project_id: "clh1234567890abcdef"
+              auditor_id: "clh1234567890abcdef"
+              audit_date: "2024-01-15"
+              scores:
+                progress: 75
+                quality: 85
+                budget: 90
+                timeline: 80
+              notes: "Project progressing well within timeline"
+              risks_identified: ["Weather delays", "Supply chain issues"]
+              recommendations: ["Accelerate procurement", "Increase monitoring"]
+              metadata:
+                company_id: "clh1234567890abcdef"
+                location: "Ibadan Division"
+                duration_minutes: 120
+          market_audit:
+            value:
+              audit_type: market
+              market_id: "clh1234567890abcdef"
+              auditor_id: "clh1234567890abcdef"
+              audit_date: "2024-01-15"
+              scores:
+                compliance: 85
+                quality: 88
+                safety: 90
+                efficiency: 82
+              notes: "Market operations meeting standards"
+              risks_identified: ["Storage conditions", "Documentation gaps"]
+              recommendations:
+                ["Upgrade storage facilities", "Implement digital records"]
+              metadata:
+                company_id: "clh1234567890abcdef"
+                location: "Central Market"
+                duration_minutes: 90
+  responses:
+    "201":
+      description: Audit created successfully
+      content:
+        application/json:
+          schema:
+            $ref: "../components/schemas/audit.yaml"
+    "400":
+      $ref: "../components/responses/ValidationError.yaml"
+    "401":
+      $ref: "../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../components/responses/ForbiddenError.yaml"
+    "409":
+      description: Audit already exists
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Audit Already Exists"
+              message:
+                type: string
+                example: "An audit with these parameters already exists"
+              code:
+                type: string
+                example: "AUDIT_ALREADY_EXISTS"
+    "500":
+      $ref: "../components/responses/ServerError.yaml"
 
 put:
   tags:
@@ -37,19 +155,17 @@ put:
       schema:
         type: string
         format: cuid
-        example: "clh1234567890abcdef"
   requestBody:
     required: true
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/audit.yaml"
+          $ref: "../components/schemas/audit.yaml"
         examples:
           update_project_audit:
-            summary: Update project audit
-            description: Update a project audit with new scores and notes
             value:
-              audit_type: "project"
+              audit_type: project
+              project_id: "clh1234567890abcdef"
               auditor_id: "clh1234567890abcdef"
               audit_date: "2024-01-15"
               scores:
@@ -57,27 +173,33 @@ put:
                 quality: 88
                 budget: 92
                 timeline: 85
-              notes: "Updated progress assessment - better than expected"
-              risks_identified: ["Weather delays", "Supply chain issues"]
-              recommendations: ["Accelerate procurement", "Increase monitoring"]
+              notes: "Project showing improved progress"
+              risks_identified: ["Minor delays", "Resource constraints"]
+              recommendations:
+                ["Optimize resource allocation", "Weekly progress tracking"]
               metadata:
+                company_id: "clh1234567890abcdef"
+                location: "Ibadan Division"
                 duration_minutes: 150
           update_market_audit:
-            summary: Update market audit
-            description: Update a market audit with new scores and notes
             value:
-              audit_type: "market"
+              audit_type: market
+              market_id: "clh1234567890abcdef"
               auditor_id: "clh1234567890abcdef"
               audit_date: "2024-01-15"
               scores:
-                quality: 90
-                compliance: 88
-                safety: 92
-                efficiency: 85
-              notes: "Updated compliance assessment - improved standards"
+                compliance: 90
+                quality: 92
+                safety: 95
+                efficiency: 88
+              notes: "Market showing significant improvements"
+              risks_identified:
+                ["Peak season capacity", "Equipment maintenance"]
               recommendations:
-                ["Improve storage facilities", "Enhance quality control"]
+                ["Capacity planning", "Preventive maintenance schedule"]
               metadata:
+                company_id: "clh1234567890abcdef"
+                location: "Central Market"
                 duration_minutes: 120
   responses:
     "200":
@@ -85,13 +207,13 @@ put:
       content:
         application/json:
           schema:
-            $ref: "../../components/schemas/audit.yaml"
+            $ref: "../components/schemas/audit.yaml"
     "400":
-      $ref: "../../components/responses/ValidationError.yaml"
+      $ref: "../components/responses/ValidationError.yaml"
     "401":
-      $ref: "../../components/responses/UnauthorizedError.yaml"
+      $ref: "../components/responses/UnauthorizedError.yaml"
     "403":
-      $ref: "../../components/responses/ForbiddenError.yaml"
+      $ref: "../components/responses/ForbiddenError.yaml"
     "404":
       description: Audit not found
       content:
@@ -125,7 +247,7 @@ put:
                 type: string
                 example: "UPDATE_CONFLICT"
     "500":
-      $ref: "../../components/responses/ServerError.yaml"
+      $ref: "../components/responses/ServerError.yaml"
 
 delete:
   tags:
@@ -143,14 +265,13 @@ delete:
       schema:
         type: string
         format: cuid
-        example: "clh1234567890abcdef"
   responses:
     "204":
       description: Audit deleted successfully
     "401":
-      $ref: "../../components/responses/UnauthorizedError.yaml"
+      $ref: "../components/responses/UnauthorizedError.yaml"
     "403":
-      $ref: "../../components/responses/ForbiddenError.yaml"
+      $ref: "../components/responses/ForbiddenError.yaml"
     "404":
       description: Audit not found
       content:
@@ -168,4 +289,4 @@ delete:
                 type: string
                 example: "AUDIT_NOT_FOUND"
     "500":
-      $ref: "../../components/responses/ServerError.yaml"
+      $ref: "../components/responses/ServerError.yaml"

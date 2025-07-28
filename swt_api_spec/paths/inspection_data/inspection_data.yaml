@@ -2,17 +2,8 @@
 post:
   tags:
     - 🔍 Inspection
-  summary: Create inspection data
-  description: |
-    Create inspection data for each farm inspected.
-
-    **Required Permissions:** `write:inspection`
-
-    **Business Rules:**
-    - Inspection data must be associated with a valid farm
-    - GPS coordinates are required for compliance tracking
-    - Inspection date must be within campaign period
-    - Only authorized inspectors can create inspection data
+  summary: Create new inspection data
+  description: Create a new inspection data record
   operationId: createInspectionData
   security:
     - BearerAuth: []
@@ -22,75 +13,19 @@ post:
       application/json:
         schema:
           $ref: "../../components/schemas/inspection_data.yaml"
-        examples:
-          basic_inspection:
-            summary: Basic inspection data
-            description: Create inspection data with minimal information
-            value:
-              project_id: "clh1234567890abcdef"
-              project_data:
-                field_1: "value_1"
-                field_2: "value_2"
-              collected_by: "clh1234567890abcdef"
-              collected_at: "2024-01-15T10:30:00Z"
-          detailed_inspection:
-            summary: Detailed inspection data
-            description: Create inspection data with comprehensive details
-            value:
-              project_id: "clh1234567890abcdef"
-              project_data:
-                field_1: "value_1"
-                field_2: "value_2"
-                field_3: "value_3"
-              collected_by: "clh1234567890abcdef"
-              project_data_url: "https://storage.cocoaflow.com/projects/data1.json"
-              collected_at: "2024-01-15T10:30:00Z"
   responses:
     "201":
       description: Inspection data created successfully
-      headers:
-        Location:
-          description: URL of the created inspection data resource
-          schema:
-            type: string
-            format: uri
       content:
         application/json:
           schema:
             $ref: "../../components/schemas/inspection_data.yaml"
-          example:
-            id: "clh1234567890abcdef"
-            project_id: "clh1234567890abcdef"
-            project_data:
-              field_1: "value_1"
-              field_2: "value_2"
-            collected_by: "clh1234567890abcdef"
-            project_data_url: "https://storage.cocoaflow.com/projects/data1.json"
-            collected_at: "2024-01-15T10:30:00Z"
-            created_at: "2024-01-15T10:30:00Z"
-            updated_at: "2024-01-15T10:30:00Z"
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
       $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
       $ref: "../../components/responses/ForbiddenError.yaml"
-    "404":
-      description: Project not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Project Not Found"
-              message:
-                type: string
-                example: "Project with the specified ID was not found"
-              code:
-                type: string
-                example: "PROJECT_NOT_FOUND"
     "409":
       description: Inspection data already exists
       content:
@@ -103,7 +38,7 @@ post:
                 example: "Inspection Data Already Exists"
               message:
                 type: string
-                example: "Inspection data already exists for this project and date"
+                example: "An inspection data record with these parameters already exists"
               code:
                 type: string
                 example: "INSPECTION_DATA_ALREADY_EXISTS"
@@ -114,17 +49,10 @@ post:
 get:
   tags:
     - 🔍 Inspection
-  summary: Get all inspection data
+  summary: List all inspection data
   description: |
-    Retrieve all inspection data with optional filtering.
-
-    **Required Permissions:** `read:inspection`
-
-    **Features:**
-    - Filter by project ID
-    - Filter by collector
-    - Filter by date range
-    - Pagination support
+    Retrieve a list of all inspection data.
+    This endpoint supports pagination and filtering.
   operationId: listInspectionData
   security:
     - BearerAuth: []
@@ -134,38 +62,9 @@ get:
     - $ref: "../../components/parameters/CompanyId.yaml"
     - $ref: "../../components/parameters/DateRangeStart.yaml"
     - $ref: "../../components/parameters/DateRangeEnd.yaml"
-    - name: project_id
-      in: query
-      required: false
-      description: Filter by project ID
-      schema:
-        type: string
-        format: cuid
-        example: "clh1234567890abcdef"
-    - name: collected_by
-      in: query
-      required: false
-      description: Filter by collector ID
-      schema:
-        type: string
-        format: cuid
-        example: "clh1234567890abcdef"
   responses:
     "200":
       description: List of inspection data retrieved successfully
-      headers:
-        X-Total-Count:
-          description: Total number of inspection data matching the filter criteria
-          schema:
-            type: integer
-        X-Page-Count:
-          description: Total number of pages
-          schema:
-            type: integer
-        Link:
-          description: Pagination links (first, prev, next, last)
-          schema:
-            type: string
       content:
         application/json:
           schema:
@@ -175,48 +74,21 @@ get:
                 type: array
                 items:
                   $ref: "../../components/schemas/inspection_data.yaml"
-              pagination:
+              meta:
                 type: object
                 properties:
                   total:
                     type: integer
-                    example: 150
+                    example: 100
+                  page:
+                    type: integer
+                    example: 1
                   limit:
                     type: integer
                     example: 20
-                  offset:
-                    type: integer
-                    example: 0
                   has_more:
                     type: boolean
                     example: true
-          example:
-            data:
-              - id: "clh1234567890abcdef"
-                project_id: "clh1234567890abcdef"
-                project_data:
-                  field_1: "value_1"
-                  field_2: "value_2"
-                collected_by: "clh1234567890abcdef"
-                project_data_url: "https://storage.cocoaflow.com/projects/data1.json"
-                collected_at: "2024-01-15T10:30:00Z"
-                created_at: "2024-01-15T10:30:00Z"
-                updated_at: "2024-01-15T10:30:00Z"
-              - id: "clh1234567890abcdeg"
-                project_id: "clh1234567890abcdeg"
-                project_data:
-                  field_1: "value_3"
-                  field_2: "value_4"
-                collected_by: "clh1234567890abcdef"
-                project_data_url: "https://storage.cocoaflow.com/projects/data2.json"
-                collected_at: "2024-01-14T09:15:00Z"
-                created_at: "2024-01-14T09:15:00Z"
-                updated_at: "2024-01-14T09:15:00Z"
-            pagination:
-              total: 150
-              limit: 20
-              offset: 0
-              has_more: true
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
@@ -233,15 +105,7 @@ put:
   tags:
     - 🔍 Inspection
   summary: Update inspection data
-  description: |
-    Update existing inspection data.
-
-    **Required Permissions:** `write:inspection`
-
-    **Business Rules:**
-    - Cannot update data older than 30 days
-    - Only the original collector or admin can update
-    - All changes are logged for audit purposes
+  description: Update an existing inspection data record
   operationId: updateInspectionData
   security:
     - BearerAuth: []
@@ -253,7 +117,6 @@ put:
       schema:
         type: string
         format: cuid
-        example: "clh1234567890abcdef"
   requestBody:
     required: true
     content:
@@ -267,17 +130,6 @@ put:
         application/json:
           schema:
             $ref: "../../components/schemas/inspection_data.yaml"
-          example:
-            id: "clh1234567890abcdef"
-            project_id: "clh1234567890abcdef"
-            project_data:
-              field_1: "updated_value_1"
-              field_2: "updated_value_2"
-            collected_by: "clh1234567890abcdef"
-            project_data_url: "https://storage.cocoaflow.com/projects/data1.json"
-            collected_at: "2024-01-15T10:30:00Z"
-            created_at: "2024-01-15T10:30:00Z"
-            updated_at: "2024-01-15T11:30:00Z"
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
@@ -324,16 +176,7 @@ delete:
   tags:
     - 🔍 Inspection
   summary: Delete inspection data
-  description: |
-    Delete inspection data from the system.
-
-    **Required Permissions:** `write:inspection`
-
-    **Business Rules:**
-    - Cannot delete data older than 30 days
-    - Cannot delete data that has been submitted for compliance
-    - Only admin users can delete inspection data
-    - Soft delete - marks as deleted but preserves data for audit trail
+  description: Delete an existing inspection data record
   operationId: deleteInspectionData
   security:
     - BearerAuth: []
@@ -345,26 +188,9 @@ delete:
       schema:
         type: string
         format: cuid
-        example: "clh1234567890abcdef"
   responses:
     "204":
       description: Inspection data deleted successfully
-    "400":
-      description: Cannot delete inspection data
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Cannot Delete Inspection Data"
-              message:
-                type: string
-                example: "Cannot delete inspection data that has been submitted for compliance"
-              code:
-                type: string
-                example: "INSPECTION_DATA_ALREADY_SUBMITTED"
     "401":
       $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
