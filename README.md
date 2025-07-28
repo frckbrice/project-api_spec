@@ -2,7 +2,7 @@
 
 <img src="https://images.unsplash.com/photo-1667900598245-6620cea1c04c?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Y29jb2F8ZW58MHx8MHx8fDA%3D" alt="CocoaFlow - Cocoa Industry Management" width="100%" style="max-height: 300px; object-fit: cover;">
 
-![display image](docs/api_spec_image_1.png)
+![display image](public/api_spec_image_1.png)
 
 [![OpenAPI 3.1.0](https://img.shields.io/badge/OpenAPI-3.1.0-green.svg)](https://spec.openapis.org/oas/v3.1.0)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
