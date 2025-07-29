@@ -52,6 +52,13 @@ jobs:
             docs/
           retention-days: 30
 
+      - name: Upload bundled spec
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundled-spec
+          path: dist/cocoaflow-api.yaml
+          retention-days: 30
+
   test:
     name: Test Generated Clients
     runs-on: ubuntu-latest
@@ -69,6 +76,12 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Download bundled specification
+        uses: actions/download-artifact@v4
+        with:
+          name: bundled-spec
+          path: dist/
 
       - name: Generate TypeScript client
         run: npm run generate:client
@@ -124,6 +137,12 @@ jobs:
 
       - name: Build documentation
         run: npm run docs:build
+
+      - name: Download bundled specification
+        uses: actions/download-artifact@v4
+        with:
+          name: bundled-spec
+          path: dist/
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
