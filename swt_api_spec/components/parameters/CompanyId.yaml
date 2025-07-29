@@ -5,4 +5,4 @@ required: false
 schema:
   type: string
   format: cuid
-  example: "clh1234567890abcdef" 
+  example: "clh1234567890abcdef"

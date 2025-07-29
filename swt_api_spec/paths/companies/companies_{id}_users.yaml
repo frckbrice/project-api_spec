@@ -1,20 +1,20 @@
 get:
   tags:
     - Company
-    description: Get users of a company
-    summary: Get users of a company
-    operationId: getCompanyUsers
-    parameters:
-      - in: path
-        name: id
-        description: company id
-        required: true
-        schema:
-          type: array
-          items:
-            type: string
-            example: AQA9CNo0cXNLt6sZp5Uc5P0
-        style: simple
+  description: Get users of a company
+  summary: Get users of a company
+  operationId: getCompanyUsers
+  parameters:
+    - in: path
+      name: id
+      description: company id
+      required: true
+      schema:
+        type: array
+        items:
+          type: string
+          example: AQA9CNo0cXNLt6sZp5Uc5P0
+      style: simple
   security:
     - BearerAuth: []
   responses:
@@ -25,7 +25,7 @@ get:
           schema:
             type: array
             items:
-              $ref: "../components/schemas/company"
+              $ref: "../../components/schemas/company"
     "404":
       description: Company not found
     "401":
@@ -33,4 +33,4 @@ get:
     "403":
       description: Forbidden access
     "400":
-        description: Bad request
+      description: Bad request

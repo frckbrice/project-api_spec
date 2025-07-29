@@ -61,7 +61,7 @@ farm_details = client.farms.get(farm_id='clh1234567890abcdef')
 ## API Coverage
 
 - ✅ Companies Management
-- ✅ User Management  
+- ✅ User Management
 - ✅ Farmer Profiles
 - ✅ Farm Operations
 - ✅ Project Management
@@ -80,7 +80,7 @@ from cocoaflow import AsyncCocoaFlowAPI
 
 async def main():
     client = AsyncCocoaFlowAPI(api_key='your-api-key')
-    
+
     # Create multiple farms
     farms = []
     for i in range(5):
@@ -92,7 +92,7 @@ async def main():
             'council': 'Ibadan Council'
         })
         farms.append(farm)
-    
+
     return farms
 
 # Run async function
@@ -107,4 +107,4 @@ farms = asyncio.run(main())
 
 ## License
 
-Apache 2.0 
+Apache 2.0

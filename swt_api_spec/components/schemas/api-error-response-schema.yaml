@@ -1,15 +1,11 @@
-description: Standard error response
-content:
-  application/json:
-    schema:
-      type: object
-      properties:
-        statusCode:
-          type: number
-          example: 400
-        message:
-          type: string
-          example: "Bad Request"
-        error:
-          type: string
-          example: "Validation Error"
+type: object
+properties:
+  statusCode:
+    type: number
+    example: 400
+  message:
+    type: string
+    example: "Bad Request"
+  error:
+    type: string
+    example: "Validation Error"

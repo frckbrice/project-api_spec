@@ -244,9 +244,9 @@ paths:
   "/farms/{id}":
     $ref: paths/farm/farm_{id}.yaml
   "/audits": # unified audits endpoint
-    $ref: paths/audits.yaml
+    $ref: paths/audit/audits.yaml
   "/audits/{audit_id}": # unified audits endpoint
-    $ref: "paths/audits.yaml"
+    $ref: "paths/audit/audits_{id}.yaml"
   "/receipts": # receipts
     $ref: paths/receipt/receipt.yaml
   "/receipts/{id}":
@@ -263,23 +263,22 @@ paths:
     $ref: paths/market/market_{company_id}.yaml
   "/inspection_data": # inspection_data
     $ref: "paths/inspection_data/inspection_data.yaml"
-  "/inspection_data/{inspection_id}": # inspection_data
-    $ref: "paths/inspection_data/inspection_data_{inspection_id}.yaml"
-
+  "/inspection_data/{project_id}": # inspection_data
+    $ref: "paths/inspection_data/inspection_data_{id}.yaml"
   "/subscriptions": # subcription
     $ref: "paths/subscription/subscription.yaml"
   "/subscriptions/{subscription_id}": # subscription
-    $ref: "paths/subscription/subscription_{subscription_id}.yaml"
+    $ref: "paths/subscription/subscription_{id}.yaml"
   "/subscriptions/{company_id}/company":
     $ref: paths/subscription/subscription_{company_id }_company.yaml
   "/trainings": # training
     $ref: paths/training/training.yaml
   "/trainings/{training_id}": # training
-    $ref: "paths/training/training.yaml"
+    $ref: "paths/training/training_{id}.yaml"
   "/transaction": # transaction
-    $ref: paths/transaction.yaml
+    $ref: paths/transaction/transaction.yaml
   "/transaction/{transaction_id}": # transaction
-    $ref: "paths/transaction.yaml"
+    $ref: "paths/transaction/transaction_{id}.yaml"
   "/campaign_stocks": #campaign_stock
     $ref: paths/campaign_stock/campaign_stock.yaml
   "/campaign_stocks/{campaign_id}":
@@ -295,9 +294,9 @@ paths:
   "/collector_agents/{id}":
     $ref: paths/collector_agent/collector_agent_{id}.yaml
   "/training_session": #participants
-    $ref: paths/training_session.yaml
+    $ref: paths/training_sessions/training_session.yaml
   "/training_session/{session_id}": #participants
-    $ref: paths/training_session.yaml
+    $ref: paths/training_sessions/training_session_{id}.yaml
   "/price_plan_requirements":
     $ref: paths/price_plan_requirement.yaml
 components:
@@ -366,165 +365,27 @@ components:
 
   parameters:
     PaginationLimit:
-      name: limit
-      in: query
-      description: Number of items to return (max 100)
-      required: false
-      schema:
-        type: integer
-        minimum: 1
-        maximum: 100
-        default: 20
-        example: 20
+      $ref: components/parameters/PaginationLimit.yaml
     PaginationOffset:
-      name: offset
-      in: query
-      description: Number of items to skip for pagination
-      required: false
-      schema:
-        type: integer
-        minimum: 0
-        default: 0
-        example: 0
+      $ref: components/parameters/PaginationOffset.yaml
     CompanyId:
-      name: company_id
-      in: query
-      description: Filter by company ID
-      required: false
-      schema:
-        type: string
-        format: cuid
-        example: "clh1234567890abcdef"
+      $ref: components/parameters/CompanyId.yaml
     DateRangeStart:
-      name: start_date
-      in: query
-      description: Start date for filtering (ISO 8601 format)
-      required: false
-      schema:
-        type: string
-        format: date
-        example: "2024-01-01"
+      $ref: components/parameters/DateRangeStart.yaml
     DateRangeEnd:
-      name: end_date
-      in: query
-      description: End date for filtering (ISO 8601 format)
-      required: false
-      schema:
-        type: string
-        format: date
-        example: "2024-12-31"
+      $ref: components/parameters/DateRangeEnd.yaml
 
   responses:
     UnauthorizedError:
-      description: Authentication credentials were missing or invalid
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Unauthorized"
-              message:
-                type: string
-                example: "Invalid or missing authentication token"
-              code:
-                type: string
-                example: "AUTH_REQUIRED"
+      $ref: components/responses/UnauthorizedError.yaml
     ForbiddenError:
-      description: The request was understood but the server is refusing to authorize it
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Forbidden"
-              message:
-                type: string
-                example: "Insufficient permissions to access this resource"
-              code:
-                type: string
-                example: "INSUFFICIENT_PERMISSIONS"
+      $ref: components/responses/ForbiddenError.yaml
     ValidationError:
-      description: The request was well-formed but contains invalid parameters
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Validation Error"
-              message:
-                type: string
-                example: "Request validation failed"
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    field:
-                      type: string
-                      example: "email"
-                    message:
-                      type: string
-                      example: "Invalid email format"
-              code:
-                type: string
-                example: "VALIDATION_ERROR"
+      $ref: components/responses/ValidationError.yaml
     RateLimitError:
-      description: Too many requests, please try again later
-      headers:
-        X-RateLimit-Limit:
-          description: The number of allowed requests in the current period
-          schema:
-            type: integer
-        X-RateLimit-Remaining:
-          description: The number of remaining requests in the current period
-          schema:
-            type: integer
-        X-RateLimit-Reset:
-          description: The number of seconds left in the current period
-          schema:
-            type: integer
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Rate Limit Exceeded"
-              message:
-                type: string
-                example: "Too many requests, please try again later"
-              retry_after:
-                type: integer
-                example: 3600
-              code:
-                type: string
-                example: "RATE_LIMIT_EXCEEDED"
+      $ref: components/responses/RateLimitError.yaml
     ServerError:
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Internal Server Error"
-              message:
-                type: string
-                example: "An unexpected error occurred"
-              request_id:
-                type: string
-                example: "req_1234567890abcdef"
-              code:
-                type: string
-                example: "INTERNAL_ERROR"
+      $ref: components/responses/ServerError.yaml
 
 security:
   - BearerAuth: []

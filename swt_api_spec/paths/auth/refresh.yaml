@@ -4,13 +4,13 @@ post:
   summary: Refresh Access Token
   description: |
     Refresh an expired access token using a valid refresh token.
-    
+
     **Token Refresh Flow:**
     1. Client sends refresh token
     2. System validates refresh token
     3. Returns new access token
     4. Refresh token remains valid (30 days)
-    
+
     **Security Features:**
     - Refresh token rotation (optional)
     - Token blacklisting for security
@@ -92,4 +92,4 @@ post:
                 type: string
                 example: "INVALID_REFRESH_TOKEN"
     "500":
-      $ref: "../../components/responses/ServerError.yaml" 
+      $ref: "../../components/responses/ServerError.yaml"

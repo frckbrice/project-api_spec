@@ -1,28 +1,28 @@
-# get subscription by ID
+# get transaction by ID
 get:
   tags:
-    - 🏢 Companies
-  summary: Get subscription by ID
+    - 💰 Transactions
+  summary: Get transaction by ID
   description: |
-    Retrieve a specific subscription by its ID.
-  operationId: getSubscriptionById
+    Retrieve a specific transaction by its ID.
+  operationId: getTransactionById
   security:
     - BearerAuth: []
   parameters:
-    - name: subscription_id
+    - name: transaction_id
       in: path
       required: true
-      description: ID of the subscription to retrieve
+      description: ID of the transaction to retrieve
       schema:
         type: string
         format: cuid
   responses:
     "200":
-      description: List of subscriptions retrieved successfully
+      description: List of transactions retrieved successfully
       content:
         application/json:
           schema:
-            $ref: "../../components/schemas/subscription.yaml"
+            $ref: "../../components/schemas/transaction.yaml"
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
@@ -34,19 +34,20 @@ get:
     "500":
       $ref: "../../components/responses/ServerError.yaml"
 
+# update a transaction
 put:
   tags:
-    - 🏢 Companies
-  summary: Update a subscription
-  description: Update an existing subscription
-  operationId: updateSubscription
+    - 💰 Transactions
+  summary: Update a transaction
+  description: Update an existing transaction
+  operationId: updateTransaction
   security:
     - BearerAuth: []
   parameters:
-    - name: subscription_id
+    - name: transaction_id
       in: path
       required: true
-      description: ID of the subscription to update
+      description: ID of the transaction to update
       schema:
         type: string
         format: cuid
@@ -55,14 +56,32 @@ put:
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/subscription.yaml"
+          $ref: "../../components/schemas/transaction.yaml"
   responses:
     "200":
-      description: Subscription updated successfully
+      description: Transaction updated successfully
       content:
         application/json:
           schema:
-            $ref: "../../components/schemas/subscription.yaml"
+            $ref: "../../components/schemas/transaction.yaml"
+          example:
+            id: "clh1234567890abcdef"
+            market_id: "clh1234567890abcdef"
+            date: "2024-01-15T10:30:00Z"
+            level_of_traceability: "identite preservee"
+            driver_name: "John Smith"
+            quantity: 500
+            net_weight_declared_in_Ton: 0.5
+            humidity_level_of_product: 7.5
+            total_quantity_in_bags: 10
+            receiver_name: "Jane Doe"
+            min_com_verif_agent_name_and_sig: "Agent Smith - Verified"
+            sender_signature: "Sender123"
+            driver_signature: "Driver456"
+            product_quality: "Grade A"
+            vehicule_immatriculation_number: "ABC123XY"
+            created_at: "2024-01-15T10:30:00Z"
+            updated_at: "2024-01-15T11:30:00Z"
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
@@ -70,7 +89,7 @@ put:
     "403":
       $ref: "../../components/responses/ForbiddenError.yaml"
     "404":
-      description: Subscription not found
+      description: Transaction not found
       content:
         application/json:
           schema:
@@ -78,13 +97,13 @@ put:
             properties:
               error:
                 type: string
-                example: "Subscription Not Found"
+                example: "Transaction Not Found"
               message:
                 type: string
-                example: "Subscription with the specified ID was not found"
+                example: "Transaction with the specified ID was not found"
               code:
                 type: string
-                example: "SUBSCRIPTION_NOT_FOUND"
+                example: "TRANSACTION_NOT_FOUND"
     "409":
       description: Update conflict
       content:
@@ -97,38 +116,39 @@ put:
                 example: "Update Conflict"
               message:
                 type: string
-                example: "Cannot update subscription in current state"
+                example: "Cannot update transaction in current state"
               code:
                 type: string
                 example: "UPDATE_CONFLICT"
     "500":
       $ref: "../../components/responses/ServerError.yaml"
 
+# delete a transaction
 delete:
   tags:
-    - 🏢 Companies
-  summary: Delete a subscription
-  description: Delete an existing subscription
-  operationId: deleteSubscription
+    - 💰 Transactions
+  summary: Delete a transaction
+  description: Delete an existing transaction
+  operationId: deleteTransaction
   security:
     - BearerAuth: []
   parameters:
-    - name: subscription_id
+    - name: transaction_id
       in: path
       required: true
-      description: ID of the subscription to delete
+      description: ID of the transaction to delete
       schema:
         type: string
         format: cuid
   responses:
     "204":
-      description: Subscription deleted successfully
+      description: Transaction deleted successfully
     "401":
       $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
       $ref: "../../components/responses/ForbiddenError.yaml"
     "404":
-      description: Subscription not found
+      description: Transaction not found
       content:
         application/json:
           schema:
@@ -136,12 +156,12 @@ delete:
             properties:
               error:
                 type: string
-                example: "Subscription Not Found"
+                example: "Transaction Not Found"
               message:
                 type: string
-                example: "Subscription with the specified ID was not found"
+                example: "Transaction with the specified ID was not found"
               code:
                 type: string
-                example: "SUBSCRIPTION_NOT_FOUND"
+                example: "TRANSACTION_NOT_FOUND"
     "500":
       $ref: "../../components/responses/ServerError.yaml"

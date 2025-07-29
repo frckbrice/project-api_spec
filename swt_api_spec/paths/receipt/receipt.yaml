@@ -1,30 +1,3 @@
-# create a data for a receipt
-post:
-  tags:
-    - 💰 Receipts
-  summary: Create a receipt
-  description: The receipt data are created after a specific transaction between the farmer and the company during the buying process.
-  security:
-    - BearerAuth: []
-  requestBody:
-    content:
-      application/json:
-        schema:
-          $ref: ../../components/schemas/receipt.yaml
-
-  responses:
-    "201":
-      description: the receipt created
-    "400":
-      description: the receipt not created. Bad Input
-    "401":
-      description: Unauthorized access
-    "403":
-      description: Forbidden access
-    "500":
-      description: internal server error
-  operationId: createReceipt
-
 # get all the receipt produced during a single market
 get:
   tags:
@@ -69,3 +42,30 @@ get:
       description: Forbidden access
     "500":
       description: internal server error
+
+# create a data for a receipt
+post:
+  tags:
+    - 💰 Receipts
+  summary: Create a receipt
+  description: The receipt data are created after a specific transaction between the farmer and the company during the buying process.
+  security:
+    - BearerAuth: []
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/schemas/receipt.yaml
+
+  responses:
+    "201":
+      description: the receipt created
+    "400":
+      description: the receipt not created. Bad Input
+    "401":
+      description: Unauthorized access
+    "403":
+      description: Forbidden access
+    "500":
+      description: internal server error
+  operationId: createReceipt

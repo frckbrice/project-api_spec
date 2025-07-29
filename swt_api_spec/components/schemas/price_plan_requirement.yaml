@@ -14,6 +14,41 @@ properties:
     type: string
     format: cuid
     description: To indicate the ID corresponding to the price plan involved in the relation
+  unit:
+    type: string
+    description: To indicate the unit of the price plan requirement
+    example: "percentage"
+  requirement_description:
+    type: string
+    description: To indicate the description of the price plan requirement
+    example: "Must meet minimum quality standards for cocoa beans"
+  requirement_name:
+    type: string
+    description: To indicate the name of the price plan requirement
+  requirement_type:
+    type: string
+    description: To indicate the type of the price plan requirement
+    example: "quality"
+  validation_rules:
+    type: array
+    description: To indicate the validation rules of the price plan requirement
+    example:
+      [
+        "Must meet minimum quality standards for cocoa beans",
+        "Must meet maximum quality standards for cocoa beans",
+      ]
+  is_mandatory:
+    type: boolean
+    description: To indicate if the price plan requirement is mandatory
+    example: true
+  min_value:
+    type: number
+    description: To indicate the minimum value of the price plan requirement
+    example: 80
+  max_value:
+    type: number
+    description: To indicate the maximum value of the price plan requirement
+    example: 100
   created_at:
     type: string
     format: date-time

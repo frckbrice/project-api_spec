@@ -43,7 +43,7 @@ post:
           schema:
             type: array
             items:
-              $ref: "../components/schemas/Company.yaml"
+              $ref: "../../components/schemas/Company.yaml"
     "404":
       description: Company not found
     "401":

@@ -1,3 +1,49 @@
+get:
+  tags:
+    - Requirement
+  summary: Get a requirement
+  description: Get a single requirement by ID
+  operationId: getRequirementById
+  security:
+    - BearerAuth: []
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: ID of the requirement to retrieve
+      schema:
+        type: string
+        format: cuid
+  responses:
+    "200":
+      description: Requirement retrieved successfully
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/requirement.yaml"
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "404":
+      description: Requirement not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Requirement Not Found"
+              message:
+                type: string
+                example: "Requirement with the specified ID was not found"
+              code:
+                type: string
+                example: "REQUIREMENT_NOT_FOUND"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"
+
 patch:
   tags:
     - Requirement
@@ -29,52 +75,6 @@ patch:
             $ref: "../../components/schemas/requirement.yaml"
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
-    "401":
-      $ref: "../../components/responses/UnauthorizedError.yaml"
-    "403":
-      $ref: "../../components/responses/ForbiddenError.yaml"
-    "404":
-      description: Requirement not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Requirement Not Found"
-              message:
-                type: string
-                example: "Requirement with the specified ID was not found"
-              code:
-                type: string
-                example: "REQUIREMENT_NOT_FOUND"
-    "500":
-      $ref: "../../components/responses/ServerError.yaml"
-
-get:
-  tags:
-    - Requirement
-  summary: Get a requirement
-  description: Get a single requirement by ID
-  operationId: getRequirementById
-  security:
-    - BearerAuth: []
-  parameters:
-    - name: id
-      in: path
-      required: true
-      description: ID of the requirement to retrieve
-      schema:
-        type: string
-        format: cuid
-  responses:
-    "200":
-      description: Requirement retrieved successfully
-      content:
-        application/json:
-          schema:
-            $ref: "../../components/schemas/requirement.yaml"
     "401":
       $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":

@@ -19,37 +19,37 @@ npm install @cocoaflow/js-sdk
 ### Proposed Usage Pattern
 
 ```typescript
-import { CocoaFlowAPI } from '@cocoaflow/js-sdk';
+import { CocoaFlowAPI } from "@cocoaflow/js-sdk";
 
 // Initialize the client
 const client = new CocoaFlowAPI({
-  apiKey: 'your-api-key',
-  baseURL: 'https://api.cocoaflow.com'
+  apiKey: "your-api-key",
+  baseURL: "https://api.cocoaflow.com",
 });
 
 // Authenticate
 await client.auth.login({
-  email: 'user@example.com',
-  password: 'password'
+  email: "user@example.com",
+  password: "password",
 });
 
 // Create a farm
 const farm = await client.farms.create({
   location: {
     lat: 6.5244,
-    lng: 3.3792
+    lng: 3.3792,
   },
-  farmer_id: 'clh1234567890abcdef',
-  village: 'Ibadan Village',
-  division: 'Oyo Division',
-  council: 'Ibadan Council'
+  farmer_id: "clh1234567890abcdef",
+  village: "Ibadan Village",
+  division: "Oyo Division",
+  council: "Ibadan Council",
 });
 
 // List farms with pagination
 const farms = await client.farms.list({
   limit: 20,
   offset: 0,
-  company_id: 'clh1234567890abcdef'
+  company_id: "clh1234567890abcdef",
 });
 ```
 
@@ -65,7 +65,7 @@ const farms = await client.farms.list({
 ## API Coverage (Based on Specification)
 
 - ✅ Companies Management
-- ✅ User Management  
+- ✅ User Management
 - ✅ Farmer Profiles
 - ✅ Farm Operations
 - ✅ Project Management
@@ -98,4 +98,4 @@ const farms = await client.farms.list({
 
 ## License
 
-Apache 2.0 
+Apache 2.0

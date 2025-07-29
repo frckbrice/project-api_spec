@@ -23,4 +23,4 @@ properties:
 required:
   - success
   - message
-  - data 
+  - data

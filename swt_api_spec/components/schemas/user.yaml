@@ -53,7 +53,7 @@ properties:
       - AUDITOR
       - TRAINER
       - AGENT
-      - IT_SUPPORT 
+      - IT_SUPPORT
       - SALES
   famer_attached_contract_url:
     type: string
@@ -73,6 +73,10 @@ properties:
         "https://www.facebook.com/example",
         "https://www.linkedin.com/in/example",
       ]
+  is_active:
+    type: boolean
+    description: "Whether the user is active or not."
+    default: true
   created_at:
     type: string
     format: date-time

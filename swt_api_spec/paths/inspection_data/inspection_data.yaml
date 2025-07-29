@@ -1,50 +1,3 @@
-# create inspection data
-post:
-  tags:
-    - 🔍 Inspection
-  summary: Create new inspection data
-  description: Create a new inspection data record
-  operationId: createInspectionData
-  security:
-    - BearerAuth: []
-  requestBody:
-    required: true
-    content:
-      application/json:
-        schema:
-          $ref: "../../components/schemas/inspection_data.yaml"
-  responses:
-    "201":
-      description: Inspection data created successfully
-      content:
-        application/json:
-          schema:
-            $ref: "../../components/schemas/inspection_data.yaml"
-    "400":
-      $ref: "../../components/responses/ValidationError.yaml"
-    "401":
-      $ref: "../../components/responses/UnauthorizedError.yaml"
-    "403":
-      $ref: "../../components/responses/ForbiddenError.yaml"
-    "409":
-      description: Inspection data already exists
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Inspection Data Already Exists"
-              message:
-                type: string
-                example: "An inspection data record with these parameters already exists"
-              code:
-                type: string
-                example: "INSPECTION_DATA_ALREADY_EXISTS"
-    "500":
-      $ref: "../../components/responses/ServerError.yaml"
-
 # retrieve all inspection data
 get:
   tags:
@@ -100,23 +53,15 @@ get:
     "500":
       $ref: "../../components/responses/ServerError.yaml"
 
-# update inspection data
-put:
+# create inspection data
+post:
   tags:
     - 🔍 Inspection
-  summary: Update inspection data
-  description: Update an existing inspection data record
-  operationId: updateInspectionData
+  summary: Create new inspection data
+  description: Create a new inspection data record
+  operationId: createInspectionData
   security:
     - BearerAuth: []
-  parameters:
-    - name: inspection_id
-      in: path
-      required: true
-      description: ID of the inspection data to update
-      schema:
-        type: string
-        format: cuid
   requestBody:
     required: true
     content:
@@ -124,8 +69,8 @@ put:
         schema:
           $ref: "../../components/schemas/inspection_data.yaml"
   responses:
-    "200":
-      description: Inspection data updated successfully
+    "201":
+      description: Inspection data created successfully
       content:
         application/json:
           schema:
@@ -136,24 +81,8 @@ put:
       $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
       $ref: "../../components/responses/ForbiddenError.yaml"
-    "404":
-      description: Inspection data not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Inspection Data Not Found"
-              message:
-                type: string
-                example: "Inspection data with the specified ID was not found"
-              code:
-                type: string
-                example: "INSPECTION_DATA_NOT_FOUND"
     "409":
-      description: Update conflict
+      description: Inspection data already exists
       content:
         application/json:
           schema:
@@ -161,55 +90,12 @@ put:
             properties:
               error:
                 type: string
-                example: "Update Conflict"
+                example: "Inspection Data Already Exists"
               message:
                 type: string
-                example: "Cannot update inspection data in current state"
+                example: "An inspection data record with these parameters already exists"
               code:
                 type: string
-                example: "UPDATE_CONFLICT"
-    "500":
-      $ref: "../../components/responses/ServerError.yaml"
-
-# delete inspection data
-delete:
-  tags:
-    - 🔍 Inspection
-  summary: Delete inspection data
-  description: Delete an existing inspection data record
-  operationId: deleteInspectionData
-  security:
-    - BearerAuth: []
-  parameters:
-    - name: inspection_id
-      in: path
-      required: true
-      description: ID of the inspection data to delete
-      schema:
-        type: string
-        format: cuid
-  responses:
-    "204":
-      description: Inspection data deleted successfully
-    "401":
-      $ref: "../../components/responses/UnauthorizedError.yaml"
-    "403":
-      $ref: "../../components/responses/ForbiddenError.yaml"
-    "404":
-      description: Inspection data not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Inspection Data Not Found"
-              message:
-                type: string
-                example: "Inspection data with the specified ID was not found"
-              code:
-                type: string
-                example: "INSPECTION_DATA_NOT_FOUND"
+                example: "INSPECTION_DATA_ALREADY_EXISTS"
     "500":
       $ref: "../../components/responses/ServerError.yaml"

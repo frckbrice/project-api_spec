@@ -1,28 +1,28 @@
-# get subscription by ID
+# get inspection data by ID
 get:
   tags:
-    - 🏢 Companies
-  summary: Get subscription by ID
+    - 🔍 Inspection
+  summary: Get inspection data by ID
   description: |
-    Retrieve a specific subscription by its ID.
-  operationId: getSubscriptionById
+    Retrieve a specific inspection data by its ID.
+  operationId: getInspectionDataById
   security:
     - BearerAuth: []
   parameters:
-    - name: subscription_id
+    - name: project_id
       in: path
       required: true
-      description: ID of the subscription to retrieve
+      description: ID of the project to get inspection data for
       schema:
         type: string
         format: cuid
   responses:
     "200":
-      description: List of subscriptions retrieved successfully
+      description: List of inspection data retrieved successfully
       content:
         application/json:
           schema:
-            $ref: "../../components/schemas/subscription.yaml"
+            $ref: "../../components/schemas/inspection_data.yaml"
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
@@ -34,19 +34,20 @@ get:
     "500":
       $ref: "../../components/responses/ServerError.yaml"
 
+# update inspection data
 put:
   tags:
-    - 🏢 Companies
-  summary: Update a subscription
-  description: Update an existing subscription
-  operationId: updateSubscription
+    - 🔍 Inspection
+  summary: Update inspection data
+  description: Update an existing inspection data record
+  operationId: updateInspectionData
   security:
     - BearerAuth: []
   parameters:
-    - name: subscription_id
+    - name: project_id
       in: path
       required: true
-      description: ID of the subscription to update
+      description: ID of the project to update inspection data for
       schema:
         type: string
         format: cuid
@@ -55,14 +56,14 @@ put:
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/subscription.yaml"
+          $ref: "../../components/schemas/inspection_data.yaml"
   responses:
     "200":
-      description: Subscription updated successfully
+      description: Inspection data updated successfully
       content:
         application/json:
           schema:
-            $ref: "../../components/schemas/subscription.yaml"
+            $ref: "../../components/schemas/inspection_data.yaml"
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
@@ -70,7 +71,7 @@ put:
     "403":
       $ref: "../../components/responses/ForbiddenError.yaml"
     "404":
-      description: Subscription not found
+      description: Inspection data not found
       content:
         application/json:
           schema:
@@ -78,13 +79,13 @@ put:
             properties:
               error:
                 type: string
-                example: "Subscription Not Found"
+                example: "Inspection Data Not Found"
               message:
                 type: string
-                example: "Subscription with the specified ID was not found"
+                example: "Inspection data with the specified ID was not found"
               code:
                 type: string
-                example: "SUBSCRIPTION_NOT_FOUND"
+                example: "INSPECTION_DATA_NOT_FOUND"
     "409":
       description: Update conflict
       content:
@@ -97,38 +98,39 @@ put:
                 example: "Update Conflict"
               message:
                 type: string
-                example: "Cannot update subscription in current state"
+                example: "Cannot update inspection data in current state"
               code:
                 type: string
                 example: "UPDATE_CONFLICT"
     "500":
       $ref: "../../components/responses/ServerError.yaml"
 
+# delete inspection data
 delete:
   tags:
-    - 🏢 Companies
-  summary: Delete a subscription
-  description: Delete an existing subscription
-  operationId: deleteSubscription
+    - 🔍 Inspection
+  summary: Delete inspection data
+  description: Delete an existing inspection data record
+  operationId: deleteInspectionData
   security:
     - BearerAuth: []
   parameters:
-    - name: subscription_id
+    - name: project_id
       in: path
       required: true
-      description: ID of the subscription to delete
+      description: ID of the project to delete inspection data for
       schema:
         type: string
         format: cuid
   responses:
     "204":
-      description: Subscription deleted successfully
+      description: Inspection data deleted successfully
     "401":
       $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
       $ref: "../../components/responses/ForbiddenError.yaml"
     "404":
-      description: Subscription not found
+      description: Inspection data not found
       content:
         application/json:
           schema:
@@ -136,12 +138,12 @@ delete:
             properties:
               error:
                 type: string
-                example: "Subscription Not Found"
+                example: "Inspection Data Not Found"
               message:
                 type: string
-                example: "Subscription with the specified ID was not found"
+                example: "Inspection data with the specified ID was not found"
               code:
                 type: string
-                example: "SUBSCRIPTION_NOT_FOUND"
+                example: "INSPECTION_DATA_NOT_FOUND"
     "500":
       $ref: "../../components/responses/ServerError.yaml"

@@ -44,4 +44,4 @@ required:
   - user_id
   - created_at
   - expires_at
-  - is_active 
+  - is_active

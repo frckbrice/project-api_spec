@@ -1,7 +1,7 @@
 #  get the campaign stock for specific campaign
 get:
   tags:
-    - Camoaign_stock
+    - 📦 Campaign Stock
   summary: Get campaign stock by campaign id
   description: get the campaign stock for specific campaign by campaign id
   operationId: getCampaignStock

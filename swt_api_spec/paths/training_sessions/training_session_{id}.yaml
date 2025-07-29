@@ -1,74 +1,23 @@
 get:
   tags:
     - 🎓 Training
-  summary: List all training sessions
+  summary: Get training session by ID
   description: |
-    Retrieve a list of all training sessions.
-    This endpoint supports pagination and filtering.
-  operationId: listTrainingSessions
+    Retrieve a specific training session by its ID.
+  operationId: getTrainingSessionById
   security:
     - BearerAuth: []
   parameters:
-    - $ref: "../../components/parameters/PaginationLimit.yaml"
-    - $ref: "../../components/parameters/PaginationOffset.yaml"
-    - $ref: "../../components/parameters/CompanyId.yaml"
-    - $ref: "../../components/parameters/DateRangeStart.yaml"
-    - $ref: "../../components/parameters/DateRangeEnd.yaml"
+    - name: session_id
+      in: path
+      required: true
+      description: ID of the training session to retrieve
+      schema:
+        type: string
+        format: cuid
   responses:
     "200":
       description: List of training sessions retrieved successfully
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: "../../components/schemas/training_session.yaml"
-              meta:
-                type: object
-                properties:
-                  total:
-                    type: integer
-                    example: 100
-                  page:
-                    type: integer
-                    example: 1
-                  limit:
-                    type: integer
-                    example: 20
-                  has_more:
-                    type: boolean
-                    example: true
-    "400":
-      $ref: "../../components/responses/ValidationError.yaml"
-    "401":
-      $ref: "../../components/responses/UnauthorizedError.yaml"
-    "403":
-      $ref: "../../components/responses/ForbiddenError.yaml"
-    "429":
-      $ref: "../../components/responses/RateLimitError.yaml"
-    "500":
-      $ref: "../../components/responses/ServerError.yaml"
-
-post:
-  tags:
-    - 🎓 Training
-  summary: Create a new training session
-  description: Create a new training session record
-  operationId: createTrainingSession
-  security:
-    - BearerAuth: []
-  requestBody:
-    required: true
-    content:
-      application/json:
-        schema:
-          $ref: "../../components/schemas/training_session.yaml"
-  responses:
-    "201":
-      description: Training session created successfully
       content:
         application/json:
           schema:
@@ -79,22 +28,8 @@ post:
       $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
       $ref: "../../components/responses/ForbiddenError.yaml"
-    "409":
-      description: Training session already exists
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Training Session Already Exists"
-              message:
-                type: string
-                example: "A training session with these parameters already exists"
-              code:
-                type: string
-                example: "TRAINING_SESSION_ALREADY_EXISTS"
+    "429":
+      $ref: "../../components/responses/RateLimitError.yaml"
     "500":
       $ref: "../../components/responses/ServerError.yaml"
 

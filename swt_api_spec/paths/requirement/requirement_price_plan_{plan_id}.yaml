@@ -3,8 +3,8 @@ get:
   tags:
     - Requirement
   summary: Get requirement by id
-  operationId: findAllRequirements
   description: To get a specific requirement. Only administrators can use this operation. If you want to get a specific requirement, use the **getRequirement** operation.
+  operationId: getRequirementPricePlanById
   parameters:
     - name: plan_id
       in: path

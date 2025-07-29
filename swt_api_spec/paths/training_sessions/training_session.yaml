@@ -1,12 +1,11 @@
-# get all training data
 get:
   tags:
     - 🎓 Training
-  summary: List all trainings
+  summary: List all training sessions for the training project
   description: |
-    Retrieve a list of all trainings.
+    Retrieve a list of all training sessions for the training project.
     This endpoint supports pagination and filtering.
-  operationId: listTrainings
+  operationId: listTrainingSessions
   security:
     - BearerAuth: []
   parameters:
@@ -17,7 +16,7 @@ get:
     - $ref: "../../components/parameters/DateRangeEnd.yaml"
   responses:
     "200":
-      description: List of trainings retrieved successfully
+      description: List of training sessions retrieved successfully
       content:
         application/json:
           schema:
@@ -26,7 +25,7 @@ get:
               data:
                 type: array
                 items:
-                  $ref: "../../components/schemas/training.yaml"
+                  $ref: "../../components/schemas/training_session.yaml"
               meta:
                 type: object
                 properties:
@@ -53,13 +52,12 @@ get:
     "500":
       $ref: "../../components/responses/ServerError.yaml"
 
-# create a training data
 post:
   tags:
     - 🎓 Training
-  summary: Create a new training
-  description: Create a new training record
-  operationId: createTraining
+  summary: Create a new training session for a day
+  description: Create a new training session record for a day
+  operationId: createTrainingSession
   security:
     - BearerAuth: []
   requestBody:
@@ -67,14 +65,14 @@ post:
     content:
       application/json:
         schema:
-          $ref: "../../components/schemas/training.yaml"
+          $ref: "../../components/schemas/training_session.yaml"
   responses:
     "201":
-      description: Training created successfully
+      description: Training session created successfully
       content:
         application/json:
           schema:
-            $ref: "../../components/schemas/training.yaml"
+            $ref: "../../components/schemas/training_session.yaml"
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
@@ -82,7 +80,7 @@ post:
     "403":
       $ref: "../../components/responses/ForbiddenError.yaml"
     "409":
-      description: Training already exists
+      description: Training session already exists
       content:
         application/json:
           schema:
@@ -90,12 +88,12 @@ post:
             properties:
               error:
                 type: string
-                example: "Training Already Exists"
+                example: "Training Session Already Exists"
               message:
                 type: string
-                example: "A training with these parameters already exists"
+                example: "A training session with these parameters already exists"
               code:
                 type: string
-                example: "TRAINING_ALREADY_EXISTS"
+                example: "TRAINING_SESSION_ALREADY_EXISTS"
     "500":
       $ref: "../../components/responses/ServerError.yaml"

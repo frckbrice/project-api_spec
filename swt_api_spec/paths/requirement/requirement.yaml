@@ -1,114 +1,19 @@
-post:
-  tags:
-    - 💰 Transactions
-  summary: Create requirement
-  description: |
-    Create a new requirement from Rainforest Alliance certification requirements dedicated for the offer plan.
-    
-    **Required Permissions:** `write:requirement`
-    
-    **Business Rules:**
-    - Requirement must be associated with a valid certification standard
-    - Requirement name must be unique within the same category
-    - Only authorized users can create requirements
-    - Requirements must have valid validation rules
-  operationId: createRequirement
-  security:
-    - BearerAuth: []
-  requestBody:
-    required: true
-    content:
-      application/json:
-        schema:
-          type: object
-          $ref: "../../components/schemas/requirement.yaml"
-        examples:
-          basic_requirement:
-            summary: Basic requirement
-            description: Create a requirement with minimal information
-            value:
-              name: "Organic Certification"
-              category: "certification"
-              is_mandatory: true
-              description: "Must have valid organic certification"
-          detailed_requirement:
-            summary: Detailed requirement
-            description: Create a requirement with comprehensive details
-            value:
-              name: "Organic Certification"
-              category: "certification"
-              description: "Must have valid organic certification from recognized bodies"
-              is_mandatory: true
-              validation_rules: ["Valid certification document", "Annual renewal required"]
-              min_score: 80
-              max_score: 100
-              unit: "percentage"
-  responses:
-    "201":
-      description: Requirement created successfully
-      headers:
-        Location:
-          description: URL of the created requirement resource
-          schema:
-            type: string
-            format: uri
-      content:
-        application/json:
-          schema:
-            $ref: "../../components/schemas/requirement.yaml"
-          example:
-            id: "clh1234567890abcdef"
-            name: "Organic Certification"
-            category: "certification"
-            description: "Must have valid organic certification from recognized bodies"
-            is_mandatory: true
-            validation_rules: ["Valid certification document", "Annual renewal required"]
-            min_score: 80
-            max_score: 100
-            unit: "percentage"
-            created_at: "2024-01-15T10:30:00Z"
-            updated_at: "2024-01-15T10:30:00Z"
-    "400":
-      $ref: "../../components/responses/ValidationError.yaml"
-    "401":
-      $ref: "../../components/responses/UnauthorizedError.yaml"
-    "403":
-      $ref: "../../components/responses/ForbiddenError.yaml"
-    "409":
-      description: Requirement already exists
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Requirement Already Exists"
-              message:
-                type: string
-                example: "A requirement with this name already exists in this category"
-              code:
-                type: string
-                example: "REQUIREMENT_ALREADY_EXISTS"
-    "500":
-      $ref: "../../components/responses/ServerError.yaml"
-
 # get all requirements
 get:
   tags:
-    - 💰 Transactions
+    - 📦 Requirements
   summary: List all requirements
   description: |
     Retrieve a paginated list of requirements with optional filtering capabilities.
-    
+
     **Required Permissions:** `read:requirement`
-    
+
     **Filtering Options:**
     - Filter by category
     - Filter by mandatory status
     - Filter by name (partial match)
     - Filter by company ID
-    
+
     **Pagination:**
     - Default limit: 20 items per page
     - Maximum limit: 100 items per page
@@ -125,7 +30,16 @@ get:
       required: false
       schema:
         type: string
-        enum: [certification, quality, quantity, documentation, safety, environmental, other]
+        enum:
+          [
+            certification,
+            quality,
+            quantity,
+            documentation,
+            safety,
+            environmental,
+            other,
+          ]
         example: "certification"
     - name: is_mandatory
       in: query
@@ -193,7 +107,8 @@ get:
                 category: "certification"
                 description: "Must have valid organic certification from recognized bodies"
                 is_mandatory: true
-                validation_rules: ["Valid certification document", "Annual renewal required"]
+                validation_rules:
+                  ["Valid certification document", "Annual renewal required"]
                 min_score: 80
                 max_score: 100
                 unit: "percentage"
@@ -229,22 +144,21 @@ get:
     "500":
       $ref: "../../components/responses/ServerError.yaml"
 
-# update requirement
-put:
+post:
   tags:
-    - 💰 Transactions
-  summary: Update requirement
+    - 📦 Requirements
+  summary: Create requirement
   description: |
-    Update an existing requirement.
-    
+    Create a new requirement from Rainforest Alliance certification requirements dedicated for the offer plan.
+
     **Required Permissions:** `write:requirement`
-    
+
     **Business Rules:**
-    - Cannot update requirements that are already in use by active plans
-    - Cannot change requirement category after creation
-    - Only authorized users can update requirements
-    - All changes are logged for audit purposes
-  operationId: updateRequirement
+    - Requirement must be associated with a valid certification standard
+    - Requirement name must be unique within the same category
+    - Only authorized users can create requirements
+    - Requirements must have valid validation rules
+  operationId: createRequirement
   security:
     - BearerAuth: []
   requestBody:
@@ -253,98 +167,63 @@ put:
       application/json:
         schema:
           type: object
-          properties:
-            name:
-              type: string
-              description: Updated requirement name
-              example: "Updated Organic Certification"
-            description:
-              type: string
-              description: Updated requirement description
-              example: "Updated organic certification requirements"
-            is_mandatory:
-              type: boolean
-              description: Updated mandatory status
-              example: true
-            validation_rules:
-              type: array
-              items:
-                type: string
-              description: Updated validation rules
-              example: ["Valid certification document", "Annual renewal required", "Third-party verification"]
-            min_score:
-              type: number
-              description: Updated minimum score
-              example: 85
-            max_score:
-              type: number
-              description: Updated maximum score
-              example: 100
-            unit:
-              type: string
-              description: Updated unit of measurement
-              example: "percentage"
+          $ref: "../../components/schemas/requirement.yaml"
         examples:
-          update_basic:
-            summary: Update basic requirement details
-            description: Update requirement name and description
+          basic_requirement:
+            summary: Basic requirement
+            description: Create a requirement with minimal information
             value:
-              name: "Updated Organic Certification"
-              description: "Updated organic certification requirements"
-          update_detailed:
-            summary: Update detailed requirement details
-            description: Update comprehensive requirement details
-            value:
-              name: "Updated Organic Certification"
-              description: "Updated organic certification requirements"
+              name: "Organic Certification"
+              category: "certification"
               is_mandatory: true
-              validation_rules: ["Valid certification document", "Annual renewal required", "Third-party verification"]
-              min_score: 85
+              description: "Must have valid organic certification"
+          detailed_requirement:
+            summary: Detailed requirement
+            description: Create a requirement with comprehensive details
+            value:
+              name: "Organic Certification"
+              category: "certification"
+              description: "Must have valid organic certification from recognized bodies"
+              is_mandatory: true
+              validation_rules:
+                ["Valid certification document", "Annual renewal required"]
+              min_score: 80
               max_score: 100
               unit: "percentage"
   responses:
-    "200":
-      description: Requirement updated successfully
+    "201":
+      description: Requirement created successfully
+      headers:
+        Location:
+          description: URL of the created requirement resource
+          schema:
+            type: string
+            format: uri
       content:
         application/json:
           schema:
             $ref: "../../components/schemas/requirement.yaml"
           example:
             id: "clh1234567890abcdef"
-            name: "Updated Organic Certification"
+            name: "Organic Certification"
             category: "certification"
-            description: "Updated organic certification requirements"
+            description: "Must have valid organic certification from recognized bodies"
             is_mandatory: true
-            validation_rules: ["Valid certification document", "Annual renewal required", "Third-party verification"]
-            min_score: 85
+            validation_rules:
+              ["Valid certification document", "Annual renewal required"]
+            min_score: 80
             max_score: 100
             unit: "percentage"
             created_at: "2024-01-15T10:30:00Z"
-            updated_at: "2024-01-15T11:30:00Z"
+            updated_at: "2024-01-15T10:30:00Z"
     "400":
       $ref: "../../components/responses/ValidationError.yaml"
     "401":
       $ref: "../../components/responses/UnauthorizedError.yaml"
     "403":
       $ref: "../../components/responses/ForbiddenError.yaml"
-    "404":
-      description: Requirement not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Requirement Not Found"
-              message:
-                type: string
-                example: "Requirement with the specified ID was not found"
-              code:
-                type: string
-                example: "REQUIREMENT_NOT_FOUND"
     "409":
-      description: Requirement update conflict
+      description: Requirement already exists
       content:
         application/json:
           schema:
@@ -352,72 +231,204 @@ put:
             properties:
               error:
                 type: string
-                example: "Requirement Update Conflict"
+                example: "Requirement Already Exists"
               message:
                 type: string
-                example: "Cannot update requirement that is in use by active plans"
+                example: "A requirement with this name already exists in this category"
               code:
                 type: string
-                example: "REQUIREMENT_UPDATE_CONFLICT"
+                example: "REQUIREMENT_ALREADY_EXISTS"
     "500":
       $ref: "../../components/responses/ServerError.yaml"
+# # update requirement
+# put:
+#   tags:
+#     - 📦 Requirements
+#   summary: Update requirement
+#   description: |
+#     Update an existing requirement.
 
-# delete requirement
-delete:
-  tags:
-    - 💰 Transactions
-  summary: Delete requirement
-  description: |
-    Delete a requirement from the system.
-    
-    **Required Permissions:** `write:requirement`
-    
-    **Business Rules:**
-    - Cannot delete requirements that are in use by active plans
-    - Cannot delete mandatory requirements for active plans
-    - Only admin users can delete requirements
-    - Soft delete - marks as deleted but preserves data for audit
-  operationId: deleteRequirement
-  security:
-    - BearerAuth: []
-  responses:
-    "204":
-      description: Requirement deleted successfully
-    "400":
-      description: Cannot delete requirement
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Cannot Delete Requirement"
-              message:
-                type: string
-                example: "Cannot delete requirement that is in use by active plans"
-              code:
-                type: string
-                example: "REQUIREMENT_IN_USE"
-    "401":
-      $ref: "../../components/responses/UnauthorizedError.yaml"
-    "403":
-      $ref: "../../components/responses/ForbiddenError.yaml"
-    "404":
-      description: Requirement not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Requirement Not Found"
-              message:
-                type: string
-                example: "Requirement with the specified ID was not found"
-              code:
-                type: string
-                example: "REQUIREMENT_NOT_FOUND"
-    "500":
-      $ref: "../../components/responses/ServerError.yaml"
+#     **Required Permissions:** `write:requirement`
+
+#     **Business Rules:**
+#     - Cannot update requirements that are already in use by active plans
+#     - Cannot change requirement category after creation
+#     - Only authorized users can update requirements
+#     - All changes are logged for audit purposes
+#   operationId: updateRequirement
+#   security:
+#     - BearerAuth: []
+#   requestBody:
+#     required: true
+#     content:
+#       application/json:
+#         schema:
+#           type: object
+#           properties:
+#             name:
+#               type: string
+#               description: Updated requirement name
+#               example: "Updated Organic Certification"
+#             description:
+#               type: string
+#               description: Updated requirement description
+#               example: "Updated organic certification requirements"
+#             is_mandatory:
+#               type: boolean
+#               description: Updated mandatory status
+#               example: true
+#             validation_rules:
+#               type: array
+#               items:
+#                 type: string
+#               description: Updated validation rules
+#               example: ["Valid certification document", "Annual renewal required", "Third-party verification"]
+#             min_score:
+#               type: number
+#               description: Updated minimum score
+#               example: 85
+#             max_score:
+#               type: number
+#               description: Updated maximum score
+#               example: 100
+#             unit:
+#               type: string
+#               description: Updated unit of measurement
+#               example: "percentage"
+#         examples:
+#           update_basic:
+#             summary: Update basic requirement details
+#             description: Update requirement name and description
+#             value:
+#               name: "Updated Organic Certification"
+#               description: "Updated organic certification requirements"
+#           update_detailed:
+#             summary: Update detailed requirement details
+#             description: Update comprehensive requirement details
+#             value:
+#               name: "Updated Organic Certification"
+#               description: "Updated organic certification requirements"
+#               is_mandatory: true
+#               validation_rules: ["Valid certification document", "Annual renewal required", "Third-party verification"]
+#               min_score: 85
+#               max_score: 100
+#               unit: "percentage"
+#   responses:
+#     "200":
+#       description: Requirement updated successfully
+#       content:
+#         application/json:
+#           schema:
+#             $ref: "../../components/schemas/requirement.yaml"
+#           example:
+#             id: "clh1234567890abcdef"
+#             name: "Updated Organic Certification"
+#             category: "certification"
+#             description: "Updated organic certification requirements"
+#             is_mandatory: true
+#             validation_rules: ["Valid certification document", "Annual renewal required", "Third-party verification"]
+#             min_score: 85
+#             max_score: 100
+#             unit: "percentage"
+#             created_at: "2024-01-15T10:30:00Z"
+#             updated_at: "2024-01-15T11:30:00Z"
+#     "400":
+#       $ref: "../../components/responses/ValidationError.yaml"
+#     "401":
+#       $ref: "../../components/responses/UnauthorizedError.yaml"
+#     "403":
+#       $ref: "../../components/responses/ForbiddenError.yaml"
+#     "404":
+#       description: Requirement not found
+#       content:
+#         application/json:
+#           schema:
+#             type: object
+#             properties:
+#               error:
+#                 type: string
+#                 example: "Requirement Not Found"
+#               message:
+#                 type: string
+#                 example: "Requirement with the specified ID was not found"
+#               code:
+#                 type: string
+#                 example: "REQUIREMENT_NOT_FOUND"
+#     "409":
+#       description: Requirement update conflict
+#       content:
+#         application/json:
+#           schema:
+#             type: object
+#             properties:
+#               error:
+#                 type: string
+#                 example: "Requirement Update Conflict"
+#               message:
+#                 type: string
+#                 example: "Cannot update requirement that is in use by active plans"
+#               code:
+#                 type: string
+#                 example: "REQUIREMENT_UPDATE_CONFLICT"
+#     "500":
+#       $ref: "../../components/responses/ServerError.yaml"
+
+# # delete requirement
+# delete:
+#   tags:
+#     - 📦 Requirements
+#   summary: Delete requirement
+#   description: |
+#     Delete a requirement from the system.
+
+#     **Required Permissions:** `write:requirement`
+
+#     **Business Rules:**
+#     - Cannot delete requirements that are in use by active plans
+#     - Cannot delete mandatory requirements for active plans
+#     - Only admin users can delete requirements
+#     - Soft delete - marks as deleted but preserves data for audit
+#   operationId: deleteRequirement
+#   security:
+#     - BearerAuth: []
+#   responses:
+#     "204":
+#       description: Requirement deleted successfully
+#     "400":
+#       description: Cannot delete requirement
+#       content:
+#         application/json:
+#           schema:
+#             type: object
+#             properties:
+#               error:
+#                 type: string
+#                 example: "Cannot Delete Requirement"
+#               message:
+#                 type: string
+#                 example: "Cannot delete requirement that is in use by active plans"
+#               code:
+#                 type: string
+#                 example: "REQUIREMENT_IN_USE"
+#     "401":
+#       $ref: "../../components/responses/UnauthorizedError.yaml"
+#     "403":
+#       $ref: "../../components/responses/ForbiddenError.yaml"
+#     "404":
+#       description: Requirement not found
+#       content:
+#         application/json:
+#           schema:
+#             type: object
+#             properties:
+#               error:
+#                 type: string
+#                 example: "Requirement Not Found"
+#               message:
+#                 type: string
+#                 example: "Requirement with the specified ID was not found"
+#               code:
+#                 type: string
+#                 example: "REQUIREMENT_NOT_FOUND"
+#     "500":
+#       $ref: "../../components/responses/ServerError.yaml"

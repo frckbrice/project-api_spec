@@ -4,9 +4,9 @@ post:
   summary: Create price plan requirement
   description: |
     Create a new price plan requirement that represents the requirements corresponding to a particular price plan.
-    
+
     **Required Permissions:** `write:price_plan_requirement`
-    
+
     **Business Rules:**
     - Price plan requirement must be associated with a valid price plan
     - Requirement must have a valid category and type
@@ -42,7 +42,8 @@ post:
               min_value: 80
               max_value: 100
               unit: "percentage"
-              validation_rules: ["Must be organic certified", "No chemical residues"]
+              validation_rules:
+                ["Must be organic certified", "No chemical residues"]
   responses:
     "201":
       description: Price plan requirement created successfully
@@ -100,15 +101,15 @@ get:
   summary: List all price plan requirements
   description: |
     Retrieve a paginated list of price plan requirements with optional filtering capabilities.
-    
+
     **Required Permissions:** `read:price_plan_requirement`
-    
+
     **Filtering Options:**
     - Filter by price plan ID
     - Filter by requirement type
     - Filter by mandatory status
     - Filter by company ID
-    
+
     **Pagination:**
     - Default limit: 20 items per page
     - Maximum limit: 100 items per page
@@ -235,9 +236,9 @@ put:
   summary: Update price plan requirement
   description: |
     Update an existing price plan requirement.
-    
+
     **Required Permissions:** `write:price_plan_requirement`
-    
+
     **Business Rules:**
     - Cannot update requirements that are already in use by active price plans
     - Cannot change requirement type after creation
@@ -282,7 +283,12 @@ put:
               items:
                 type: string
               description: Updated validation rules
-              example: ["Must be organic certified", "No chemical residues", "Fair trade certified"]
+              example:
+                [
+                  "Must be organic certified",
+                  "No chemical residues",
+                  "Fair trade certified",
+                ]
         examples:
           update_basic:
             summary: Update basic requirement details
@@ -300,7 +306,12 @@ put:
               min_value: 85
               max_value: 100
               unit: "percentage"
-              validation_rules: ["Must be organic certified", "No chemical residues", "Fair trade certified"]
+              validation_rules:
+                [
+                  "Must be organic certified",
+                  "No chemical residues",
+                  "Fair trade certified",
+                ]
   responses:
     "200":
       description: Price plan requirement updated successfully
@@ -318,7 +329,12 @@ put:
             min_value: 85
             max_value: 100
             unit: "percentage"
-            validation_rules: ["Must be organic certified", "No chemical residues", "Fair trade certified"]
+            validation_rules:
+              [
+                "Must be organic certified",
+                "No chemical residues",
+                "Fair trade certified",
+              ]
             created_at: "2024-01-15T10:30:00Z"
             updated_at: "2024-01-15T11:30:00Z"
     "400":
@@ -369,9 +385,9 @@ delete:
   summary: Delete price plan requirement
   description: |
     Delete a price plan requirement from the system.
-    
+
     **Required Permissions:** `write:price_plan_requirement`
-    
+
     **Business Rules:**
     - Cannot delete requirements that are in use by active price plans
     - Cannot delete mandatory requirements for active plans

@@ -29,8 +29,8 @@ properties:
     format: array
     description: To specify the modules of the training
     example: ["Module 1", "Module 2"]
- 
-   create_at:
+
+  create_at:
     type: string
     format: date-time
     description: To specify the creation date of the attendance sheet

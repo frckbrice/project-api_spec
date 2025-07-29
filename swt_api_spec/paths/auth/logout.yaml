@@ -4,13 +4,13 @@ post:
   summary: User Logout
   description: |
     Logout the current user and invalidate their tokens.
-    
+
     **Logout Process:**
     1. Invalidate current access token
     2. Invalidate refresh token
     3. Clear session data
     4. Log logout event for audit
-    
+
     **Security Features:**
     - Token blacklisting
     - Session cleanup
@@ -81,4 +81,4 @@ post:
     "401":
       $ref: "../../components/responses/UnauthorizedError.yaml"
     "500":
-      $ref: "../../components/responses/ServerError.yaml" 
+      $ref: "../../components/responses/ServerError.yaml"

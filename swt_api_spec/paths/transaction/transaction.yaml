@@ -1,0 +1,149 @@
+# get all transaction
+get:
+  tags:
+    - 💰 Transactions
+  summary: List all transactions
+  description: |
+    Retrieve a list of all transactions.
+    This endpoint supports pagination and filtering.
+  operationId: listTransactions
+  security:
+    - BearerAuth: []
+  parameters:
+    - $ref: "../../components/parameters/PaginationLimit.yaml"
+    - $ref: "../../components/parameters/PaginationOffset.yaml"
+    - $ref: "../../components/parameters/CompanyId.yaml"
+    - $ref: "../../components/parameters/DateRangeStart.yaml"
+    - $ref: "../../components/parameters/DateRangeEnd.yaml"
+  responses:
+    "200":
+      description: List of transactions retrieved successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: "../../components/schemas/transaction.yaml"
+              meta:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    example: 100
+                  page:
+                    type: integer
+                    example: 1
+                  limit:
+                    type: integer
+                    example: 20
+                  has_more:
+                    type: boolean
+                    example: true
+    "400":
+      $ref: "../../components/responses/ValidationError.yaml"
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "429":
+      $ref: "../../components/responses/RateLimitError.yaml"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"
+
+# create a transaction
+post:
+  tags:
+    - 💰 Transactions
+  summary: Create a transaction
+  description: Create a new transaction record
+  operationId: createTransaction
+  security:
+    - BearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/transaction.yaml"
+        examples:
+          basic_transaction:
+            summary: Basic transaction
+            description: Create a transaction with minimal information
+            value:
+              market_id: "clh1234567890abcdef"
+              date: "2024-01-15T10:30:00Z"
+              quantity: 500
+              net_weight_declared_in_Ton: 0.5
+              humidity_level_of_product: 7.5
+              total_quantity_in_bags: 10
+              product_quality: "Grade A"
+          detailed_transaction:
+            summary: Detailed transaction
+            description: Create a transaction with all available information
+            value:
+              market_id: "clh1234567890abcdef"
+              date: "2024-01-15T10:30:00Z"
+              level_of_traceability: "identite preservee"
+              driver_name: "John Smith"
+              quantity: 500
+              net_weight_declared_in_Ton: 0.5
+              humidity_level_of_product: 7.5
+              total_quantity_in_bags: 10
+              receiver_name: "Jane Doe"
+              min_com_verif_agent_name_and_sig: "Agent Smith - Verified"
+              sender_signature: "Sender123"
+              driver_signature: "Driver456"
+              product_quality: "Grade A"
+              vehicule_immatriculation_number: "ABC123XY"
+  responses:
+    "201":
+      description: Transaction created successfully
+      content:
+        application/json:
+          schema:
+            $ref: "../../components/schemas/transaction.yaml"
+          example:
+            id: "clh1234567890abcdef"
+            market_id: "clh1234567890abcdef"
+            date: "2024-01-15T10:30:00Z"
+            level_of_traceability: "identite preservee"
+            driver_name: "John Smith"
+            quantity: 500
+            net_weight_declared_in_Ton: 0.5
+            humidity_level_of_product: 7.5
+            total_quantity_in_bags: 10
+            receiver_name: "Jane Doe"
+            min_com_verif_agent_name_and_sig: "Agent Smith - Verified"
+            sender_signature: "Sender123"
+            driver_signature: "Driver456"
+            product_quality: "Grade A"
+            vehicule_immatriculation_number: "ABC123XY"
+            created_at: "2024-01-15T10:30:00Z"
+            updated_at: "2024-01-15T10:30:00Z"
+    "400":
+      $ref: "../../components/responses/ValidationError.yaml"
+    "401":
+      $ref: "../../components/responses/UnauthorizedError.yaml"
+    "403":
+      $ref: "../../components/responses/ForbiddenError.yaml"
+    "409":
+      description: Transaction already exists
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Transaction Already Exists"
+              message:
+                type: string
+                example: "A transaction with these details already exists"
+              code:
+                type: string
+                example: "TRANSACTION_ALREADY_EXISTS"
+    "500":
+      $ref: "../../components/responses/ServerError.yaml"
