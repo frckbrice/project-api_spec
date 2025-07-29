@@ -109,9 +109,31 @@ jobs:
 
       - name: Test Docker container
         run: |
+          echo "Building Docker image..."
+          docker build -t cocoaflow-api-docs .
+          echo "Running container..."
           docker run -d --name test-container -p 8080:8080 cocoaflow-api-docs
-          sleep 10
-          curl -f http://localhost:8080 || exit 1
+          echo "Waiting for container to start..."
+          sleep 20
+          echo "Container status:"
+          docker ps -a
+          echo "Checking container logs..."
+          docker logs test-container
+          echo "Testing container endpoint with retries..."
+          for i in {1..5}; do
+            echo "Attempt $i: Testing container endpoint..."
+            if curl -f http://localhost:8080; then
+              echo "Container is responding successfully!"
+              break
+            else
+              echo "Attempt $i failed, waiting 5 seconds..."
+              sleep 5
+              docker logs test-container
+            fi
+          done
+          echo "Final test..."
+          curl -v http://localhost:8080 || (echo "Container endpoint check failed" && docker logs test-container && exit 1)
+          echo "Container is healthy and responding!"
           docker stop test-container && docker rm test-container
 
   deploy:
