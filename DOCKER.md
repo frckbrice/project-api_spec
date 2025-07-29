@@ -111,7 +111,7 @@ The Docker container is automatically tested in the CI/CD pipeline. The test inc
 
 ## Container Details
 
-- **Base Image**: `node:18-alpine`
+- **Base Image**: `node:22-alpine`
 - **Port**: 8080
 - **Health Check**: HTTP GET request to `/`
 - **Command**: `npx redocly preview-docs ./dist/cocoaflow-api.yaml --port 8080 --host 0.0.0.0`
