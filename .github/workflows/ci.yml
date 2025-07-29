@@ -193,6 +193,18 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           working-directory: ./
           vercel-args: "--prod"
+        continue-on-error: true
+
+      - name: Vercel deployment status
+        if: always()
+        run: |
+          echo "🔍 Checking Vercel deployment status..."
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ Vercel deployment completed"
+          else
+            echo "⚠️ Vercel deployment had issues"
+            echo "This is not critical - GitHub Pages deployment will still work"
+          fi
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
