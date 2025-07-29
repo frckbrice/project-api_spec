@@ -258,7 +258,7 @@ graph LR
 ### **Documentation & API**
 
 - **Interactive API Documentation**: [https://project-apispec.vercel.app](https://project-apispec.vercel.app)
-- **Raw OpenAPI Specification**: [https://project-apispec.vercel.app/cocoaflow-api.yaml](https://project-apispec.vercel.app/swt_api_spec/cocoaflow-api.yaml)
+- **Raw OpenAPI Specification**: [https://project-apispec.vercel.app/cocoaflow-api.yaml](public/cocoaflow-api.yaml)
 - **GitHub Repository**: [https://github.com/frckbrice/project-api_spec](https://github.com/frckbrice/project-api_spec)
 - **Issue Tracking**: [https://github.com/frckbrice/project-api_spec/issues](https://github.com/frckbrice/project-api_spec/issues)
 
