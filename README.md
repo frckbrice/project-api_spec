@@ -13,17 +13,16 @@
 
 ## 🌟 Overview
 
-CocoaFlow is a comprehensive **API specification** designed for managing cocoa industry operations, including farmer management, farm tracking, certification compliance, and supply chain optimization. This specification serves as the contract between frontend and backend teams, ensuring consistent development and integration.
-
-> **Note**: This is an API specification project. The actual API implementation is in development. You can use this specification to understand the API design and generate client libraries.
+CocoaFlow is a comprehensive **API specification** designed for managing cocoa industry operations, from farm to end consumer, including farmer management, farm tracking, certification compliance, and supply chain optimization. This specification serves as the contract between frontend and backend teams, ensuring consistent development and integration.
 
 ### 🎯 Key Features
 
 - **Farmer Management**: Complete farmer profiles, contracts, and relationship tracking
 - **Farm Operations**: GPS coordinates, inspection data, and compliance monitoring
+- **Inspections (internal and external)**: follow up of farmer to comply with Rainforest Alliance standards and regulations for agriculture.
 - **Certification Support**: Rainforest Alliance compliance tracking and audit trails
-- **Supply Chain**: Market management, transactions, and inventory tracking
-- **Training & Education**: Session management and participant tracking
+- **Supply Chain**: Market management, transactions, and inventory tracking, and tansport and storage to factory plant.
+- **Training & Education**: Session management and participant tracking for farmers by the industry.
 - **Analytics & Reporting**: Comprehensive data insights and business intelligence
 
 ### 🏗️ Architecture Highlights
@@ -66,9 +65,17 @@ npm run docs:build       # Build static documentation
 npm run lint            # Lint OpenAPI specification
 npm run validate        # Validate specification
 
+or
+npm run test            # Run tests
+
+
 # Build & Generate
 npm run bundle          # Bundle specification into single file
 npm run generate:client # Generate TypeScript client
+
+# view the specification
+npm run build
+npm run preview
 ```
 
 ## 📚 Documentation

@@ -219,8 +219,7 @@ paths:
   "/auth/logout":
     $ref: paths/auth/logout.yaml
   "/auth/me":
-    get:
-      $ref: paths/auth/auth.yaml#/get
+    $ref: paths/auth/me.yaml
   "/users": # user
     $ref: paths/user/user.yaml
   "/users/{id}":

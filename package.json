@@ -28,8 +28,8 @@
     "url": "https://github.com/frckbrice/project-api_spec/issues"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=8.0.0"
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
   },
   "scripts": {
     "prepare": "husky install",
@@ -46,7 +46,7 @@
     "docs:serve": "redocly preview-docs ./swt_api_spec/cocoaflow-api.yaml --port 8080",
     "docs:build": "redocly build-docs ./swt_api_spec/cocoaflow-api.yaml -o ./public/index.html",
     "generate:client": "openapi-generator-cli generate -i ./dist/cocoaflow-api.yaml -g typescript-axios -o ./generated/typescript",
-    "generate:postman": "openapi-generator-cli generate -i ./dist/cocoaflow-api.yaml -g postman -o ./generated/postman",
+    "generate:postman": "openapi-generator-cli generate -i ./dist/cocoaflow-api.yaml -g postman-collection -o ./generated/postman",
     "clean": "rm -rf ./dist ./generated ./docs",
     "version": "npm run bundle && git add -A dist",
     "postversion": "git push && git push --tags"
