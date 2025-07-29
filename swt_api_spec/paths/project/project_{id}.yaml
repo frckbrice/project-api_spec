@@ -10,10 +10,8 @@ get:
       description: project id
       required: true
       schema:
-        type: array
-        items:
-          type: string
-          example: AQA9CNo0cXNLt6sZp5Uc5P0
+        type: string
+        example: AQA9CNo0cXNLt6sZp5Uc5P0
       style: simple
   security:
     - BearerAuth: []
@@ -23,9 +21,7 @@ get:
       content:
         "*/*":
           schema:
-            type: array
-            items:
-              $ref: ../../components/schemas/project.yaml
+            $ref: ../../components/schemas/project.yaml
     "404":
       description: Project not found
     "401":

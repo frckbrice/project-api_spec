@@ -1,10 +1,10 @@
-# list all users
-post:
+# List all projects
+get:
   tags:
     - 🌿 Projects
-  summary: Create a new project
-  description: To create the project form by a specific company administrator (ADG).
-  operationId: getAllProjectsByCompany
+  summary: Get all projects
+  description: Retrieve all projects with optional filtering
+  operationId: getAllProjects
   security:
     - BearerAuth: []
   parameters:
@@ -61,6 +61,50 @@ post:
       schema:
         type: integer
         format: int32
+  responses:
+    "200":
+      description: List of projects
+      content:
+        "*/*":
+          schema:
+            type: array
+            items:
+              $ref: "../../components/schemas/project.yaml"
+    "404":
+      description: Projects not found
+    "401":
+      description: Unauthorized access
+    "403":
+      description: Forbidden access
+    "400":
+      description: Bad request
+
+# Create a new project
+post:
+  tags:
+    - 🌿 Projects
+  summary: Create a new project
+  description: To create the project form by a specific company administrator (ADG).
+  operationId: createProject
+  security:
+    - BearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../../components/schemas/project.yaml"
+        example:
+          type: "INITIAL_INSPECTION"
+          company_id: "AQA9CNo0cXNLt6sZp5Uc5P0"
+          title: "Internal Inspection Project"
+          description: "Comprehensive internal inspection for quality assurance"
+          sector_activity: "engineering"
+          country: "Cameroon"
+          city: ["Douala", "Buea"]
+          status: "DRAFT"
+          start_date: "2024-01-01T00:00:00.000Z"
+          end_date: "2024-12-31T00:00:00.000Z"
   responses:
     "200":
       description: Project
